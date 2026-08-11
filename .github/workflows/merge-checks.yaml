@@ -7,8 +7,8 @@ name: Merge Checks
 # (setup-node/.nvmrc) with the project's own by hand.
 #
 # The project's own CI: lint and unit tests that gate merges to the default
-# branch. This is the CI the /address skill's tail polls after a push (see
-# .claude/skills/address/SKILL.md). Keep REVIEW.md's do-not-report list in sync
+# branch. This is the CI loop-engineering's tail polls after a push (see
+# .claude/skills/loop-engineering/SKILL.md). Keep REVIEW.md's do-not-report list in sync
 # with exactly what these jobs enforce.
 #
 # The tokenized run commands below are substituted by `./init.sh apply` along

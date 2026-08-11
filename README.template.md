@@ -47,72 +47,53 @@ setup, database or services to start — from the project's actual needs (see
 
 Development in this repository is agent-assisted via
 [Claude Code](https://claude.com/claude-code). The working agreement lives in
-[`AGENTS.md`](./AGENTS.md) (loaded through `CLAUDE.md`) and routes to the
-detailed skills under [`.claude/skills/`](./.claude/skills). Human and agent
-contributors follow the same loop: plan → implement → self-review → verify →
-report.
+[`AGENTS.md`](./AGENTS.md) (loaded through `CLAUDE.md`), which routes to the
+installed skills under [`.claude/skills/`](./.claude/skills) and to this
+project's own documents under [`docs/`](./docs/index.md). Human and agent
+contributors follow the same loop.
 
-<!-- INIT:OPTIONAL key=INDEPENDENT_REVIEW — Fixed: the independent-review channel and `/address` are fixed infrastructure (INIT.md Step 4), so KEEP the workflow subsections below; just delete this marker (and adapt the copy to the project's stack). -->
-### `/address` — deliver a unit of work end-to-end
+<!-- INIT:OPTIONAL key=INDEPENDENT_REVIEW — Fixed: the change loop and the independent-review channel are fixed infrastructure (INIT.md Step 4), so KEEP the subsections below; just delete this marker and adapt the copy to the project's stack. -->
+### The change loop
 
-[`/address`](./.claude/skills/address/SKILL.md) is the main delivery entry point.
-It takes one unit of work — a GitHub issue, a pull request, or a free-form
-prompt — from intake to a merge-ready pull request in a single continuing
-session:
+Every change — code or document, one line or one feature — goes through the
+`loop-engineering` skill: **plan → approve → code → verify → independent review
+→ address → ready**.
+
+There is no command to type. The skill is model-invoked, so naming the work is
+what starts it: *"deliver issue #42"*, *"pick up PR 57"*, or a description of a
+change with no issue behind it yet. To carry on after it stops, continue the
+session and tell it to.
 
 1. **Plan** — reads the issue and its thread, asks you the product and scope
    questions the spec leaves open, and rewrites the issue body into a
-   reviewable plan with acceptance criteria. It then **always pauses for your
-   approval**: it verifies nothing gets built until you review the plan and
-   send `/address continue`.
-2. **Code + verify** — implements the approved plan (on a separate worktree
-   unless it is running in a Claude Code cloud environment, so it never blocks
-   your working copy) on an agent-namespaced branch, runs the checks the
-   changed surface requires, and self-reviews the diff.
+   reviewable plan with acceptance criteria. It then **always stops for your
+   approval**: nothing gets built until you review the plan and resume.
+2. **Code + verify** — implements the approved plan on an agent-namespaced
+   branch (on a separate worktree when it shares your working copy, so it never
+   blocks you), runs the checks the changed surface requires, and self-reviews
+   the diff. Implementation runs in the `implementer` subagent where the
+   harness allows one.
 3. **Independent review** — opens a draft pull request and requests the CI
-   reviewer, a separate bot session, so the code's author never certifies its
-   own work.
+   reviewer, a separate session under a separate identity, so the code's author
+   never certifies its own work.
 4. **Address** — fixes review findings and CI failures, tying each resolved
-   thread to the resolving commit, for up to eight rounds.
+   thread to the resolving commit, for a capped number of rounds.
 5. **Ready** — flips the pull request to ready once CI is green and the review
    is clean. Merging always stays a human decision.
 
-Practical examples:
-
-```text
-/address https://github.com/OWNER/REPO/issues/42   # deliver issue #42 end-to-end
-/address 57                                        # resume delivery of open PR #57
-/address The 404 page should link back home        # no issue yet: files a tracking
-                                                   #   issue, then delivers it
-/address continue                                  # approve a paused plan, or resume
-                                                   #   after you answer a question,
-                                                   #   leave PR comments, or start a
-                                                   #   fresh session from a /handoff
-                                                   #   package
-```
-
-Every run pauses after the plan for your approval, and pauses again whenever it
-genuinely needs a human — an ambiguous requirement, a judgment call on
-conflicting changes — and `/address continue` picks it back up where it
-stopped.
+[docs/operations/development-workflow.md](./docs/operations/development-workflow.md)
+holds this project's own part: the branch prefix, what audits the loop from
+outside a session, and how the review is requested.
 
 ### `@claude review` — get findings on any PR
+<!-- INIT: replace the trigger phrase above and below with this project's own, matching claude-review.yaml. -->
 
 Comment **`@claude review`** on a pull request to run this repository's review
 policy ([`REVIEW.md`](./REVIEW.md)) — severity-tagged findings with `file:line`
 evidence and concrete fixes, posted as inline comments by the CI reviewer
 ([`claude-review.yaml`](./.github/workflows/claude-review.yaml)). Use it for a
-pre-merge check on a hand-written change or a second opinion before merging; the
-same review runs automatically against `/address` pull requests.
-
-<!-- INIT:OPTIONAL key=SESSION_HANDOFF — Fixed: `/handoff` is fixed infrastructure (INIT.md Step 4), so KEEP this subsection; just delete this marker. -->
-### `/handoff` — suspend work for another session
-
-[`/handoff`](./.claude/skills/handoff/SKILL.md) packages in-progress work — goal,
-current state, remaining to-dos, uncommitted changes — into a downloadable
-`handoff-<epoch>.md` (plus an optional zip of supporting files). Use it when a
-session is running low on context, or to park work for later; a fresh session
-(yours or a teammate's) takes the package over with `/address continue`.
+pre-merge check on a hand-written change or a second opinion before merging; it
+is the same reviewer the change loop requests for itself.
 
 <!-- INIT:OPTIONAL key=PREVIEW_ENVIRONMENTS — keep & adapt this subsection when the project has per-PR preview environments (INIT Step 1d) OR delete it. -->
 ### Preview environments — review every PR live
@@ -124,9 +105,12 @@ Each pull request gets its own preview environment with a **stable per-PR
 link** — a preview URL for a web project, an installable build's distribution
 link for a mobile app — posted to the PR as a fresh comment on every deploy
 (each recording the deployed commit) and torn down when the PR closes. The
-pipeline is inert until its hosting/distribution secrets are configured; see
-[preview-environments](./.claude/skills/development-guidelines/references/preview-environments.md)
-for the setup and rules.
+pipeline is inert until its hosting and distribution secrets are configured;
+see `docs/operations/preview-deployment.md` for the setup and its rules.
+<!-- INIT: the template ships no preview-deployment document, so the path above
+is deliberately not a link — an unwritten target would fail the link check.
+Write that document in Step 5, make this a real link, and add its Routing a
+Change row in AGENTS.md. -->
 
 Changes made without an agent follow the same bar: branch, implement, run the
 checks below, open a pull request, and get it reviewed before merge.
@@ -144,9 +128,14 @@ tests cover versus e2e, and which checks gate a merge. -->
 | Unit tests | `{{UNIT_TEST_CMD}}` <!-- INIT:OPTIONAL key=UNIT_TESTS — delete this row if the project has no unit suite. --> |
 | E2E tests | `{{E2E_TEST_CMD}}` <!-- INIT:OPTIONAL key=E2E_TESTS — delete this row if the project has no e2e suite. --> |
 
-Run format + lint after every change, and the suites relevant to the changed
-surface before opening a pull request — see the Verification section of
-[`AGENTS.md`](./AGENTS.md).
+This table is the authoritative list of the project's commands, for human
+contributors and agents alike. Run format and lint after every change, and the
+suites relevant to the changed surface before opening a pull request; the
+`software-development` skill owns why, and [`AGENTS.md`](./AGENTS.md) requires
+reading this file before running any of them.
+
+If a required command cannot be run, say so — naming the command, the reason,
+and the residual risk — rather than presenting the change as fully verified.
 
 ## Related links
 
