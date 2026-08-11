@@ -96,8 +96,39 @@ An entry records a decision the human accepted, with its reason. A hypothetical
 or anticipated collision MUST NOT be entered: a deviation is recorded when it is
 accepted, not when it is expected.
 
-<!-- INIT: leave this section empty until the project actually accepts a
-deviation. An empty register is the correct state for a project that has not
-departed from an installed rule yet — do not seed it with examples. -->
+<!-- INIT: the one entry below is real, not an example — keep it while the
+project has authentication and the gap is still open upstream. Do not seed the
+section with anything else; an otherwise-empty register is the correct state
+for a project that has not departed from an installed rule. -->
 
-*No deviations or gaps recorded.*
+### Gap — `application-security` is silent on authentication lockout and session-cookie ownership
+
+`application-security` presents itself as an OWASP Top 10 lens, and OWASP's
+A07 is Identification and Authentication Failures. Its references cover
+secrets, input validation, injection, SSRF, privacy and exposure, and supply
+chain — but nothing on authentication itself. Two rule classes this template
+previously carried have no home in the installed set:
+
+- **Lockout thresholds.** A lockout duration below 5 minutes, a max-attempt
+  count above 5, or the removal of the lockout configuration block entirely.
+  Lockout is the only cost imposed on password guessing, so relaxing it turns
+  a login form into a brute-force oracle — and it relaxes in a one-line diff
+  that reads like a config tweak.
+- **Session-cookie ownership.** A component or request handler reading or
+  writing session cookies directly instead of going through the project's
+  authentication system, or implementing its own auth cookie or token beside
+  the one that system already provides. Cookie names, flags, and rotation are
+  that system's internal details, so a second reader desyncs silently whenever
+  it changes them.
+
+Neither is framework-specific. `next-app-development` covers adjacent ground
+for one framework, but this project does not necessarily install it, and the
+rules apply to any project with a login.
+
+**Until the gap closes:** a project with authentication states these thresholds
+in its own `docs/conventions/security.md` and reviews against them there. The
+gap is worth filing upstream on
+[`axross/skills`](https://github.com/axross/skills) because it generalizes well
+beyond this project — but filing is a public write on a repository this project
+does not own, so it waits on the human's go-ahead, and this entry stands in the
+meantime.

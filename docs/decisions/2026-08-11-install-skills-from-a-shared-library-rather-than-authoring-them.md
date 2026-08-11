@@ -5,7 +5,7 @@ status: accepted
 # Install skills from a shared library rather than authoring them here
 
 This template carried fourteen hand-written skills under `.claude/skills/` —
-81 files and 6,201 lines — covering skill authoring, product requirements,
+82 files and 6,320 lines — covering skill authoring, product requirements,
 development, review, testing, GitHub operation, maintainability, security,
 performance, observability, and QA evidence, plus two workflow entry points,
 `/address` and `/handoff`. Because they were authored here, every

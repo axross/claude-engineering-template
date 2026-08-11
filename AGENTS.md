@@ -42,7 +42,7 @@
 names the specific document for a kind of change this project already
 distinguishes, so a session does not have to open the index for one of these.
 
-The four rows below ship with the template and stay true after adaptation.
+The five rows below ship with the template and stay true after adaptation.
 <!-- INIT: add a row per surface the project distinguishes, as `docs/` grows — at
 minimum `docs/conventions/directory-structure.md` for where a file goes, and a
 `docs/specs/` row per product domain. The template ships neither, because it has

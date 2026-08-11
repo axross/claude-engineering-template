@@ -41,7 +41,7 @@ jobs:
         run: node .claude/skills/agent-skill-authoring/scripts/check-links.mjs
 
   docs:
-    name: Docs Corpus Check
+    name: Docs Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

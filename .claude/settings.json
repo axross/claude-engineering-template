@@ -1,7 +1,7 @@
 {
 	"effortLevel": "xhigh",
 	"env": {
-		"OTEL_METRICS_INCLUDE_ENTRYPOINT": "1",
+		"OTEL_METRICS_INCLUDE_ENTRYPOINT": "true",
 		"OTEL_RESOURCE_ATTRIBUTES": "repository={{PROJECT_NAME}}"
 	},
 	"hooks": {

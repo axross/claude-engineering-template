@@ -284,9 +284,9 @@ confirm the answers instead of relying solely on the user — confirmation
 supplements the interview; it never replaces asking. **Prefer adding a missing
 capability over silently dropping it** — deleting a whole testing or
 observability skill should be a deliberate choice the user made, not a default.
-(The `/address` / `/handoff` skills, `REVIEW.md`, the CI workflows, and
-`github-operation` are the exception — they are fixed and never
-dropped; see the "Fixed vs. configured" note.)
+(`loop-engineering`, `REVIEW.md`, the CI workflows, and `github-operation`
+are the exception — they are fixed and never dropped; see the
+"Fixed vs. configured" note.)
 
 ---
 
@@ -536,6 +536,15 @@ line to `index.md` for each document as you write it:
    general practice to the installed skill that owns it by name; that is what
    keeps `conventions/testing.md` from growing into a second, divergent copy of
    a testing capability.
+
+   **One exception, where the installed skill is silent rather than general.**
+   A project with authentication must state its own lockout thresholds and its
+   session-cookie ownership rule in `conventions/security.md`, because
+   `application-security` covers neither — the gap and its reasoning are
+   recorded in
+   [docs/operations/agent-skills.md](./docs/operations/agent-skills.md). This is
+   not the usual "state only your own answer" case: there is no general practice
+   to defer to.
 3. **`docs/specs/<domain>.md` for one domain** — the one whose behaviour is
    most often asked about, or most often got wrong. State the domain's boundary
    and what it deliberately does not do, alongside what it does.

@@ -172,7 +172,7 @@ PY
       echo "  SKIPPED — node not found. Relative links were NOT checked."
     fi
     echo
-    echo "== docs/ corpus =="
+    echo "== docs/ validators =="
     # Five single-purpose validators, one per kind of change; there is no
     # run-all script by design. All five exit 0 while docs/index.md is absent,
     # so this section is inert until the project adopts docs/ (INIT Step 5).

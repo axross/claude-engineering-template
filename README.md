@@ -47,7 +47,7 @@ wrong or to collide with your project.
 The template installs the 17 that apply to any project whatever its stack —
 conduct, the change loop, baseline development, commits, GitHub operation,
 review, QA, maintainability, security, instrumentation, unit and e2e testing,
-requirements, technical writing, the docs corpus, and skill authoring and
+requirements, technical writing, the docs tree, and skill authoring and
 management. The stack-specific rest of the library — framework, UI, vendor, and
 runner layers — is chosen during adaptation, in INIT Step 4.
 
