@@ -4,9 +4,9 @@
 #
 # This automates the mechanical half of INIT (Step 3): replacing every {{TOKEN}}
 # with the project's value. It does NOT make the judgement calls — interviewing
-# the user, deciding which optional capabilities to ADD vs. delete, pruning
-# sections, and adding project-specific skills are still done by following
-# INIT.md. Run this AFTER you have the answers.
+# the user, choosing which skills to install, resolving the remaining optional
+# sections, and writing docs/ are still done by following INIT.md. Run this
+# AFTER you have the answers.
 #
 # Why a script instead of `sed`: two tokens ({{CODE_FILE_GLOB}},
 # {{CODE_FILE_REGEX}}) contain shell/regex metacharacters ( | * ( ) \ $ ), which
@@ -93,8 +93,8 @@ missing = [t for t in tokens if not vals.get(t, "").strip()]
 if missing:
     sys.stderr.write("Refusing to apply — these tokens have no value in %s:\n  %s\n"
                      % (values, ", ".join(missing)))
-    sys.stderr.write("Fill them, or delete the section/skill that uses an optional "
-                     "one (see INIT.md Step 4) and remove its row here.\n")
+    sys.stderr.write("Fill them, or delete the section that uses an optional one "
+                     "(see INIT.md Step 4) and remove its row from tokens.json.\n")
     sys.exit(1)
 
 SKIP = {".git", "node_modules", ".next", "dist", "build", "out", "coverage", ".venv", "tools"}
@@ -162,7 +162,30 @@ PY
     fi
     echo
     echo "== Relative-link integrity =="
-    "$ROOT/.claude/skills/agent-skills-best-practices/scripts/check-links.sh"
+    # The checker ships inside the installed agent-skill-authoring skill and
+    # survives adaptation; it needs Node, which refreshing skills needs anyway.
+    if command -v node >/dev/null 2>&1; then
+      # `|| true`: check reports every section rather than aborting on the
+      # first failing one, so one run shows the whole remaining worklist.
+      node "$ROOT/.claude/skills/agent-skill-authoring/scripts/check-links.mjs" || true
+    else
+      echo "  SKIPPED — node not found. Relative links were NOT checked."
+    fi
+    echo
+    echo "== docs/ corpus =="
+    # Five single-purpose validators, one per kind of change; there is no
+    # run-all script by design. All five exit 0 while docs/index.md is absent,
+    # so this section is inert until the project adopts docs/ (INIT Step 5).
+    if command -v node >/dev/null 2>&1; then
+      docs_failed=0
+      for check in "$ROOT"/.claude/skills/living-product-specification/scripts/check-*.mjs; do
+        node "$check" || docs_failed=1
+      done
+      # same reason as above: report, do not abort the run.
+      [ "$docs_failed" -eq 0 ] || echo "  ^ fix the findings above."
+    else
+      echo "  SKIPPED — node not found. docs/ was NOT checked."
+    fi
     ;;
 
   *)

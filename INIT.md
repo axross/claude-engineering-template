@@ -1,15 +1,25 @@
 # INIT — Adapting this template to a project
 
 This repository is a **reusable, framework-agnostic template** for a **Claude
-Code** project built on an `AGENTS.md`-driven skill system. It ships:
+Code** project. It ships:
 
-- `AGENTS.md` — the master routing index + working agreement (the entry point
-  Claude Code routes through via `CLAUDE.md`).
-- `CLAUDE.md` — a one-line binding (`@AGENTS.md`) so Claude Code loads `AGENTS.md`.
-- `.claude/skills/**` — a generic, cross-project **skill core** (12 guideline
-  skills) plus the fixed **workflow entry-point skills** `/address` and
-  `/handoff`.
-- `.claude/**` — the **Claude Code** harness binding (example hooks + settings).
+- `AGENTS.md` — the working agreement plus the **Routing a Change** table that
+  points at `docs/`. It carries no skill index: installed skills route on their
+  own `description`, and a second list would only be a ledger to keep in sync.
+- `CLAUDE.md` — `@AGENTS.md`, plus the half of the agreement that is true of
+  Claude Code and of no other host.
+- `.claude/skills/**` — **17 skills installed from
+  [axross/skills](https://github.com/axross/skills)**, pinned by
+  `skills-lock.json`. They are generated artifacts, not template content: a
+  hand-edit is discarded by the next install. Step 4 adds the stack-specific
+  ones.
+- `.claude/agents/` — the `implementer` and `reviewer` subagent definitions
+  `loop-engineering` delegates to.
+- `.claude/**` — the rest of the **Claude Code** harness binding (hooks +
+  settings).
+- `docs/` — the project's own knowledge, in the shape
+  `living-product-specification` defines. The template ships `index.md`, three
+  `operations/` documents, and one decision record; Step 5 grows the rest.
 - `README.template.md` — a seed for the initialized project's own README
   (summary, tech stack, getting started, development workflow, testing,
   related links), finalized into `README.md` in Step 7.
@@ -19,15 +29,13 @@ neutral prose. This file tells an AI agent how to turn the template into a
 working setup for one concrete project.
 
 > **Fixed vs. configured — do not ask about these.** This template targets
-> **Claude Code specifically**: there is no "which agent?" choice. The `/address`
-> and `/handoff` workflow entry-point skills under `.claude/skills/**`, together with the
-> **independent-review loop** they drive (`REVIEW.md`, the `.github/workflows/`,
-> and the `github-operation-guidelines` skill), are **fixed infrastructure** —
-> INIT *configures and adapts* them but **never asks whether to keep them, and
-> never deletes them.** The rest of the skill core is resolved per capability in
-> Steps 1 and 4: most of the 12 skills are always-present cross-project guidance,
-> and a few (unit tests, e2e, observability) are added or skipped to match the
-> project's stack.
+> **Claude Code specifically**: there is no "which agent?" choice. The change
+> loop (`loop-engineering`) and the **independent-review channel** it drives
+> (`REVIEW.md`, the `.github/workflows/`, and the `github-operation` skill) are
+> **fixed infrastructure** — INIT *configures and adapts* them but **never asks
+> whether to keep them, and never deletes them.** The 17 installed skills are
+> the cross-project core and all stay; what Step 1 and Step 4 resolve is which
+> *additional*, stack-specific skills to install beside them.
 
 > **You are the agent running INIT.** Follow the steps in order. Do not skip
 > Step 0 or Step 1 — the rest depends on their answers. Make changes only inside
@@ -40,11 +48,14 @@ working setup for one concrete project.
 >   `tokens.json` (`./init.sh init` to scaffold a values file, `apply` to
 >   substitute, `check` to run the gates). Use it instead of a hand-written
 >   `sed` sweep — two tokens contain `| * ( ) \ $` and break `sed`.
-> - `.claude/skills/agent-skills-best-practices/scripts/check-links.sh` —
->   relative-link integrity across the whole tree, **including** the
->   `.claude/` dot-directory that a `glob('**/*.md')` sweep silently skips.
->   Not INIT-only tooling: it ships with the agent-skills-best-practices
->   skill and survives adaptation.
+> - `./init.sh check` also runs the two checkers that ship inside installed
+>   skills and survive adaptation:
+>   `agent-skill-authoring/scripts/check-links.mjs` for relative-link integrity
+>   across the whole tree — **including** the `.claude/` dot-directory a
+>   `glob('**/*.md')` sweep silently skips — and the five
+>   `living-product-specification/scripts/check-*.mjs` validators over `docs/`,
+>   which stay inert until `docs/index.md` exists. Both need Node, which
+>   refreshing skills needs anyway.
 
 ---
 
@@ -220,24 +231,29 @@ component / UI-design skills). Ask each area that applies:
       surface (a library, a CLI).
 
     **Not on this list — fixed, do not ask:** GitHub operations
-    (`github-operation-guidelines`) and the independent-review loop (the
-    `/address` / `/handoff` skills, `REVIEW.md`, and the `.github/workflows/`)
-    are **fixed infrastructure** (see the "Fixed vs. configured" note at the top).
-    INIT configures and adapts them but never offers them up for deletion; record
-    them as kept, and resolve their markers as "keep + adapt" in Step 4.
+    (`github-operation`), the change loop (`loop-engineering`), and the
+    independent-review channel (`REVIEW.md` and the `.github/workflows/`) are
+    **fixed infrastructure** (see the "Fixed vs. configured" note at the top).
+    INIT configures and adapts them but never offers them up for deletion;
+    record them as kept, and resolve their markers as "keep + adapt" in Step 4.
+
+    Each answer above also decides whether a stack-specific **skill** gets
+    installed in Step 4a — the runner skill for a named test framework, the
+    vendor skill for a named error tracker, and so on. Record the tool name for
+    that reason too, not only for the token.
 
     Record each of the eight capabilities above as **have → _tool_**, **add →
-    _tool_**, or **skip**. This single answer drives both the token fill (Step 3)
-    and the keep-or-delete decision for every `<!-- INIT:OPTIONAL -->` section
-    (Step 4): **have** and **add** keep the section (fill the token; **add** also
-    scaffolds the tool in Step 5); **skip** deletes it — or, for infrastructure
-    the project will plausibly add later, marks it **dormant** (see Step 4). (Not
-    every marked section has a token: E2E scenario coverage has a Step-4 bullet
-    instead of a token fill, and a few smaller marked sections — typed-language
-    type safety, the unit-coverage gate, the backend/API test helpers — carry
-    their keep-or-delete instruction in the marker itself. The Step-4 grep walk
-    resolves them all; decide the smaller ones from the project's own shape rather
-    than a Step-1 answer.)
+    _tool_**, or **skip**. This single answer drives three things: which
+    stack-specific skills get installed (Step 4a), the token fill (Step 3), and
+    the keep-or-delete decision for each remaining `<!-- INIT:OPTIONAL -->`
+    section (Step 4b). **have** and **add** keep the section and fill its token;
+    **add** also scaffolds the tool for real in Step 5. **skip** deletes the
+    section and its row in `tokens.json`.
+
+    Because the guidance now lives in installed skills rather than in template
+    files, skipping a capability no longer means editing prose out of a dozen
+    places — it means not installing that skill and deleting a README row. That
+    is the whole of it.
 
 ### 1e — Agent (fixed: Claude Code)
 
@@ -327,21 +343,23 @@ stack not listed.
 | `{{LINTER}}` | Linter | `Biome` · `ESLint` · `Ruff` · `golangci-lint` · `Clippy` |
 | `{{FORMATTER}}` | Formatter | `Biome` · `Prettier` · `Ruff` · `gofmt` · `rustfmt` |
 | `{{UNIT_TEST_FRAMEWORK}}` | Unit test framework | `Jest` · `Vitest` · `pytest` · `go test` · `cargo test` |
-| `{{SOURCE_DIR}}` | Main source dir (no trailing slash — templates append the `/`) | `src` · `app` · `lib` · `internal` |
-| `{{TEST_DIR}}` | Test root dir (no trailing slash — templates append the `/`) | `e2e` · `tests` · `__tests__` · `spec` |
 
 ### Optional integrations
 
-If the project does not use one of these, **delete** the matching skill /
-section instead of filling the token (see Step 4). When kept, fill the token.
+If the project does not use one of these, **delete** the matching section and
+its row in `tokens.json` instead of filling the token (see Step 4b). When kept,
+fill the token.
 
 | Token | Fill with | Example values | If absent |
 | ----- | --------- | -------------- | --------- |
-| `{{E2E_TEST_FRAMEWORK}}` | E2E test framework | `Playwright` · `Cypress` · `Detox` | delete `e2e-testing-guidelines` |
-| `{{ERROR_TRACKER}}` | Error-reporting service | `Sentry` · `Rollbar` · `Bugsnag` · `Honeybadger` | delete the error-tracking sections of `observability-guidelines` |
-| `{{LOGGER}}` | Structured logger | `Pino` · `Winston` · `structlog` · `zap` | delete the logging section of `observability-guidelines` |
-| `{{CMS_OR_DATA_LAYER}}` | Data / content layer | `Payload CMS` · `Prisma` · `Drizzle` · `SQLAlchemy` · `a REST API` | delete the data-layer sections (marked optional) |
-| `{{HOSTING_PLATFORM}}` | Hosting / deploy platform | `Vercel` · `AWS` · `Fly.io` · `Cloudflare` · `self-hosted` | leave generic or delete the mention |
+| `{{E2E_TEST_FRAMEWORK}}` | E2E test framework | `Playwright` · `Cypress` · `Detox` | delete the e2e rows of `README.template.md` |
+| `{{CMS_OR_DATA_LAYER}}` | Data / content layer | `Payload CMS` · `Prisma` · `Drizzle` · `SQLAlchemy` · `a REST API` | delete the data-layer row of `README.template.md` |
+| `{{HOSTING_PLATFORM}}` | Hosting / deploy platform | `Vercel` · `AWS` · `Fly.io` · `Cloudflare` · `self-hosted` | delete the hosting row of `README.template.md` |
+
+An error tracker and a structured logger no longer have tokens of their own:
+`software-instrumentation` names roles rather than products, and the vendor
+skill installed beside it in Step 4a supplies the mechanics. Record the tools in
+the Stack Decision Record and the README, not in a token.
 
 ### Commands
 
@@ -368,317 +386,228 @@ A find-and-replace sweep is the fastest path. After replacing, search the tree
 for `{{` to confirm none remain (the completion checklist does this).
 
 ---
+## Step 4 — Choose the skill set, and resolve the remaining optional sections
 
-## Step 4 — Resolve optional capabilities (add or remove)
+### 4a — Install the skills the project needs
 
-The skill core is intentionally broad. Every capability-specific block is wrapped
-with a greppable marker so you can find them all:
+The template ships a **core set of 17** installed skills — the ones that apply
+to any project whatever its stack. Leave them in place. The rest of the
+library is stack-specific, and this is where you choose from it, using the
+Stack Decision Record (Step 1).
+
+Consult the library's own catalog rather than a list copied here, which would
+go stale the moment upstream adds a skill:
 
 ```bash
-grep -rn 'INIT:OPTIONAL' .claude .github AGENTS.md REVIEW.md README.template.md   # every optional section, with a key
+npx skills add axross/skills --list
 ```
 
-**The loop machinery is fixed — never deleted here.** The `/address` /
-`/handoff` skills, `REVIEW.md`, the `.github/workflows/`, and
-`github-operation-guidelines` are permanent (see the "Fixed vs. configured" note
-at the top of this file): resolve their `INIT:OPTIONAL` markers as "keep +
-adapt", never as a deletion. Every *other* marked capability is resolved by its
-Step-1 decision below.
+Install each one the project actually needs, naming them explicitly:
 
-For **each** marked section, apply the Step 1 decision for that capability:
+```bash
+npx skills add axross/skills --agent claude-code --yes --copy \
+  --skill <name> --skill <name>
+```
 
-- **have** / **add** → keep the section and fill its token. For **add**, also
-  scaffold the tool in Step 5 (install it, add the run-script, wire the command
-  token) so the kept rules describe something real. Then delete the
-  `<!-- INIT:OPTIONAL ... -->` comment and the italic "_delete during INIT_"
-  note, leaving the content.
-- **skip** → delete the whole marked section (and, for a whole skill, follow the
-  removal list below). Remove the marker, the note, and every inbound link.
-  (The fixed loop machinery above is never skipped.)
-- **dormant** (a middle path) → keep the section, but replace its
-  `<!-- INIT:OPTIONAL ... -->` marker and italic note with a **visible**
-  one-line banner, so the rule self-restores instead of vanishing:
+The stack-specific layers to consider, per the Stack Decision Record:
 
-  ```markdown
-  > **Dormant until <infrastructure> exists** — remove this banner when it
-  > lands, making the lens unconditional.
-  ```
+| Recorded decision | Skill to consider |
+| ----------------- | ----------------- |
+| Unit test framework is Vitest / Jest | `vitest-testing` / `jest-testing` |
+| App framework is Next.js / Expo | `next-app-development` / `expo-app-development` |
+| The project renders UI | `react-component-development`, `react-component-styling`, `high-fidelity-ui-design`, `wireframe-design` |
+| Server-cache library is TanStack Query | `tanstack-query-development` |
+| Validation library is Zod | `zod-schema` |
+| Error tracker is Sentry | `sentry-instrumentation` |
+| Product analytics is Amplitude | `amplitude-instrumentation` |
 
-  Replace any unfilled `{{TOKEN}}` inside a dormant section with neutral prose
-  (e.g. "the project's error tracker") and delete the token's row from
-  `tokens.json` (and `init.values.json`, if already generated) — `./init.sh
-  apply` refuses to run while any manifest-listed token has no value, whether
-  or not it still occurs in the tree. Prefer
-  **dormant** over **skip** for service-shaped capabilities the project is
-  likely to acquire (an error tracker, server-side caching, a data layer): the
-  rules are already correct and only their infrastructure is missing. Prefer
-  **skip** for capability-shaped sections that would be re-authored anyway when
-  adopted (a whole test framework) — a dormant copy of those only rots.
+Three rules about the CLI, each of which fails quietly rather than loudly:
 
-Do not leave a section half-resolved: a kept section MUST have its token (if any)
-filled; a skipped section MUST be gone along with its links; a dormant section
-MUST carry its banner and no unfilled token. The detailed removal lists below
-apply to the **skip** path.
+- **Never `--skill '*'` against an external source.** It installs the library's
+  entire catalogue rather than the subset you chose, adopting framework and
+  vendor layers this project has not picked.
+- **One skill per `--skill` flag.** A comma-separated value matches nothing,
+  installs nothing, writes no lockfile, and prints an available-skill list that
+  reads like ordinary help rather than a failure.
+- **Commit `.claude/skills/**` and `skills-lock.json` together.** The lockfile
+  describes the directory's entire contents; that correspondence is the only
+  thing that makes drift detectable.
 
-- **No error tracker AND no structured logger** → the
-  `.claude/skills/observability-guidelines/` skill MAY be deleted (or
-  dormant-marked per the dormant path above, when the project will plausibly
-  add either tool). If only one of the two is missing, instead trim the
-  sections marked `key=ERROR_TRACKER` / `key=LOGGER` inside the skill. On the
-  delete path, resolve every inbound link:
-  - the Observability Guidelines row of the `AGENTS.md` skill index, and the
-    word "observability" in the review-lenses MUST bullet of `AGENTS.md`'s
-    Review Independence Gates;
-  - the "Error handling and structured logging" row of the
-    developer-facing-skills table in `code-review-guideline/SKILL.md`;
-  - the "Error handling, error-reporting, and logging" row of the topic table
-    in `development-guidelines/SKILL.md`;
-  - the `{{ERROR_TRACKER}} config and {{LOGGER}} setup` row of the
-    output-surface table in `development-guidelines/references/verification.md`;
-  - the `{{ERROR_TRACKER}}` row and refresh bullet in
-    `development-guidelines/references/current-docs.md` (marked
-    `key=ERROR_TRACKER`);
-  - the `logger.info()` / `logger.warn()` phrasing in the secret-interpolation
-    bullet of `application-security-requirements/references/secret-handling.md`
-    (reword to "any log/console output" when the logger is dropped);
-  - in `performance-and-reliability-requirements/SKILL.md` and its
-    `references/error-and-observability.md`, the rules survive as the
-    reviewer's checklist: drop each `per [observability-guidelines › …]` /
-    "Defer the developer-facing rules to …" citation and fold the cited rule
-    inline (e.g. "…not in nested helpers, so errors propagate to the root call
-    site"; "the project routes errors through `reportError(...)`");
-  - the start/complete log-pair SHOULD bullet in
-    `performance-and-reliability-requirements/references/caching-correctness.md`
-    (delete the bullet);
-  - the logging-module label sub-bullet in
-    `maintainable-code-guidelines/references/naming-and-organization.md`
-    (delete it);
-  - the empty-`try`/`catch` bullet in
-    `maintainable-code-guidelines/references/complexity-and-readability.md`:
-    keep the bullet but fold the rule inline — "errors are rethrown or
-    reported, never swallowed" — instead of linking the rethrow rule.
-- **GitHub operations** → `.claude/skills/github-operation-guidelines/` is
-  **fixed — keep it** (this template drives GitHub through Claude Code + the
-  GitHub MCP server, and the independent-review channel depends on it). Delete
-  its `<!-- INIT:OPTIONAL -->` marker and the italic note below it,
-  replace the example tool-channel, marker, and branch-prefix names with the
-  project's real ones, and review its Conventions section's SHOULD bullets
-  against the project's policy. A project that genuinely does no GitHub
-  automation leaves the skill's rules dormant rather than deleting the skill.
-- **Independent-review channel** → the `/address` and `/handoff` skills,
-  `REVIEW.md`, and the `.github/workflows/*.yaml` are **fixed — keep them all.**
-  This is the template's Claude delivery loop, and it requires the
-  GitHub-operations capability (also fixed — keep both). Delete the
-  `key=INDEPENDENT_REVIEW` and `key=SESSION_HANDOFF` markers and their italic
-  notes across `REVIEW.md`, `.claude/skills/address/SKILL.md`,
-  `.claude/skills/handoff/SKILL.md`, `.github/workflows/claude-review.yaml`,
-  `.github/workflows/merge-checks.yaml`, the "Repository Review Policy Overlay"
-  section and marked posted-review bullets in `code-review-guideline`
-  (`SKILL.md`, `references/severity.md`, `references/evidence.md`,
-  `references/escalation.md`), the marked SHOULD bullet in `AGENTS.md`'s Review
-  Independence Gates, the marked Workflow Entry Points subsection in
-  `AGENTS.md`'s Skill Index, and the marked `/address` / `/handoff` subsections in
-  `README.template.md`'s Development workflow section — leaving the content in
-  place — and then configure it (a project that wants no automated loop disables
-  the workflow triggers and leaves the skills dormant rather than deleting
-  them):
-  - fill `REVIEW.md`'s do-not-report list with the checks the project's CI
-    actually enforces (the `merge-checks.yaml` jobs), and review its mandatory
-    checks against the project's `AGENTS.md` skill index;
-  - set the review trigger phrase and reviewer identity across
-    `claude-review.yaml` and the address skill
-    (`.claude/skills/address/SKILL.md`). The trigger phrase
-    is functional and dangerous in prose: a comment-triggered workflow matches
-    it **anywhere** in a comment body, so the literal phrase belongs ONLY in
-    the workflow and entry-point skill files — everywhere else refer to it as "the
-    review trigger phrase";
-  - replace the `@<maintainer>`, agent-comment-marker, and branch-prefix
-    examples in `.claude/skills/address/SKILL.md` with the project's real values
-    per `github-operation-guidelines`, and replace the generic visual-surface
-    examples in `.claude/skills/address/SKILL.md` and
-    `.claude/skills/address/references/visual-design-options.md` (public site
-    appearance, application UI, an admin surface) with the project's real
-    human-facing surfaces;
-  - the `{{INSTALL_CMD}}` / `{{LINT_CMD}}` / `{{UNIT_TEST_CMD}}` run commands
-    in `merge-checks.yaml` are substituted by `./init.sh apply` like every
-    other token; only the toolchain setup (setup-node, `.nvmrc`, the npm
-    cache) is not a token — replace it with the project's own by hand.
-    The template ships no `.nvmrc`: even a project keeping the npm-flavored
-    setup must create one (or switch `setup-node` to `node-version:`), or
-    both jobs fail at Setup Node on every run. Note both jobs self-skip
-    their real steps (and pass) while `INIT.md` exists; deleting the INIT
-    tooling in Step 7 is what arms them, so a green Merge Checks before
-    that point does not mean lint/tests ran.
-- **Per-PR preview environments** → resolve every `key=PREVIEW_ENVIRONMENTS`
-  site (the Step-4 grep finds them all) per the Step-1 decision. The six
-  sites: `development-guidelines/references/preview-environments.md` (the whole
-  file), its "Preview Environments" routing section in
-  `development-guidelines/SKILL.md`, the stable-preview-link bullet in
-  `development-guidelines/references/verification.md`, the "Preview Environment
-  Exposure" section in
-  `application-security-requirements/references/privacy-and-exposure.md`, the
-  preview-environments routing bullet in
-  `application-security-requirements/SKILL.md`'s Privacy and Exposure Control
-  section, and the marked subsection in `README.template.md`'s Development
-  workflow.
-  - **have** / **add** → keep all six sites: delete the markers and italic
-    notes, replace the illustrative tool names with the project's real
-    hosting/distribution stack, and author the concrete workflow in Step 5.
-  - **skip** → delete all six sites, plus the "per-PR preview environments" /
-    "preview environments" phrases in `development-guidelines/SKILL.md`'s
-    frontmatter `description` and `when_to_use`.
-  - **dormant** fits this capability well when the project will plausibly
-    deploy later: the pipeline the reference describes is preflight-gated and
-    inert by design, so the kept rules cost nothing until the infrastructure
-    exists.
-- **No e2e framework** → delete `.claude/skills/e2e-testing-guidelines/` and
-  its index row, then remove every inbound link to it:
-  - `quality-assurance-guidelines/references/e2e-coverage.md` (delete the file)
-    and its pointer in `quality-assurance-guidelines/SKILL.md`;
-  - the `../e2e-testing-guidelines/SKILL.md` link in
-    `quality-assurance-guidelines/SKILL.md`;
-  - the `../../e2e-testing-guidelines/SKILL.md` link in
-    `unit-test-guidelines/references/testing-scope.md`;
-  - the `../e2e-testing-guidelines/SKILL.md` link in
-    `product-requirement-guidelines/SKILL.md`;
-  - the e2e row of the topic table in `development-guidelines/SKILL.md`;
-  - the e2e row of the developer-facing-skills table in
-    `code-review-guideline/SKILL.md`;
-  - the `../../e2e-testing-guidelines/SKILL.md` link in
-    `performance-and-reliability-requirements/references/server-client-boundary.md`;
-  - the e2e-authoring pointer in
-    `development-guidelines/references/verification.md`;
-  - the `{{E2E_TEST_CMD}}` bullet in the `AGENTS.md` Verification section;
-  - the marked e2e rows in `README.template.md`'s Tech stack and Testing
-    tables.
+Then confirm the host actually loaded them, which is not observable from inside
+the session that changed the tree: start a **fresh** session and run `/context`.
 
-  Deleting the e2e skill also removes every `key=SCENARIO_COVERAGE` site (next
-  bullet) — the two that live outside `e2e-testing-guidelines/` are inside
-  `quality-assurance-guidelines` files deleted or trimmed above.
-- **E2E suite kept, but no scenario-coverage catalog** → delete every
-  `INIT:OPTIONAL key=SCENARIO_COVERAGE` site:
-  - `e2e-testing-guidelines/references/scenario-coverage.md` (delete the file)
-    and its "E2E Scenario Coverage" routing section in
-    `e2e-testing-guidelines/SKILL.md`;
-  - the "Scenario Coverage" section in
-    `quality-assurance-guidelines/references/e2e-coverage.md` and the marked
-    scenario-coverage bullet in `quality-assurance-guidelines/SKILL.md`.
+[docs/operations/agent-skills.md](./docs/operations/agent-skills.md) holds the
+refresh command and the deviation register — read it, and keep it accurate if
+this project's install story differs from the template's.
 
-  If the project **adopts** it, keep all four sites, delete the markers and
-  italic notes, and then in Step 5 author the journey catalog (e.g.
-  `scenarios.md` in `{{TEST_DIR}}`), pick the tag syntax
-  `{{E2E_TEST_FRAMEWORK}}` supports, and build the coverage reporter and gate
-  script — the template ships the convention only, no implementation.
-- **No unit test framework** → delete `.claude/skills/unit-test-guidelines/`
-  and its index row, then remove every inbound link to it:
-  - the `../unit-test-guidelines/SKILL.md` link in
-    `product-requirement-guidelines/SKILL.md`;
-  - the unit-test row of the developer-facing-skills table in
-    `code-review-guideline/SKILL.md`;
-  - the `{{UNIT_TEST_CMD}}` bullet in the `AGENTS.md` Verification section;
-  - the marked unit-test rows in `README.template.md`'s Tech stack and
-    Testing tables.
-- **No data/content layer** → delete every `key=DATA_LAYER` site (the Step-4
-  grep finds them all): the marked sections in `development-guidelines`
-  (`dev-commands.md`, `change-management.md`, plus the `current-docs.md` row
-  and bullet), `application-security-requirements` (`access-control.md`),
-  `performance-and-reliability-requirements`
-  (`references/data-access-efficiency.md` — the whole file — and its
-  "Data-Access Efficiency" section in `SKILL.md`), and
-  `maintainable-code-guidelines` (`abstraction-boundaries.md` — rewrite the
-  Data-Access / UI Split bullets around the project's actual persistence
-  boundary — and the realm row/bullet in `naming-and-organization.md`), plus
-  the marked data-layer row in `README.template.md`'s Tech stack table. Then
-  sweep the prose: the "data-layer/migration handling" / "migrations" phrases
-  in `development-guidelines/SKILL.md`'s description and body, the
-  data-access/data-layer phrases in the `AGENTS.md` index rows
-  (Development Guidelines, Performance and Reliability) and in `AGENTS.md`'s
-  high-risk and Verification bullets, and the data-layer mentions in
-  `performance-and-reliability-requirements/SKILL.md`'s description.
-- **No authentication system** (nothing logs in — no accounts, sessions, or
-  admin surface) → delete every `key=AUTH` site:
-  `application-security-requirements/references/auth-and-session.md` (move its
-  auth-independent "Localhost / Production Divergence" section into
-  `privacy-and-exposure.md` first) and, when the project also has no data
-  layer, `references/access-control.md` entirely; then remove their routing
-  sections ("Access Control", "Auth and Session Management") from that skill's
-  `SKILL.md`, the auth phrases from its frontmatter description and the
-  `AGENTS.md` index row, and the inbound access-control link in
-  `performance-and-reliability-requirements/references/data-access-efficiency.md`
-  (itself deleted on the no-data-layer path). Verify with
-  `.claude/skills/agent-skills-best-practices/scripts/check-links.sh`.
-- **No client bundle / not a UI project** → remove the "User-Facing Work"
-  subsection from `AGENTS.md` and the bundling/asset sections (marked optional)
-  in `performance-and-reliability-requirements`.
-- Walk every `<!-- INIT:OPTIONAL ... -->` marker (the grep above) and resolve
-  each one as **have/add/skip** per Step 1.
+### 4b — Resolve the remaining optional sections
 
-Whenever you remove a skill, also remove every relative link pointing to it so
-no dangling links remain. Verify with
-`.claude/skills/agent-skills-best-practices/scripts/check-links.sh`.
+With the skills installed rather than authored, only a handful of marked
+sections remain, all of them outside `.claude/skills/`:
+
+```bash
+grep -rn 'INIT:OPTIONAL' .claude .github AGENTS.md REVIEW.md README.template.md
+```
+
+**The loop machinery is fixed — never deleted here.** `REVIEW.md`, the
+`.github/workflows/`, and the `github-operation` + `loop-engineering` skills are
+permanent (see the "Fixed vs. configured" note at the top of this file):
+resolve their markers as "keep + adapt", never as a deletion.
+
+For each remaining marked section:
+
+- **keep** → delete the `<!-- INIT:OPTIONAL ... -->` comment and any italic
+  "_delete during INIT_" note, fill its token, and leave the content.
+- **delete** → remove the whole marked section, its token's row in
+  `tokens.json`, and every inbound link. `./init.sh apply` refuses to run while
+  a manifest-listed token has no value, whether or not it still occurs in the
+  tree.
+
+Then configure the two fixed pieces:
+
+- **`REVIEW.md`** — enumerate the do-not-report list from the checks
+  `merge-checks.yaml` actually runs. Add an entry only where the mechanical
+  check and the finding it would silence are the same thing; a check that is
+  merely a narrow proxy for a broader prose rule does not remove that rule from
+  the reviewer's scope.
+- **`claude-review.yaml`** — set the review trigger phrase and the reviewer
+  identity. The phrase is functional and dangerous in prose: a
+  comment-triggered workflow matches it **anywhere** in a comment body, so the
+  literal phrase belongs ONLY in the workflow file. Everywhere else — including
+  `docs/operations/development-workflow.md` — refer to it as "the review
+  trigger phrase".
+- **`branch-governance-audit.yaml`** — set `AGENT_PREFIX` to the push-allowed
+  branch prefix `AGENTS.md` names, if the project uses something other than
+  `claude/`.
+- **`merge-checks.yaml`** — `./init.sh apply` substitutes the run commands; the
+  toolchain setup is NOT a token, so replace `setup-node` / `.nvmrc` / the npm
+  cache with the project's own by hand. The template ships no `.nvmrc`, so a
+  project keeping the npm-flavored setup must create one (or switch to
+  `node-version:`), or both jobs fail at Setup Node on every run. Note that both
+  jobs self-skip their real steps — and pass — while `INIT.md` exists; deleting
+  the INIT tooling in Step 7 is what arms them, so a green Merge Checks before
+  that point does not mean lint and tests ran.
 
 ---
 
-## Step 5 — Add project-specific skills
+## Step 5 — Write `docs/`
 
-The template deliberately ships only the cross-project core. Recreate the
-project's own skills as needed, following
-[Agent Skills Best Practices](.claude/skills/agent-skills-best-practices/SKILL.md)
-and its
-[project-skill archetypes](.claude/skills/agent-skills-best-practices/references/project-skill-archetypes.md)
-reference — section-by-section skeletons for the skills below. Common ones to
-add:
+This is where the project's own knowledge goes: its conventions, its
+operational procedures, what its product does, and the decisions that constrain
+it. **Not into skills.** The reasoning is recorded in
+[docs/decisions/2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md](./docs/decisions/2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md);
+the short version is that a hand-written project skill duplicates what an
+installed one already says, and drifts from it silently.
 
-- **Project Structure** — repository layout, stack, services, file placement.
-  Create this first; `AGENTS.md` already points at it. Its Stack section MUST
-  record the Stack Decision Record's directory-structure, business-logic
-  structure, state-management, database-engine, ORM/db-wrapper, and
-  validation/sanitization decisions (1c).
-- **Component / UI skills** — if the project has a UI (component conventions,
-  styling, UI design principles, accessibility). These MUST record the Stack
-  Decision Record's headless-component-library, styling, and theming decisions
-  (1c).
-- **Routing** — if the project has a routing layer.
-- **Domain skills** — content authoring, data-model/CMS operations, or any
-  domain workflow specific to this project.
+The `living-product-specification` skill owns the shape, the document format,
+and the validators. **Load it and follow it** — this step states only what INIT
+adds on top.
 
-For each new skill: add a directory under `.claude/skills/<name>/` with a
-`SKILL.md`, then add a row to the `AGENTS.md` skill index (there is a commented
-example block there) and to the review-lens lists in
-`code-review-guideline` / `development-guidelines` where relevant.
+### What ships, and what you add
 
-**Scaffolding capabilities chosen as "add" in Step 1.** When the user opted to
-add a capability rather than skip it, set it up for real here so the kept rules
-are not aspirational:
+The template ships `docs/index.md`, three `operations/` documents, and one
+decision record. It ships **no** `conventions/`, no `specs/`, and no
+`glossary.md`, because it has no source tree and no product of its own — and
+an empty document is worse than a missing one: it is indistinguishable from a
+subject nobody has considered, and it makes the index claim coverage `docs/`
+does not have.
 
-- **Unit tests** → install the runner (e.g. `vitest`), add a `test:unit`
-  run-script, fill `{{UNIT_TEST_FRAMEWORK}}` / `{{UNIT_TEST_CMD}}`, and create a
-  first example test. Keep `unit-test-guidelines`.
-- **E2E tests** → install the runner (e.g. `@playwright/test`), add a
-  `test:e2e` script, fill `{{E2E_TEST_FRAMEWORK}}` / `{{E2E_TEST_CMD}}` /
-  `{{TEST_DIR}}`. Keep `e2e-testing-guidelines`.
-- **E2E scenario coverage** → author the journey catalog (e.g. `scenarios.md`
-  in `{{TEST_DIR}}`), tag the asserting tests, and build the coverage
-  reporter/gate wired into the e2e run. Keep the marked `SCENARIO_COVERAGE`
-  sections.
-- **Error tracker / logger** → add the dependency and its init, fill
-  `{{ERROR_TRACKER}}` / `{{LOGGER}}`. Keep `observability-guidelines`.
-- **Per-PR preview environments** → author the concrete pipeline for the
-  project's actual stack per
-  `development-guidelines/references/preview-environments.md`. For a web
-  client/server project: a `.github/workflows/preview-deploy.yaml` that
-  provisions the PR's isolated backing resources, deploys the preview,
-  re-points a deterministic stable alias (`<prefix>-pr-<n>`) at the newest
-  deployment, comments the stable URL with the deployed short SHA, and tears
-  everything down on close. For a mobile app: a dispatched preview-build
-  workflow that produces a signed build, distributes it through the tester
-  channel (e.g. Firebase App Distribution, TestFlight), and comments the
-  install link on the PR. Either way, follow the reference's core rules
-  (preflight inert gating, per-PR data isolation, a fresh comment per deploy,
-  fail-loud stable link) and document the required secrets/vars in the
-  project README so the maintainer can complete the one-time account setup.
-- **Formatter** → add it (e.g. Prettier/Biome), add a `format` script, fill
-  `{{FORMATTER}}` / `{{FORMAT_CMD}}`.
+Copy the shape from the worked example the skill ships — seven files across two
+domains, demonstrating every relational rule — rather than starting from a
+blank template:
+
+```
+.claude/skills/living-product-specification/assets/docs-example/
+```
+
+### The write order
+
+Do not scaffold the tree and fill it in later. Write in this order, and add a
+line to `index.md` for each document as you write it:
+
+1. **`docs/conventions/directory-structure.md`** — where a file goes, what it
+   is called, which module may import which. This is the first thing a session
+   needs and the thing it is most likely to get wrong by inference. It records
+   the Stack Decision Record's directory-structure and business-logic-structure
+   decisions (§1c).
+2. **A `conventions/` document per surface the project distinguishes** — as
+   `code-style.md`, `testing.md`, `styling.md`, `security.md`, and so on
+   actually acquire content. State only this project's own answer and defer the
+   general practice to the installed skill that owns it by name; that is what
+   keeps `conventions/testing.md` from growing into a second, divergent copy of
+   a testing capability.
+3. **`docs/specs/<domain>.md` for one domain** — the one whose behaviour is
+   most often asked about, or most often got wrong. State the domain's boundary
+   and what it deliberately does not do, alongside what it does.
+4. **`docs/glossary.md`** — seeded from that spec's own vocabulary and from the
+   code's, not invented. Link it from `index.md`'s opening prose, never under a
+   heading of its own. Once the tree holds `conventions/` or `operations/` too,
+   it splits at the `#` level into `# Product vocabulary` and
+   `# Development vocabulary`.
+5. **`docs/decisions/`** — from the next decision made, never backfilled.
+   Reconstructed rationale is a guess presented as history.
+
+### Placing a document: `conventions/` or `operations/`?
+
+Decide by **where a violation would appear**, not by a "code versus process"
+label:
+
+- A **convention**'s violation stays in the tree — the wrong thing is sitting
+  in a file and a reviewer can point at the line. Where a file goes is a
+  convention.
+- An **operation**'s violation exists only in an act — a step skipped, run out
+  of order, or run with the wrong flag, leaving no diff to cite. A deployment
+  procedure is an operation.
+
+### The document format
+
+A document under `conventions/` or `operations/` is **not** shaped like a
+`SKILL.md`. It is read whole, so a trailing `**Guidelines:**` block restating
+the prose above it produces two statements of one rule with nothing holding
+them together. State each rule once, next to the reasoning that justifies it,
+and let the heading be the citable anchor. Make each rule's strength readable
+from its own sentence, and declare the vocabulary once in `index.md`.
+
+Name a document for the field it already uses — `directory-structure.md`, not
+`repository-map.md`; `testing.md`, not `quality-gates.md`. A coined internal
+name is a name nobody searches for.
+
+### Then update the routing table
+
+Every document you add earns a row in `AGENTS.md`'s
+**Routing a Change** table, naming the kind of change it governs. This matters
+more here than it looks: a document fires on nothing — skill discovery will
+never surface it — so a kind of change the table does not name has nothing
+pointing a session at it. Link only; never copy a document's content into
+`AGENTS.md`.
+
+### Scaffolding capabilities chosen as "add" in Step 1
+
+When the user opted to add a capability rather than skip it, set it up for real
+here so the kept rules are not aspirational:
+
+- **Unit tests** → install the runner, add a `test:unit` run-script, fill
+  `{{UNIT_TEST_FRAMEWORK}}` / `{{UNIT_TEST_CMD}}`, create a first example test,
+  and install the matching runner skill (§4a).
+- **E2E tests** → install the runner, add a `test:e2e` script, fill
+  `{{E2E_TEST_FRAMEWORK}}` / `{{E2E_TEST_CMD}}`. The `end-to-end-testing` skill
+  ships a scenario-catalog example under its own `assets/`; use it if the
+  project adopts scenario coverage.
+- **Error tracker / logger** → add the dependency and its init, and install the
+  vendor skill (§4a) beside `software-instrumentation`.
+- **Per-PR preview environments** → **the one capability the installed library
+  does not cover.** Author `docs/operations/preview-deployment.md` yourself and
+  build the pipeline it describes: for a web project, a workflow that
+  provisions the pull request's isolated backing resources, deploys, re-points
+  a deterministic stable alias (`<prefix>-pr-<n>`) at the newest deployment,
+  comments the stable URL with the deployed short SHA, and tears everything
+  down on close; for a mobile app, a dispatched build that distributes through
+  the tester channel and comments the install link. Keep it preflight-gated and
+  inert — it should merge green before any account setup — isolate per-PR data,
+  post a fresh comment per deploy, and fail loudly rather than emitting a stale
+  link. Document the required secrets and variables in the README.
+- **Formatter** → add it, add a `format` script, fill `{{FORMATTER}}` /
+  `{{FORMAT_CMD}}`.
 
 Confirm each added command actually runs before relying on the `check.sh` /
 `format.sh` hooks that call it.
@@ -686,43 +615,55 @@ Confirm each added command actually runs before relying on the `check.sh` /
 **Application identifier(s) — use the confirmed answer, never invent one.** When
 the Stack Decision Record records an application identifier (§1a, item 3),
 every generated app, native, or distribution config MUST take the identifier
-verbatim from that recorded answer and MUST NOT invent one: Expo `app.json`
-(`android.package` / `ios.bundleIdentifier`), any `AndroidManifest.xml` /
-`Info.plist`-shaping config, a Fastlane `Appfile`, the store / distribution app
-IDs, the deep-link scheme, and e2e `appId` selectors must all agree — app
-identity is expensive to change once published (see §1a). A surface-less kind
-recorded the area *not applicable*, so none of this applies to it.
+verbatim from that recorded answer: the Android package and iOS bundle
+identifier, any manifest- or plist-shaping config, a Fastlane `Appfile`, the
+store and distribution app IDs, the deep-link scheme, and e2e `appId` selectors
+must all agree. App identity is expensive to change once published (see §1a). A
+surface-less kind recorded the area *not applicable*, so none of this applies
+to it.
 
 ---
 
 ## Step 6 — Set up the Claude Code harness binding
 
-`AGENTS.md` + `.claude/skills/**` are the portable substance. This template
-targets **Claude Code** (fixed — Step 1e), which reads them through the
-`.claude/` binding:
+`AGENTS.md`, `.claude/skills/**`, and `docs/` are the portable substance. This
+template targets **Claude Code** (fixed — Step 1e), which reads them through
+the `.claude/` binding. Most of it needs only the token fill;
+[docs/operations/agent-sessions.md](./docs/operations/agent-sessions.md) is the
+document that describes it, and it stays accurate as long as you do not change
+the shape below.
 
-- **Claude Code** — `CLAUDE.md` (`@AGENTS.md`) plus the `.claude/` directory:
-  - `.claude/skills/**` is also discovered natively by Claude Code, so each
-    skill is directly invocable in addition to being routed via `AGENTS.md`.
-  - `.claude/settings.json` wires the `SessionStart` hook and sets the
-    default reasoning effort level (`effortLevel`; ships as `xhigh`).
-  - `.claude/settings.local-example.json` is the opt-in quality binding
-    (format-on-edit + lint/test-before-stop); the session-start hook copies it
-    to `settings.local.json` in cloud sessions.
-  - `.claude/hooks/*.sh` are **examples** — fill `{{CODE_FILE_GLOB}}`,
-    `{{CODE_FILE_REGEX}}`, `{{INSTALL_CMD}}`, command tokens, and adapt the
-    toolchain-provisioning block in `session-start.sh` to the project's runtime
-    (the example uses `mise` + Node). Delete any hook the project doesn't want.
-  - The session-start hook materializes `settings.local.json` and `.env.local`.
-    The template ships a `.gitignore` that excludes both (the
-    `application-security` skill assumes they are gitignored) — keep those entries
-    and merge the rest of the project's ignores into it. If the project keeps its
-    own `.gitignore` elsewhere, move these entries there instead.
+- `.claude/settings.json` wires the `SessionStart` hook, sets the default
+  reasoning effort (`effortLevel`; ships as `xhigh`), and stamps
+  `{{PROJECT_NAME}}` onto the OpenTelemetry resource attributes. It configures
+  no endpoint and no credential, so telemetry stays off until the project sets
+  it up; delete the `env` block if the project wants no tagging at all.
+- `.claude/settings.local-example.json` is the opt-in quality binding
+  (format-on-edit + lint/test-before-stop) and pre-approves the two scheduling
+  tools `loop-engineering` uses to wake itself while waiting on CI. The
+  session-start hook copies it to `settings.local.json` in cloud sessions.
+- `.claude/hooks/*.sh` need the token fill — `{{CODE_FILE_GLOB}}`,
+  `{{CODE_FILE_REGEX}}`, `{{INSTALL_CMD}}`, and the command tokens — plus an
+  adapted toolchain block in `session-start.sh` for the project's runtime (the
+  example activates `mise` when it is already present). Delete any hook the
+  project does not want, and its entry in the settings file above.
+- `.claude/agents/` holds `implementer.md` and `reviewer.md`. Neither carries
+  project-specific text, so neither needs adapting; both are outside the skills
+  CLI, so refreshing skills never updates them — copy a newer version by hand
+  if upstream changes one. Deleting either degrades the loop gracefully rather
+  than breaking it.
+- The session-start hook materializes `settings.local.json` and `.env.local`.
+  The template ships a `.gitignore` that excludes both (the
+  `application-security` skill assumes they are gitignored) — keep those entries
+  and merge the rest of the project's ignores into it. If the project keeps its
+  own `.gitignore` elsewhere, move these entries there instead.
+
 The Claude Code binding is the only one to set up — there is no per-agent choice
-to make. A project that later wants to also drive the same
-`AGENTS.md` + `.claude/skills/**` from another agent (Cursor, Copilot, Aider, …)
-adds that binding itself, outside INIT, by pointing the agent at `AGENTS.md` via
-its own mechanism; the portable substance already supports it.
+to make. A project that later wants to drive the same `AGENTS.md`, skills, and
+`docs/` from another agent adds that binding itself, outside INIT, by pointing
+the agent at `AGENTS.md`; the portable substance already supports it, which is
+why `AGENTS.md` holds the agreement and `CLAUDE.md` holds only the Claude-specific
+half.
 
 ---
 
@@ -739,8 +680,8 @@ its own mechanism; the portable substance already supports it.
   capabilities, and fill Related links (or delete that section) — and delete
   every `<!-- INIT… -->` comment in it. The finished README MUST cover: a
   quick summary, the tech stack, getting started, the development workflow
-  (including `/address`, which is fixed infrastructure), the testing strategy
-  and its commands, and related links (when applicable).
+  (including the change loop, which is fixed infrastructure), the testing
+  strategy and its commands, and related links (when applicable).
 - Run `./init.sh check` and resolve everything it reports.
 - Walk the completion checklist below **while the INIT tooling still exists** —
   several items run `./init.sh check`, and checking them after the deletion
@@ -749,11 +690,13 @@ its own mechanism; the portable substance already supports it.
   `init.sh`, `tokens.json`, `init.values.json`, and
   `.github/workflows/template-checks.yaml` (the template repository's own CI).
   None of these are meant to survive adaptation; a leftover copy is dead
-  weight that only rots. The link checker
-  (`.claude/skills/agent-skills-best-practices/scripts/check-links.sh`) is
-  **not** INIT tooling — it ships with the agent-skills-best-practices skill
-  and stays. If the project wants an ongoing docs-link gate, wire that script
-  into its own CI as ordinary project work.
+  weight that only rots. The checkers `init.sh check` calls are **not** INIT
+  tooling — they ship inside installed skills and stay. Before deleting
+  `template-checks.yaml`, copy whichever of its two jobs the project wants as
+  an ongoing gate into `merge-checks.yaml`: the relative-link check, and the
+  `docs/` validators. Both need a Node setup step, which is a real cost for a
+  project whose stack is not Node — decide it deliberately rather than dropping
+  the checks by default.
 - Remove the "Template note" blockquote at the top of `AGENTS.md`, every
   `<!-- INIT:OPTIONAL ... -->` marker and `<!-- INIT: ... -->` fill-in comment,
   and every "TEMPLATE NOTE" / "_delete during INIT_" line for sections you
@@ -770,40 +713,39 @@ its own mechanism; the portable substance already supports it.
       `.github/` (e.g. `merge-checks.yaml`'s run commands) are caught.
 - [ ] No `<!-- INIT… -->` markers remain — neither `INIT:OPTIONAL` capability
       markers nor `INIT:` fill-in comments: `grep -rn '<!-- INIT' .`
-- [ ] No dangling relative skill links:
-      `.claude/skills/agent-skills-best-practices/scripts/check-links.sh`
-      (checks the `.claude/` tree a `glob('**/*.md')` sweep would skip).
-- [ ] `AGENTS.md` skill index matches the directories under `.claude/skills/`.
-- [ ] Removed skills have no remaining inbound links (the fixed loop machinery —
-      `/address`, `/handoff`, `REVIEW.md`, the workflows, `github-operation-guidelines` —
-      is never removed).
-- [ ] The conditional hedges are resolved — in every bullet hedged with a
-      "when the project has …" clause, delete the clause when the capability
-      was kept and the whole bullet when it was skipped. They live in
-      `AGENTS.md`'s Verification section (the `{{UNIT_TEST_CMD}}`,
-      `{{E2E_TEST_CMD}}`, and `{{BUILD_CMD}}` bullets) **and** outside it:
-      `development-guidelines/references/dev-commands.md` (build, unit, e2e
-      bullets), `references/code-quality.md` (check-sequence test step),
-      `references/verification.md` (the e2e-suite bullet), and
-      `unit-test-guidelines/references/review-checklist.md` (the typecheck
-      clause). Grep for `when the project has` to catch them all.
+- [ ] No dangling relative links, and `docs/` passes its five validators:
+      `./init.sh check` runs both. The link checker covers the `.claude/` tree
+      a `glob('**/*.md')` sweep would skip.
+- [ ] `.claude/skills/` and `skills-lock.json` list exactly the same skills,
+      and both are committed. A skill present in one and not the other is what
+      makes drift undetectable.
+- [ ] A fresh session's `/context` shows the installed skills. This cannot be
+      confirmed from the session that installed them — skills load at session
+      start.
+- [ ] `AGENTS.md`'s **Routing a Change** table has a row for every document
+      under `docs/conventions/` and `docs/specs/`, and every row resolves.
+      Nothing surfaces those documents automatically, so an unrouted one is
+      unreachable in practice.
+- [ ] `docs/` holds no empty or heading-only document. A subject with nothing
+      to say about it yet has no file, and no index line.
 - [ ] Skipped capabilities no longer appear in prose: grep the tree for each
       skipped tool's name and for generic phrases like "data layer",
-      "structured logger", or "error tracker" in skill descriptions and
-      `AGENTS.md` index rows, and reword or delete the stragglers.
-- [ ] Every skill removed in Step 4 is also gone from the review-lenses MUST
-      bullet in `AGENTS.md`'s Review Independence Gates (e.g. drop
-      "observability" when `observability-guidelines` was deleted).
+      "structured logger", or "error tracker" in `README.md`, `AGENTS.md`, and
+      `docs/`, and reword or delete the stragglers.
 - [ ] Added capabilities have a working command (the `check.sh` / `format.sh`
       hooks actually run).
 - [ ] `merge-checks.yaml` is kept (fixed): its jobs actually run the lint/test
       steps instead of skipping them — the guard steps disarm once `INIT.md`
       is deleted, so check a post-INIT run's log shows the steps executing.
-- [ ] Per-PR preview environments are resolved: kept scaffolding has an
-      authored workflow that is preflight-gated (it merges green before any
-      account setup) with its required secrets/vars documented in the README;
-      a skipped capability leaves no `key=PREVIEW_ENVIRONMENTS` site, inbound
-      link, or prose straggler behind.
+- [ ] Per-PR preview environments are resolved: a kept capability has both
+      `docs/operations/preview-deployment.md` and an authored workflow that is
+      preflight-gated (it merges green before any account setup), with its
+      required secrets and variables documented in the README, and a Routing a
+      Change row pointing at the document; a skipped one leaves no marked site
+      or prose straggler behind.
+- [ ] `branch-governance-audit.yaml`'s `AGENT_PREFIX` matches the branch prefix
+      `AGENTS.md` names. A mismatch makes the audit pass silently while
+      checking nothing.
 - [ ] The Claude Code harness binding is filled in and runnable.
 - [ ] A `.gitignore` excludes `settings.local.json` and `.env.local` (or the
       project's equivalent local-state/secret files).

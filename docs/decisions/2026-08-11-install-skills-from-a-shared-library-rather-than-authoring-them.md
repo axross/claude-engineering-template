@@ -9,9 +9,9 @@ This template carried fourteen hand-written skills under `.claude/skills/` —
 development, review, testing, GitHub operation, maintainability, security,
 performance, observability, and QA evidence, plus two workflow entry points,
 `/address` and `/handoff`. Because they were authored here, every
-project-specific value in them was a `{{TOKEN}}` and every optional capability
-was an `INIT:OPTIONAL` marker: 191 of the template's 314 tokens and 57 of its
-86 markers lived inside the skills. Adapting the template therefore meant
+project-specific value in them was a `{{...}}` token and every optional
+capability carried an adaptation marker: 191 of the template's 314 tokens and
+57 of its 86 markers lived inside the skills. Adapting the template therefore meant
 walking long per-capability deletion lists — "no e2e framework → delete this
 skill, this file, and these ten inbound links" — with a dangling cross-link the
 routine failure.
