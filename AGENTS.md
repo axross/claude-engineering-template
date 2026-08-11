@@ -42,20 +42,22 @@
 names the specific document for a kind of change this project already
 distinguishes, so a session does not have to open the index for one of these.
 
-<!-- INIT: add one row per surface the project distinguishes, as `docs/` grows.
-A kind of change this table does not name has no document pointing a session at
-it — that is the known cost of keeping conventions in documents rather than in
-skills, and adding the row is how it is paid. Link only; never copy a
-document's content into this file. -->
+The four rows below ship with the template and stay true after adaptation.
+<!-- INIT: add a row per surface the project distinguishes, as `docs/` grows — at
+minimum `docs/conventions/directory-structure.md` for where a file goes, and a
+`docs/specs/` row per product domain. The template ships neither, because it has
+no source tree and no product to describe, and an empty document would make this
+table claim coverage `docs/` does not have. A kind of change this table does not
+name has no document pointing a session at it: that is the known cost of keeping
+conventions in documents rather than in skills, and adding the row is how it is
+paid. Link only — never copy a document's content into this file. -->
 
 | Kind of change | Document |
 | -------------- | -------- |
 | A project run-script command | [README.md](./README.md) |
-| Where a file goes, or what it is called | [docs/conventions/directory-structure.md](./docs/conventions/directory-structure.md) |
 | The change loop, branch governance, the implementer or reviewer agent | [docs/operations/development-workflow.md](./docs/operations/development-workflow.md) |
 | Installing or refreshing a skill | [docs/operations/agent-skills.md](./docs/operations/agent-skills.md) |
 | How an agent session starts, its hooks, or its telemetry | [docs/operations/agent-sessions.md](./docs/operations/agent-sessions.md) |
-| Behaviour a user can observe | the matching document under [docs/specs/](./docs/index.md) |
 | Why a past decision still constrains current work | [docs/decisions/](./docs/decisions) |
 
 ## Response Approach
