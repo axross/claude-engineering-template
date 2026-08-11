@@ -1,177 +1,149 @@
 # AGENTS.md
 
 > **Template note.** This file is a reusable, framework-agnostic starting
-> point — the working agreement and skill index a Claude Code project loads
-> through `CLAUDE.md`. Before using it in a real project, run the
-> adaptation pass described in [INIT.md](./INIT.md): fill in the `{{...}}` tokens,
-> complete the Project Overview, resolve each optional capability (add the tool
-> or remove its skill — don't assume deletion), and add project-specific skills
-> (structure, components, routing, UI, domain). Delete this note when the
-> template has been adapted.
-
-## Requirement Level Keywords
-
-Apply these keywords consistently in this document and the documents linked from this document.
-
-| Keyword | Synonym | Meaning |
-| ------- | ------- | ------- |
-| "MUST" | "REQUIRED" | Non-negotiable requirement; no exceptions. |
-| "MUST NOT" |  | Non-negotiable prohibition; no exceptions. |
-| "SHOULD" | "RECOMMENDED" | Strongly preferred; deviation is allowed only after weighing the implications. |
-| "SHOULD NOT" | "NOT RECOMMENDED" | Strongly discouraged; allowed only after weighing the implications. |
-| "MAY" | "OPTIONAL" | Genuinely optional; no preference implied. |
+> point — the working agreement a Claude Code project loads through
+> `CLAUDE.md`. Before using it in a real project, run the adaptation pass
+> described in [INIT.md](./INIT.md): fill in the `{{...}}` tokens, complete the
+> Project Overview, install the stack-specific skills the project needs, and
+> grow `docs/` with the routing rows that point at it. Delete this note when
+> the template has been adapted.
 
 ## Project Overview
 
-<!-- INIT: replace this block with a short, durable description of the project.
-     Keep it to a few bullets; deep detail belongs in a project-specific
-     structure skill, not here. -->
-
 - **{{PROJECT_NAME}}** is a {{PROJECT_KIND}}. {{PROJECT_OVERVIEW}}
 - Primary language: {{PRIMARY_LANGUAGE}}. App framework: {{APP_FRAMEWORK}}.
-- Tooling: {{PACKAGE_MANAGER}} for packages, {{LINTER}} for linting, {{FORMATTER}} for formatting.
-- For run-scripts, current-docs lookup rules, and verification commands, consult [Development Guidelines](.claude/skills/development-guidelines/SKILL.md).
-- For repository layout, stack, services, and file placement, consult the project's own structure skill once it is created during INIT.
+- Tooling: {{PACKAGE_MANAGER}} for packages, {{LINTER}} for linting,
+  {{FORMATTER}} for formatting.
+- [README.md](./README.md) is the authoritative record of this project's
+  run-script commands. It is not a skill, so skill discovery never surfaces it
+  on its own.
+- This project's own conventions, operational procedures, product
+  specifications, and decision log live under [docs/](./docs/index.md) — see
+  [Routing a Change](#routing-a-change). Skill discovery never surfaces those
+  either.
+- **Every skill under `.claude/skills/` is installed, not written here.** They
+  come from the [axross/skills](https://github.com/axross/skills) library and
+  are copied in with the [vercel-labs/skills](https://github.com/vercel-labs/skills)
+  CLI, pinned by [`skills-lock.json`](./skills-lock.json). A hand-edit to one
+  is discarded by the next install; see
+  [docs/operations/agent-skills.md](./docs/operations/agent-skills.md) for how
+  they are refreshed and how a wrong or missing rule is routed.
+- This project's fixed agent-comment marker is `<!-- agent -->`.
+  <!-- INIT: replace with the project's own marker if it uses a different one, and record any retired predecessor here. -->
+  Begin every agent-authored GitHub comment with it, identically across every
+  run, so a later run can tell its own output from human input.
+- Never push to the default branch. Work on a `claude/`-prefixed branch and
+  leave merging to the maintainer, `@<maintainer>`.
+  <!-- INIT: replace `@<maintainer>` with the connected operator's real handle. -->
 
-## Skill Index
+## Routing a Change
 
-`AGENTS.md` is the master routing index for project skills. Consult the relevant skill before acting on matching work. This index ships with a generic, cross-project core; add project-specific skills (structure, components, routing, UI design, domain rules) and list them here during INIT.
+[docs/index.md](./docs/index.md) says which document holds what; this table
+names the specific document for a kind of change this project already
+distinguishes, so a session does not have to open the index for one of these.
 
-| Skill | When to apply |
-| ----- | ------------- |
-| [Agent Skills Best Practices](.claude/skills/agent-skills-best-practices/SKILL.md) | Creating, refining, splitting, renaming, deleting, or auditing project skills or this skill index |
-| [Application Security Requirements](.claude/skills/application-security-requirements/SKILL.md) | Reviewing secrets, environment variables, input validation, access control, injection in rendered content, SSRF/outbound fetching, auth/session behavior, privacy exposure, analytics/error-reporting data, or dependency/supply-chain risk |
-| [Code Review Guideline](.claude/skills/code-review-guideline/SKILL.md) | Reviewing a diff, pull request, local change, or post-implementation self-review |
-| [Development Guidelines](.claude/skills/development-guidelines/SKILL.md) | Implementing, refactoring, running commands, preparing commits, writing pull request descriptions, adding dependencies, writing source comments or doc-comments, checking current docs, or changing the data layer |
-| [E2E Testing Guidelines](.claude/skills/e2e-testing-guidelines/SKILL.md) | Writing, running, reviewing, or maintaining end-to-end tests, snapshots, route coverage, or browser assertions |
-| [GitHub Operation Guidelines](.claude/skills/github-operation-guidelines/SKILL.md) | Reading from or writing to GitHub — issues, pull requests, comments, labels, reviews, or branches — through a proxied single-operator identity: agent-comment markers, issue-vs-PR targets, commit messages and pull request titles under squash merge, pull request template and description authoring, history preservation (no amend/force-push), untrusted content |
-| [Maintainable Code Guidelines](.claude/skills/maintainable-code-guidelines/SKILL.md) | Reviewing readability, naming, abstraction boundaries, complexity, dead code, or scope discipline |
-| [Observability Guidelines](.claude/skills/observability-guidelines/SKILL.md) | Throwing, catching, reporting, or logging errors with the project's error tracker and structured logger |
-| [Performance and Reliability Requirements](.claude/skills/performance-and-reliability-requirements/SKILL.md) | Reviewing data-access cost, server/client boundaries, caching, asset/image optimization, bundle weight, or runtime failure behavior |
-| [Product Requirement Guidelines](.claude/skills/product-requirement-guidelines/SKILL.md) | Writing, refining, or reviewing a product requirement, feature spec, issue description, or plan document; the canonical plan-document structure and its section craft — summary, background (goals/non-goals/assumptions), functional and non-functional requirements, acceptance criteria, verification strategy, open questions — plus scope framing, testable acceptance criteria, and section omit-rules |
-| [Quality Assurance Guidelines](.claude/skills/quality-assurance-guidelines/SKILL.md) | Reviewing verification evidence, e2e coverage, snapshots, flakiness, lint/format evidence, or manual checks |
-| [Unit Test Guidelines](.claude/skills/unit-test-guidelines/SKILL.md) | Writing, refactoring, reviewing, or running unit tests, including mocks/fakes, fixtures, schema tests, and behavior-focused assertions |
+<!-- INIT: add one row per surface the project distinguishes, as `docs/` grows.
+A kind of change this table does not name has no document pointing a session at
+it — that is the known cost of keeping conventions in documents rather than in
+skills, and adding the row is how it is paid. Link only; never copy a
+document's content into this file. -->
 
-<!-- INIT: add rows for project-specific skills you create, e.g.
-| [Project Structure](.claude/skills/project-structure/SKILL.md) | Navigating the repository, deciding where a new module, route, component, or test belongs, or checking stack, tooling, and directory conventions |
-| [Component Guidelines](.claude/skills/component-guidelines/SKILL.md) | Writing, placing, reviewing, or refactoring a component or hook — tier placement, generic-shell vs domain-wrapper splits, promoting repeated UI, styling extension, test hooks |
-| [Routing Guidelines](.claude/skills/routing-guidelines/SKILL.md) | Creating, moving, renaming, or reviewing routes — URL structure, route-file conventions, layouts, redirects, metadata, or route-level loading and error surfaces |
-| [UI Design Principles](.claude/skills/ui-design-principles/SKILL.md) | Deciding how a surface should look — color roles, elevation, control selection, modal patterns, spacing/typography, responsive behavior, copy, accessibility, theming |
--->
-
-### Workflow Entry Points
-
-<!-- INIT:OPTIONAL key=INDEPENDENT_REVIEW — Fixed: the /address and /handoff skills are fixed infrastructure (INIT.md Step 4), so KEEP this subsection and both rows; just delete this marker and the key=SESSION_HANDOFF one below. -->
-<!-- INIT:OPTIONAL key=SESSION_HANDOFF — Fixed: the Handoff row stays with the fixed /handoff skill; its take-over side lives in /address. Just delete this marker. -->
-Unlike the guideline skills above, these skills are runnable workflows: a human launches one as `/<name>` (or the agent invokes it when its `when_to_use` matches), so they carry `user-invocable: true` and an `argument-hint` per [Agent Skills Best Practices](.claude/skills/agent-skills-best-practices/SKILL.md).
-
-| Skill | What it drives |
-| ----- | -------------- |
-| [Address](.claude/skills/address/SKILL.md) | Delivering one unit of work — an issue, a pull request, or a free-form prompt — end-to-end: plan, human approval, code, independent review, address findings; `continue` resumes a paused run or takes over a handoff package |
-| [Handoff](.claude/skills/handoff/SKILL.md) | Suspending in-progress work into a downloadable package that a fresh-context session takes over with `/address continue` |
+| Kind of change | Document |
+| -------------- | -------- |
+| A project run-script command | [README.md](./README.md) |
+| Where a file goes, or what it is called | [docs/conventions/directory-structure.md](./docs/conventions/directory-structure.md) |
+| The change loop, branch governance, the implementer or reviewer agent | [docs/operations/development-workflow.md](./docs/operations/development-workflow.md) |
+| Installing or refreshing a skill | [docs/operations/agent-skills.md](./docs/operations/agent-skills.md) |
+| How an agent session starts, its hooks, or its telemetry | [docs/operations/agent-sessions.md](./docs/operations/agent-sessions.md) |
+| Behaviour a user can observe | the matching document under [docs/specs/](./docs/index.md) |
+| Why a past decision still constrains current work | [docs/decisions/](./docs/decisions) |
 
 ## Response Approach
 
-Use this workflow for single-agent work in this project. The agent owns planning, implementation, investigation, verification, review, and reporting directly.
+This section is the whole of how work runs here. Five things apply to every
+session; nothing below them is optional, and nothing about a request makes them
+not apply.
 
-### Overall Strategy
+**Load `professional-behavior` first, before anything else.** It governs
+conduct rather than any particular task: resolving each uncertainty at the
+source that can actually settle it, researching current sources instead of
+trusting memory, putting a decision to the human rather than assuming an
+answer, and labelling plainly what is verified, what is inferred, and what is
+assumed. Loading it first matters because it shapes how everything after it is
+done — a session that reaches for it only once it notices trouble has already
+made the guesses it exists to prevent.
 
-Non-trivial work should move through the same decision sequence even when some steps are brief.
+**Load and apply `loop-engineering` on every change.** Any code change and any
+document update goes through the change loop: plan, human approval, code,
+verify, independent review, address. There is no size threshold and no
+self-approval shortcut — a one-line edit follows the same loop as a large
+feature. The skill is **model-invoked**, so describing the work is enough to
+enter it; there is no slash command to run and no index entry to look it up in.
+That is exactly why it is named here: nothing else guarantees it loads.
 
-1. Classify the request and load the relevant project guidance.
-2. Define success criteria, constraints, affected surface, dependencies, and verification expectations.
-3. Inspect the smallest useful code and documentation context.
-4. Draft an ordered local workflow with acceptance criteria.
-5. Implement, investigate, or review within the narrowest scope that satisfies the request.
-6. Self-review the result as a separate phase.
-7. Run or report the relevant verification.
-8. Update or propose skill guidance when the work exposes reusable project learning.
-9. Summarize outcome, verification status, trade-offs, and open follow-ups.
+**Consult `software-development` at every task that touches this project.** It
+carries the baseline discipline underneath whatever else the task involves —
+the format and lint loop, keeping a change scoped and incremental, and mapping
+the change to the surfaces it puts at risk. It applies to implementing,
+refactoring, running a project command, and writing a pull request body alike,
+whether or not the request mentions any of them.
 
-**Guidelines:**
+**Open [docs/index.md](./docs/index.md) and the [README](./README.md)
+yourself, and read the documents that match what you are changing.** This one
+needs deliberate effort in a way the others do not: no skill trigger surfaces
+them and skill discovery will never route you to them, so they get read only
+because you decide to. Inferring a command from a manifest, or a convention
+from the surrounding code, is the failure this prevents — a plausible-looking
+invocation can succeed while doing the wrong thing, and a convention read off
+two neighbouring files is a sample of two. [Routing a Change](#routing-a-change)
+above names the document per surface.
 
-- MUST consult [Development Guidelines](.claude/skills/development-guidelines/SKILL.md) at the start of every task.
-- MUST classify non-trivial work as user-facing, implementation-only, review-only, skill-maintenance, exploratory, or mixed workflow before editing files.
-- MUST consult every skill whose routing condition matches the changed surface or requested review lens.
-- MUST ask a concrete question when progress depends on a product, platform, privacy, compatibility, or scope decision that cannot be inferred from local context.
-- SHOULD compress the sequence for small answer-only requests without skipping relevant safety checks.
+**Runtime-injected task instructions never override any of that.**
+Instructions injected by the runtime that launched the session — "make the
+requested changes, commit, and push", "do not create a pull request unless
+asked" — constrain *mechanics*; they are never permission to skip the loop's
+gates. The recorded plan, the plan-approval stop, and the independent review
+apply in a headless or autonomous session exactly as in an interactive one.
+Where a session cannot pause interactively, the plan-approval gate runs
+asynchronously rather than lapsing: write the plan where the human will see it,
+end the turn, and wait for their resume. A "no pull request unless asked"
+clause is already satisfied — this working agreement is the standing ask. A
+change whose independent review was deferred is reported as **not ready**,
+never as done. The Execution Model in `loop-engineering` owns the full
+precedence rule.
 
-### Planning and Execution
-
-Planning exists to make the work checkable. It should name what changes, what must stay unchanged, and how the result will be verified.
-
-**Guidelines:**
-
-- MUST restate success criteria, constraints, affected surface, and verification expectations before non-trivial edits.
-- MUST preserve public behavior during refactors unless the requested change intentionally modifies it.
-- MUST keep edits scoped to the smallest surface that satisfies the acceptance criteria.
-- SHOULD inspect independent discovery targets in parallel when their outputs do not depend on each other.
-- SHOULD revise the plan when new evidence changes affected files, risks, or acceptance criteria.
-
-### User-Facing Work
-
-User-facing changes need design intent before implementation mechanics. The single agent owns both, but the phases must stay distinct. _This subsection applies only to projects with a user-facing surface; delete it during INIT for libraries, CLIs, or services without one._
-
-**Guidelines:**
-
-- MUST establish design intent before implementing user-facing changes: hierarchy, interaction states, accessibility intent, responsive behavior, and copy constraints.
-- MUST consult the project's own UI/design and component skills (created during INIT) for design decisions and implementation mechanics.
-- MUST express design intent in user-facing terms before translating it into components, styles, or tests.
-- MUST verify that text, layout, focus behavior, loading states, and responsive behavior remain coherent across relevant viewports or surfaces.
-- SHOULD keep design-system rules in design vocabulary and link to implementation-mechanics skills instead of duplicating them.
-
-### Review Independence Gates
-
-A single agent cannot provide true independent review. This project compensates with a mandatory separate review phase for ordinary work and external review gates for high-risk work.
-
-**Guidelines:**
-
-- MUST perform a reviewer-mode reset after non-trivial implementation: stop editing, reread the request, inspect `git status` and `git diff`, and review only the produced diff.
-- MUST apply [Code Review Guideline](.claude/skills/code-review-guideline/SKILL.md) during self-review, including severity labels, file-line evidence, concrete fixes, and an explicit verdict when findings exist.
-- MUST load topic-specific review lenses when relevant: maintainability, quality assurance, security, performance/reliability, observability, e2e testing, and any project-specific lenses (structure, components, routing, UI, domain) defined during INIT.
-- MUST judge the actual diff and observed behavior, not the implementation intent.
-- MUST fix Critical or Major self-review findings before claiming completion.
-- MUST perform a second-pass re-review after fixing any blocking self-review finding.
-- MUST report verification evidence before completion: commands run, manual checks, failures, skipped checks, and residual risk.
-- MUST escalate high-risk changes to user review, CI/PR review, or an explicitly requested secondary review before calling them merge-ready.
-<!-- INIT:OPTIONAL key=INDEPENDENT_REVIEW — Fixed: the independent-review channel is fixed infrastructure (INIT.md Step 4), so KEEP the next bullet; just delete this marker. -->
-- SHOULD route that escalation through the project's independent-review channel — the posted-review policy in [REVIEW.md](./REVIEW.md).
-- SHOULD treat auth, access control, injection/output-encoding, SSRF/outbound fetching, data-layer migrations, public route/API contracts, production config, data-loss risk, and large refactors as high-risk.
-
-### Verification
-
-Verification should match the changed surface. Documentation-only changes need link and format checks; routes, user-facing output, data-layer, and runtime changes need stronger evidence.
+Beyond those five, load whichever installed skill matches the surface you are
+changing. Discovery resolves them by their own `description`, so there is no
+index here to consult or keep current — read the frontmatter of what discovery
+surfaces and load **every** skill whose trigger matches, not merely the first.
+A skill and a document routinely cover one topic as halves of one answer: the
+skill states the practice, the document under `docs/` states this project's own
+answer within it.
 
 **Guidelines:**
 
-- MUST run the relevant verification commands after non-trivial changes, or report why they could not run.
-- MUST run `{{FORMAT_CMD}}` and `{{LINT_CMD}}` after code or documentation edits.
-- MUST run `{{UNIT_TEST_CMD}}`, when the project has a unit suite, after a change affects code it covers.
-- MUST run `{{E2E_TEST_CMD}}`, when the project has an e2e suite, after a change affects a user-facing output surface or e2e coverage.
-- MUST run `{{BUILD_CMD}}`, when the project has a build step, after a change affects routes, metadata, data-layer config, runtime config, dependencies, or public type signatures.
-- SHOULD perform focused manual checks when browser behavior, crawler metadata, custom protocol behavior, responsive layout, or content-preview behavior changes.
-- MUST report unverified acceptance criteria and residual risk in the final summary.
+- MUST, when a task matches a skill — discovered by its `description` in the
+  host's skill catalog — load that skill's body and execute its own steps
+  rather than acting from a one-line summary of it.
+- MUST enter `loop-engineering` for any code change or document update by
+  loading it, before acting on whatever other skill discovery surfaces — not by
+  working from this section's description of it.
+- MUST NOT edit an installed skill under `.claude/skills/` to fix a rule that
+  is wrong, outdated, or missing; the edit does not survive a reinstall and
+  misrepresents the library until it is discarded. Route it per
+  [docs/operations/agent-skills.md](./docs/operations/agent-skills.md).
+- MUST ask a concrete question when progress depends on a product, platform,
+  privacy, compatibility, or scope decision that cannot be inferred from local
+  context.
+- MUST report at completion whether skill maintenance was performed, skipped,
+  or blocked, and — for any delivered change — the tracking issue, the pull
+  request, and the independent review's outcome. What else a completion summary
+  names is owned by `professional-behavior`.
+- SHOULD give changes to the review/CI infrastructure, secret handling, the
+  dependency/supply-chain surface, public route or API contracts, the data
+  layer, and large refactors extra scrutiny — a human reviewer in addition to
+  the independent review, not a lighter path.
 
-### Skill Maintenance
-
-Skill maintenance keeps reusable workflow learning close to the project rules. It should happen when a change reveals durable guidance, not after every narrow fix.
-
-**Guidelines:**
-
-- MUST consult [Agent Skills Best Practices](.claude/skills/agent-skills-best-practices/SKILL.md) when adding, renaming, moving, deleting, splitting, or cross-linking skills, changing reference files, or updating this index.
-- MUST keep this skill index synchronized when skills are added, renamed, moved, or removed.
-- MUST make one skill the source of truth for a rule instead of copying detailed guidance across multiple skills.
-- SHOULD propose or implement skill updates when the workflow exposes a reusable convention, outdated guidance, recurring review issue, or missing project rule.
-- SHOULD skip skill maintenance when the workflow produced no generalizable learning, and state that it was skipped.
-
-### Communication
-
-User-facing communication should expose decisions, blockers, verification, and outcomes without narrating every local inspection step.
-
-**Guidelines:**
-
-- MUST keep progress updates concise and focused on decisions, blockers, and outcomes.
-- MUST summarize changed files, verification status, trade-offs, unresolved risks, and deferred follow-ups at completion.
-- MUST state whether skill maintenance was performed, skipped, or blocked when skill guidance governed the work.
-- SHOULD include detailed plans, command logs, or iteration logs only when the user asks for auditability or when the outcome depends on them.
-- MUST ask a concrete question when progress depends on a product, platform, privacy, or scope decision.
+The independent review `loop-engineering` requires applies [REVIEW.md](./REVIEW.md),
+this project's posted-review policy, which sets what a posted review reports
+and what it must not.
