@@ -13,10 +13,36 @@
 - [axross/skills](https://github.com/axross/skills) — スキルの**供給元**。2 層モデル
   （`skills/` が source、`.agents/skills/` が実体、`.claude/skills/` が symlink）。
   `.claude/agents/{implementer,reviewer}.md`、hooks、CI を持つ。
+  読み込んだリビジョン: `3058641`。
 - [axross/btnopen.com](https://github.com/axross/btnopen.com) — スキルの**消費側**の実例。
   `.claude/skills/` は `axross/skills` から `--copy` でインストールした実体のみ。
   自前スキルはゼロで、プロジェクト固有の知識は `docs/` に置いている。
   **このテンプレートが目指すのは btnopen.com 側の形**。
+
+## 上流の更新（`3058641`）で変わったこと
+
+`living-product-specification` が改訂され、`docs/` の扱いが「製品仕様の置き場」から
+**「プロジェクトの文書ツリーそのものの規格」**に広がった。この計画の `docs/` 関連の
+記述は全てこの改訂に合わせてある。
+
+- `conventions/`（変更が満たすべきルール）と `operations/`（人が実行する手順）が
+  `specs/` `decisions/` と**並ぶ正式な body として定義**された。以前は
+  「スコープ外」とだけ書かれていた領域に、置き場と書式が与えられた。
+- 「corpus」という語が廃止。`corpus-structure.md` → `documentation-structure.md`、
+  `documentation-root.md` は削除、`scripts/corpus.mjs` → `docs.mjs`。
+  **`REVIEW.md` などで "corpus checks" と書くと即座に陳腐化する。**
+- **動く実例が同梱された** — `assets/docs-example/`（7 ファイル / 2 ドメイン）。
+  スキル本文が「白紙のテンプレートから始めるのではなく、この構造をコピーせよ」と
+  明示している。§4.3 の方針はこれに従って書き換えた。
+- axross/skills 自身がこの形を採用し、**`README.md` を 781 行 → 291 行に削って**
+  conventions / operations を `docs/` に移した
+  （[決定記録](https://github.com/axross/skills/blob/main/docs/decisions/2026-08-10-keep-conventions-and-operations-in-docs-rather-than-readme.md)）。
+  README に残ったのは positioning・getting started・カタログ・ローカルセットアップ・
+  **コマンド表**。§3.8 の線引きはこれに合わせた。
+- `AGENTS.md` に **`## Routing a Change`** 表（変更の種類 → 読む文書）が追加された。
+  スキル側にも「always-loaded な指示ファイルから具体的な文書名で誘導せよ」という
+  SHOULD が入っている（`conventions-and-operations.md#routing-from-an-instruction-file`）。
+  §3.2 の骨格はこの形を採る。
 
 ---
 
@@ -60,10 +86,10 @@ skills-lock.json              # インストール済みスキルのピン留め
 .claude/hooks/*.sh            # 上流版の改良を取り込み
 .claude/settings.json         # + 任意の OTEL env ブロック
 .claude/settings.local-example.json  # + send_later の permissions.allow
-docs/                         # プロジェクト固有知識の置き場（新規・雛形）
-  index.md / overview.md / glossary.md
+docs/                         # プロジェクト固有知識の置き場（INIT が育てる。雛形は配らない）
+  index.md                    # 唯一の必須ファイル。バリデータの採用マーカーでもある
+  glossary.md
   specs/ conventions/ operations/ decisions/
-  operations/agent-skills.md  # インストール手順 + 逸脱レジスタ
 INIT.md / init.sh / tokens.json  # 大幅縮小
 REVIEW.md                     # 索引前提を除去、リンク先を新スキル名へ
 .github/workflows/            # + branch-governance-audit.yaml
@@ -76,12 +102,22 @@ REVIEW.md                     # 索引前提を除去、リンク先を新スキ
    前置きする設計なので、索引は「同期し続けなければならない二重帳簿」になる。
    btnopen.com は索引を持たず、`CLAUDE.md` に「毎セッション必ず読む 5 つ」だけを
    書いて、残りは discovery に任せている。
+
+   **廃止するのはスキル索引であって、ルーティング表ではない。** 両者は対象が逆:
+   スキルは `description` で自分から発火するので索引が要らない。`docs/` の文書は
+   **何も発火させない**（discovery が到達しない）ので、指示ファイルから
+   名指しで誘導しないと読まれない。だから `## Routing a Change`（§3.2）は
+   索引の代替ではなく、索引が不要な理由がそのまま**必要になる理由**である。
+   上流の決定記録もこれを弱点として明記している——
+   「表がまだ挙げていない種類の変更には、誰かが行を足すまで案内が存在しない」。
 2. **プロジェクト固有スキル → `docs/`。** 現 INIT Step 5 は「structure / component /
    routing / UI / domain のスキルを自作せよ」と指示している。btnopen.com は
    [その方針を明示的に撤回](https://github.com/axross/btnopen.com/blob/main/docs/decisions/2026-08-09-keep-project-conventions-in-docs-rather-than-repository-local-skills.md)
    し、3 本の自前スキル（533 ルール / 2,815 行）を `docs/` に退避した。
-   テンプレートもこれに追随し、`living-product-specification` スキルと組で
-   `docs/` の雛形を配る。
+   上流の改訂（`3058641`）で `living-product-specification` が `conventions/` と
+   `operations/` を正式な body として定義したため、これは**もはや btnopen.com の
+   ローカル判断ではなく、スキルが規定する標準の形**になった。テンプレートは
+   その形に乗る。ただし**空の雛形は配らない**（§4.3 — スキルが明示的に禁じている）。
 3. **トークン機構の縮小。** 上流スキルは `{{TOKEN}}` を一切持たない。
    トークン 314 箇所のうち 191 箇所（61%）がスキル内にあり、移行で消滅する。
    `INIT:OPTIONAL` も 86 箇所中 57 箇所（66%）が消える。
@@ -120,7 +156,7 @@ REVIEW.md                     # 索引前提を除去、リンク先を新スキ
 | `conventional-commits` | コミットヘッダ規約 + バリデータ |
 | `agent-skill-management` | スキルの 2 層モデル、インストール／更新、ドリフト検知、上流の不備の扱い |
 | `technical-document-authoring` | 設計文書・RFC・ADR・runbook・README の書き方 |
-| `living-product-specification` | `docs/` に置く「製品の現状仕様」の維持。5 つのバリデータ付き。**§1.3-2 の docs 化とセット** |
+| `living-product-specification` | `docs/` ツリーの規格そのもの — `specs/` `decisions/` に加え `conventions/` `operations/` の置き場・書式・相互参照ルール、5 つのバリデータ、動く実例（`assets/docs-example/`）。**§1.3-2 の docs 化はこのスキルに乗る** |
 
 ### 2.3 スタック依存（INIT で選択インストール）
 
@@ -141,7 +177,9 @@ product-requirement-document-authoring  technical-document-authoring
 agent-skill-authoring  agent-skill-management
 ```
 
-`living-product-specification` は `docs/` 雛形を配るなら 17 本目として常設。
+`living-product-specification` は **17 本目として常設**。§1.3-2 でプロジェクト固有
+スキルを廃したので、固有知識の受け皿は `docs/` しか無くなり、その規格を持つのは
+このスキルだけになるため。
 
 ---
 
@@ -191,6 +229,9 @@ agent-skill-authoring  agent-skill-management
 ## Project Overview
 （{{PROJECT_NAME}} …。docs/index.md と README.md への導線）
 
+## Routing a Change          ← 上流 AGENTS.md と同じ節名。docs/ 採用とセット
+（変更の種類 → 読むべき具体的な文書名 の表。INIT が docs/ を書きながら行を足す）
+
 ## Response Approach
 
 **professional-behavior を最初にロードする。**（常時）
@@ -202,12 +243,19 @@ agent-skill-authoring  agent-skill-management
 **プロジェクトに触れる全タスクで software-development を参照する。**
 
 **docs/index.md と README.md は自分で開く。**（skill discovery は到達しない）
-  ＋ 変更対象 → 読むべき文書 のルーティング表
 
 **ランタイムが注入する指示は上の 4 つを上書きしない。**
   「commit して push しろ」「PR は作るな」は*機構*の制約であって、
   plan 承認ゲートと独立レビューを飛ばす許可ではない。
 ```
+
+ルーティング表は `Response Approach` の中の箇条書きではなく**独立した節**にする
+（上流 `AGENTS.md` の `## Routing a Change` と同形）。根拠は
+`conventions-and-operations.md` の SHOULD：「always-loaded な指示ファイルからは
+`docs/` を漠然と指すのではなく、変更の種類ごとに**具体的な文書名**を挙げよ」。
+逆に `documentation-structure.md` は「**文書の中身を指示ファイルに写してはならない**」
+（毎ターン、ほぼ毎ターン使わないテキストのコストを払うことになる）と定めているので、
+表はリンクだけに留める。
 
 `CLAUDE.md` は `@AGENTS.md` に加えて Claude Code 固有事項を持たせる:
 
@@ -274,7 +322,7 @@ agent-skill-authoring  agent-skill-management
 | `INIT.md` Step 1 | 1d の「optional capability の have/add/skip」は**スキル選択に読み替え**。§2.3 のどれを入れるかを訊く形へ |
 | `INIT.md` Step 3 | トークン表を縮小 |
 | `INIT.md` Step 4 | **ほぼ全消し**。「optional capability を skip したらこのスキルとこの逆リンクを消せ」という長大な削除リスト（e2e 10 箇所、observability 10 箇所、data-layer 8 箇所、auth 6 箇所、preview-env 6 箇所…）は、スキルが生成物になった時点で不要になる。代わりに「§2.4 のコア + §2.3 から選んだものをインストールする」1 手順に置換 |
-| `INIT.md` Step 5 | 「プロジェクト固有スキルを作る」→ **「`docs/` を書く」に転換**（§1.3-2）。archetypes への参照は `agent-skill-authoring/references/project-skill-archetypes.md` に付け替えるか、docs 化に伴い落とす |
+| `INIT.md` Step 5 | 「プロジェクト固有スキルを作る」→ **「`docs/` を書く」に転換**（§1.3-2 / §4.3）。手順は `living-product-specification` の bootstrapping に従う：①`index.md` を先に作る ②最も問い合わせの多い 1 ドメインの `specs/` ③そこから種を取った `glossary.md` ④`decisions/` は次の決定から。**空ファイル・見出しだけの文書を作ってはならない**。conventions / operations は §4.3 の書式で書く。archetypes への参照は落とす（スキル自作をやめるため） |
 | `INIT.md` Step 6 | `.claude/agents/` の扱いを追記 |
 | `INIT.md` Step 7 / チェックリスト | `check-links.sh` → `check-links.mjs`（4 箇所）。「skill index が `.claude/skills/` と一致すること」の項目は削除、代わりに「`skills-lock.json` と `.claude/skills/` が一致すること」へ |
 | `README.template.md` | `/address` `/handoff` の節を「loop-engineering — 変更を end-to-end で回す」に書き換え。`@claude review` 節は維持。Tech stack / Testing の表は残す |
@@ -287,6 +335,25 @@ agent-skill-authoring  agent-skill-management
 - `/address` `/handoff` の説明を `loop-engineering` に置換
 - Getting started に **skills のインストール／更新手順**と `npx skills` の落とし穴を追記
 - 「framework-agnostic」の但し書きに **Node が更新時に要る**ことを明記
+
+**README と `docs/` の線引き**（上流の
+[決定記録](https://github.com/axross/skills/blob/main/docs/decisions/2026-08-10-keep-conventions-and-operations-in-docs-rather-than-readme.md)
+に合わせる。axross/skills はこれで README を 781 → 291 行に削った）:
+
+| README に残す | `docs/` に出す |
+| ------------- | -------------- |
+| これが何か（positioning） | 変更が満たすべきルール → `docs/conventions/` |
+| Getting started / セットアップ | 人が実行する手順 → `docs/operations/` |
+| **コマンド表**（README が唯一の権威） | 製品の現在の振る舞い → `docs/specs/` |
+| 関連リンク | 制約の理由 → `docs/decisions/` |
+
+境界の判定基準は「**違反がどこに現れるか**」。ツリーに diff として残る＝ convention、
+実行という行為にしか残らない（skip した・順序を間違えた）＝ operation。
+「コード vs プロセス」というラベルでは切らない。
+
+これは `README.template.md`（初期化後プロジェクトの README の種）にも同じく効く。
+現在の種は Tech stack・Testing・Development workflow の表を持っているが、
+このうち**手順にあたるものは `docs/operations/` 行き**になる。コマンド表は README に残す。
 
 ### 3.9 その他
 
@@ -308,26 +375,70 @@ agent-skill-authoring  agent-skill-management
 
 §3.3。
 
-### 4.3 `docs/` 雛形
+### 4.3 `docs/` — 雛形は配らず、INIT が育てる
 
-btnopen.com の構成を汎用化した骨格を配る:
+> **前案からの変更点。** 当初は「btnopen.com の構成を汎用化した骨格を配る」としていたが、
+> 上流の改訂で `living-product-specification` が構造を規格化し、**空の雛形を配ることを
+> 明示的に禁じた**ため方針を変える。
 
-```
-docs/
-  index.md                     # 3 つの本体（specs / conventions / operations）への案内 + decisions
-  overview.md                  # 製品は何か（INIT で書く）
-  glossary.md                  # 用語（製品の語 / リポジトリの語）
-  specs/                       # 現在の振る舞い（living-product-specification が管理）
-  conventions/                 # コードの書き方（旧・プロジェクト固有スキルの行き先）
-    repository-map.md          # ← 旧「Project Structure スキル」
-  operations/
-    agent-skills.md            # ★ インストール・更新手順 + 逸脱／欠落レジスタ
-    claude-code.md             # ★ hooks / settings / サブエージェント / telemetry
-    development-workflow.md    # loop-engineering の実運用
-  decisions/                   # 決定ログ（YYYY-MM-DD-<kebab>.md）
-```
+`bootstrapping.md` の該当ルール:
 
-`operations/agent-skills.md` が特に重要。btnopen.com のものをテンプレート化して、以下を持たせる:
+- **MUST NOT scaffold empty files or heading-only documents.**
+  空の文書は「まだ誰も考えていない主題」と区別がつかず、`index.md` に
+  「実際には無いカバレッジ」を主張させてしまう。
+- **MUST create `index.md` first**、以降は文書を書くたびに行を足す。
+- **MUST NOT create a document whose content is entirely restated from elsewhere**（invariant 1）。
+  これにより、当初案に入れていた **`overview.md` は書かない**ことになる
+  （製品の目的と対象読者は README が既に述べ、境界は spec が既に画し、
+  ドメイン横断の地図は `index.md` の一覧そのもの — 全て他が持つ事実の再掲になる）。
+  btnopen.com の `docs/overview.md` はこの改訂より前のもの。
+
+#### テンプレートが配るもの
+
+ディレクトリではなく、**INIT の手順と参照先**を配る:
+
+| 配るもの | 内容 |
+| -------- | ---- |
+| INIT Step 5 の手順 | `index.md` → 1 ドメインの `specs/` → `glossary.md` → 以降必要になった分だけ、という書き順 |
+| コピー元の指定 | `.claude/skills/living-product-specification/assets/docs-example/`（7 ファイル / 2 ドメイン、全ての相互参照ルールを実演する動く実例）。スキル本文が「白紙から始めず、この構造をコピーせよ」と指示している |
+| 最初に書く `docs/` の推奨内容 | 下表 |
+| CI 配線 | §4.5。`index.md` が無い間はバリデータが全て 0 終了するので、配線だけ先に入れられる |
+
+#### テンプレートが「最初に書け」と指示する文書
+
+いずれも**中身が実際にある場合のみ**作る。
+
+| 文書 | 内容 | 由来 |
+| ---- | ---- | ---- |
+| `docs/index.md` | 4 body の案内 + `glossary.md` へのリンク + 規範語彙（RFC 2119 か否か）の宣言 | 必須。バリデータの採用マーカー |
+| `docs/operations/agent-skills.md` | インストール／更新手順 + **逸脱・欠落レジスタ** | btnopen.com / axross/skills 双方が持つ。§4.3.1 |
+| `docs/operations/agent-sessions.md` | hooks・`settings*.json`・サブエージェント・telemetry | axross/skills の同名文書。旧案の `claude-code.md` から改名（下記の命名規則） |
+| `docs/operations/development-workflow.md` | loop-engineering の実運用、ブランチ、レビュー | 3 リポジトリとも持つ |
+| `docs/conventions/directory-structure.md` | ファイルの置き場・命名・依存方向 | 旧「Project Structure スキル」の行き先。**`repository-map.md` ではない**（下記） |
+
+**命名規則が効く。** `conventions-and-operations.md` は
+「MUST name a document for the field it already uses — `directory-structure.md`, not
+`repository-map.md`; `testing.md`, not `quality-gates.md`」と明記している。
+造語のファイル名は誰も検索しない。btnopen.com の `repository-map.md` は
+この規則の**反例として名指しされている**ので、テンプレートは踏襲しない。
+
+#### `conventions/` `operations/` の文書書式（5 原則）
+
+INIT が生成する文書はこの形に従わせる。**`SKILL.md` の形式ではない**:
+
+1. ルールは**理由のすぐ隣に一度だけ**書く。`SKILL.md` のような末尾の
+   `**Guidelines:**` ブロックは作らない（全文が読まれる文書では、
+   同じルールが 2 回書かれるだけになる）。引用アンカーは見出しが担う。
+2. ルールの**強さが文自体から読める**こと（binding / recommended / permitted）。
+   RFC 2119 を使うか平易な命令形かはプロジェクトの選択で、`index.md` で一度宣言する。
+3. **変更がルーティングする面ごとに 1 文書**、body 直下にフラット、kebab-case。
+4. **既に使われている呼び名**で命名する（上記）。
+5. **プロジェクト固有の答えだけ**を書き、一般論は名指しでスキルに委ねる。
+   これが `conventions/testing.md` が testing スキルの二番煎じに育つのを防ぐ。
+
+#### 4.3.1 `operations/agent-skills.md`
+
+特に重要。btnopen.com のものをテンプレート化して、以下を持たせる:
 
 - 正しい再インストールコマンド（ロックファイルからスキル名を導出する形）
 - `--skill '*'` 禁止、カンマ区切り禁止の警告
@@ -340,6 +451,35 @@ docs/
 ### 4.4 `.github/workflows/branch-governance-audit.yaml`
 
 §3.5。
+
+### 4.5 `docs/` バリデータの CI 配線
+
+`living-product-specification` は 5 本のバリデータを同梱する。**run-all スクリプトは
+意図的に無い**（1 つの変更をした著者に全件の findings を読ませないため）。
+シェルループが公式の形:
+
+```bash
+for check in .claude/skills/living-product-specification/scripts/check-*.mjs; do
+  node "$check" || failed=1
+done
+```
+
+| バリデータ | 走らせる契機 | `conventions/` `operations/` を見るか |
+| ---------- | ------------ | ------------------------------------- |
+| `check-index.mjs` | 文書の追加・削除 | **見る** |
+| `check-references.mjs` | 任意の文書の編集 | **見る** |
+| `check-decision-supersede.mjs` | 決定の supersede | **見る** |
+| `check-glossary.mjs` | spec の追加・改名 | 見ない（`specs/` 専用） |
+| `check-decision-naming.mjs` | 決定の作成 | 見ない（`decisions/` のみ） |
+
+**テンプレートにとって重要なのは 2 段階オプトイン。** `index.md` が無い限り
+5 本とも 0 終了して何も報告しない。したがって**テンプレートは CI 配線を先に入れておける**
+——INIT が `docs/index.md` を書いた瞬間に有効化される。「配線したが赤い」という
+中間状態が生じない。
+
+**Node 依存に注意。** バリデータは `.mjs` なので、Python / Go プロジェクトでも
+CI に Node のセットアップが要る。`merge-checks.yaml` の docs ジョブは
+`INIT:OPTIONAL` にして、非 Node プロジェクトが外せるようにする（§5.4）。
 
 ---
 
@@ -354,6 +494,12 @@ docs/
 **推奨は axross/skills 方式**（2 枚）。現テンプレの構造を壊さず、将来 Codex 等を足せる。
 D3 で「AGENTS.md / CLAUDE.md で指定」と決めているので、この形が合う。
 
+上流の改訂で**この推奨は裏付けが強まった**：`## Routing a Change` 表は
+axross/skills の `AGENTS.md` に置かれており（`CLAUDE.md` ではない）、
+スキル側の SHOULD も「always-loaded な指示ファイル（`AGENTS.md`, `CLAUDE.md`, or similar）」
+と host-neutral に書かれている。ルーティング表は host 非依存の情報なので
+`AGENTS.md` 側が正しい置き場になる。
+
 ### 5.2 `REVIEW.md` の Subtractive pass を入れるか
 
 上流の第 3 の必須チェック（何を削るべきか、5 レンズ）は、Markdown 中心リポジトリの
@@ -364,21 +510,42 @@ D3 で「AGENTS.md / CLAUDE.md で指定」と決めているので、この形�
 
 | 現テンプレの資産 | 上流に相当物 | 提案 |
 | ---------------- | ------------ | ---- |
-| `development-guidelines/references/preview-environments.md`（PR ごとのプレビュー環境） | **無い** | `docs/operations/preview-deployment.md` の雛形に転記。btnopen.com も docs 側に持っている |
-| `e2e-testing-guidelines/references/scenario-coverage.md`（ジャーニーカタログ） | 上流 `end-to-end-testing` の内容を要確認 | 未収載なら `docs/conventions/testing.md` へ |
+| `development-guidelines/references/preview-environments.md`（PR ごとのプレビュー環境） | **無い** | `docs/operations/preview-deployment.md` へ。**operation** で正しい（手順を飛ばしても diff は残らない＝ §3.8 の判定基準） |
+| `e2e-testing-guidelines/references/scenario-coverage.md`（ジャーニーカタログ） | 上流 `end-to-end-testing` の内容を要確認 | 未収載なら `docs/conventions/testing.md` へ。**convention** で正しい（タグの付け忘れは diff に残る） |
 | `product-requirement-guidelines/references/template.md`（計画文書テンプレ） | `product-requirement-document-authoring` にあるはず | 要差分確認。上流優位なら破棄 |
 | `address/references/visual-design-options.md` | `loop-engineering` の plan-document + `wireframe-design` に分散 | 破棄 |
+
+いずれも「テンプレートが空の雛形として配る」のではなく、**INIT が該当機能を採用した
+プロジェクトでのみ書く**（§4.3 の空文書禁止）。テンプレートは INIT 手順に
+「この capability を採用したら `docs/operations/preview-deployment.md` を書く」と
+書いておくに留める。
 
 **移行前に、削除する 14 本と置換先の差分レビューを 1 本ずつ行うこと。**
 上流にしか無いものは取り込みで得られるが、テンプレートにしか無いものは黙って失われる。
 
-### 5.4 Codex 対応
+### 5.4 非 Node プロジェクトでの `docs/` バリデータ
+
+5 本のバリデータは `.mjs`。Python / Go / Rust プロジェクトでも CI に Node を
+入れることになる。`merge-checks.yaml` の docs ジョブを `INIT:OPTIONAL` にして
+外せるようにするのが現実的だが、外すと `docs/` の索引漏れ・リンク切れ・
+supersede 不整合が無検査になる。**要判断。**
+
+### 5.5 上流の語彙変更への追随
+
+`3058641` で「corpus」が廃止され、参照ファイル名も変わった
+（`corpus-structure.md` → `documentation-structure.md`、`documentation-root.md` 削除、
+`corpus.mjs` → `docs.mjs`）。テンプレート側で上流の**内部ファイル名やアンカーを
+引用すると腐る**。`REVIEW.md` の do-not-report 列挙や `docs/operations/agent-skills.md` は、
+スキル名とスクリプト名（`check-*.mjs` は不変）までに留め、references のファイル名は
+引用しない方針にする。
+
+### 5.6 Codex 対応
 
 axross/skills は `.codex/hooks.json` + `.codex/config.toml` を持ち、同じ hooks を
 `SKILLS_SESSION_BOOTSTRAP=1` で共有している。テンプレートは現在 Claude Code 専用を
 明言（INIT Step 1e）。**今回のスコープ外**とし、必要なら後続で。
 
-### 5.5 上流の更新にどう追随するか
+### 5.7 上流の更新にどう追随するか
 
 `skills-lock.json` は再インストールしないと動かない。追随の運用として:
 
@@ -401,9 +568,9 @@ axross/skills は `.codex/hooks.json` + `.codex/config.toml` を持ち、同じ 
 | 4 | サブエージェント | `.claude/agents/` 2 ファイル追加 | 2 |
 | 5 | hooks / settings | check.sh の in-flight リマインダ、session-start の REMINDER、send_later 許可 | 3 |
 | 6 | REVIEW.md | 索引前提の除去、リンク先更新、Do-Not-Report の列挙化 | 2, 3 |
-| 7 | CI | `branch-governance-audit.yaml` 追加、`template-checks.yaml` を `.mjs` へ、ドリフト検知（任意） | 2 |
-| 8 | `docs/` 雛形 | `index.md` / `agent-skills.md` / `claude-code.md` ほか | 2 |
-| 9 | INIT 再構築 | Step 4 の削除リスト撤去、Step 5 の docs 化、tokens.json 縮小、チェックリスト更新 | 2–8 すべて |
+| 7 | CI | `branch-governance-audit.yaml` 追加、`template-checks.yaml` を `.mjs` へ、`docs/` バリデータ 5 本の配線（`index.md` 不在の間は不活性）、ドリフト検知（任意） | 2 |
+| 8 | `docs/` 立ち上げ | テンプレート自身の `docs/index.md` + `operations/agent-skills.md` + `operations/agent-sessions.md`。**中身のあるものだけ**書く。空の `specs/` `decisions/` は作らない | 2, 7 |
+| 9 | INIT 再構築 | Step 4 の削除リスト撤去、Step 5 の docs 化（書き順・`docs-example` 参照・5 原則の書式）、tokens.json 縮小、チェックリスト更新 | 2–8 すべて |
 | 10 | README 更新 | テンプレート自身の README と `README.template.md` | 9 |
 
 フェーズ 2 と 3 を分けると、2 の直後は「スキルはあるがルーティングが旧のまま」という
@@ -419,5 +586,7 @@ axross/skills は `.codex/hooks.json` + `.codex/config.toml` を持ち、同じ 
 | 削除する 14 本にしか無い資産の喪失 | 静かに劣化 | フェーズ 1 の差分レビューを必須にする |
 | インストール済みスキルを手で直してしまう | 次のインストールで消える。消えるまでの間、上流が同意していないルールを装う | `docs/operations/agent-skills.md` の逸脱レジスタ運用 |
 | `--skill '*'` / カンマ区切りのサイレント失敗 | カタログ全採用、または無言の未インストール | 手順書に明記（§3.1）、`skills-lock.json` と `.claude/skills/` の一致を CI で検査 |
-| Node 依存の追加 | 「フレームワーク非依存」の主張が弱まる | インストール時のみ必要である旨を README に明記。インストール後のスキルは素の Markdown |
-| 上流の破壊的変更 | スキル名・アンカーの変更で `REVIEW.md` や docs のリンクが腐る | `skills-lock.json` でピン留め。更新は明示的な操作に限定し、リンク検査を CI に置く |
+| Node 依存の追加 | 「フレームワーク非依存」の主張が弱まる。`docs/` バリデータ 5 本は CI でも Node を要求する（§5.4） | インストール時のみ必要である旨を README に明記。インストール後のスキルは素の Markdown。docs ジョブは `INIT:OPTIONAL` |
+| 上流の破壊的変更 | スキル名・アンカー・参照ファイル名の変更でリンクが腐る。**`3058641` で実際に起きた**（corpus 廃止、references 3 本の改名／削除） | `skills-lock.json` でピン留め。更新は明示的な操作に限定し、リンク検査を CI に置く。テンプレート側からは**スキル名とスクリプト名までしか引用しない**（§5.5） |
+| 空の `docs/` 雛形を配ってしまう | 「まだ誰も考えていない主題」と区別がつかず、`index.md` が実在しないカバレッジを主張する | 雛形を配らない。INIT が `index.md` から 1 文書ずつ育てる（§4.3）。テンプレート自身の `docs/` も同じ規律で書く |
+| `conventions/` と `operations/` の振り分けを間違える | 文書が探せない場所に置かれ、ルーティング表も間違う | 「違反がどこに現れるか」で判定（diff に残る＝ convention、行為にしか残らない＝ operation）。「コード vs プロセス」では切らない |
