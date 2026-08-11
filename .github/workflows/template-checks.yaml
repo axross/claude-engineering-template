@@ -1,13 +1,18 @@
 name: Template Checks
 
 # The TEMPLATE REPOSITORY's own CI — not part of any adapted project's CI.
-# Keeps the template's cross-linked skill tree honest by running the
-# relative-link checker on every change.
+# Keeps the template's cross-linked tree honest: relative links across the
+# skills and docs, plus the five docs/ validators.
 #
-# The checker itself ships with the agent-skills-best-practices skill and
-# survives adaptation; THIS WORKFLOW FILE does not — adapted projects delete
-# it in INIT Step 7 together with INIT.md, init.sh, and tokens.json. A project
-# that wants an ongoing docs-link gate wires the script into its own CI.
+# The checkers themselves ship inside installed skills and survive adaptation;
+# THIS WORKFLOW FILE does not — adapted projects delete it in INIT Step 7
+# together with INIT.md, init.sh, and tokens.json, after wiring whichever of
+# these checks they want into their own merge-checks.yaml.
+#
+# Both jobs need Node, because both checkers are .mjs shipped inside a skill.
+# That is a cost this template's own CI pays; a non-Node project deciding
+# whether to pay it for its own merge gate has the trade-off recorded in
+# docs/operations/agent-skills.md.
 
 on:
   pull_request:
@@ -22,11 +27,40 @@ permissions:
   contents: read
 
 jobs:
-  docs:
-    name: Docs Link Check
+  links:
+    name: Relative Link Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - name: Check Relative Links
-        run: .claude/skills/agent-skills-best-practices/scripts/check-links.sh
+        run: node .claude/skills/agent-skill-authoring/scripts/check-links.mjs
+
+  docs:
+    name: Docs Corpus Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # The five validators are deliberately separate commands — each answers
+      # for one kind of change, so an author who touched one document reads only
+      # its findings. There is no run-all script by design; looping is the
+      # documented form. All five exit 0 when docs/index.md is absent, so this
+      # job is inert until a project adopts docs/.
+      - name: Check docs/
+        run: |
+          failed=0
+          for check in .claude/skills/living-product-specification/scripts/check-*.mjs; do
+            echo "::group::$(basename "$check")"
+            node "$check" || failed=1
+            echo "::endgroup::"
+          done
+          exit "$failed"
