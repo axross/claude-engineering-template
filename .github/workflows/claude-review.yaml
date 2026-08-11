@@ -11,9 +11,9 @@ name: Claude Code Review
 # GitHub-hosted runner — a different session, on different infrastructure,
 # under a bot identity distinct from the connected operator — triggered by a
 # comment containing the review trigger phrase (`@claude review`; if you change
-# it, change it in .claude/skills/address/SKILL.md too). It bootstraps
+# it, change it in docs/operations/development-workflow.md too). It bootstraps
 # REVIEW.md at the repo root as the review policy. This is the authoritative
-# review for the /address flow (.claude/skills/address/SKILL.md), which posts
+# review for the loop-engineering flow (.claude/skills/loop-engineering/SKILL.md), which posts
 # the trigger phrase after opening a PR and then addresses the findings this
 # workflow leaves.
 #

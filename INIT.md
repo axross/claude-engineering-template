@@ -221,7 +221,7 @@ component / UI-design skills). Ask each area that applies:
     - **Per-PR preview environments** (a pipeline giving each pull request a
       stable preview link — a stable URL for a web client/server project, a
       signed installable tester-channel build for a mobile app; the rules live
-      in `development-guidelines/references/preview-environments.md`). For
+      in `docs/operations/preview-deployment.md`, which Step 5 authors). For
       **have**/**add**, name the hosting/distribution target it deploys
       through (e.g. Vercel, Fly.io, Firebase App Distribution, TestFlight).
       For a project with a deployable or installable surface, prefer **add**
@@ -285,7 +285,7 @@ supplements the interview; it never replaces asking. **Prefer adding a missing
 capability over silently dropping it** — deleting a whole testing or
 observability skill should be a deliberate choice the user made, not a default.
 (The `/address` / `/handoff` skills, `REVIEW.md`, the CI workflows, and
-`github-operation-guidelines` are the exception — they are fixed and never
+`github-operation` are the exception — they are fixed and never
 dropped; see the "Fixed vs. configured" note.)
 
 ---
