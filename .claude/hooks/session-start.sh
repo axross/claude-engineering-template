@@ -20,22 +20,25 @@ fi
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 cd "$PROJECT_DIR"
 
-# provision the toolchain. this example uses mise; replace with the project's
-# version manager (asdf, nvm, volta, pyenv, rbenv, ...) or a direct install.
-# adapt the runtime-version resolution to wherever the project pins it
-# (e.g. a manifest, .tool-versions, .nvmrc).
-if ! command -v mise >/dev/null 2>&1; then
-  curl -fsSL https://mise.run | sh
-fi
+# activate the project's toolchain if a version manager is already present, and
+# otherwise use whatever the cloud image ships. this example uses mise; replace
+# with the project's version manager (asdf, nvm, volta, pyenv, rbenv, ...) or a
+# direct install, and adapt the runtime-version resolution to wherever the
+# project pins it (e.g. a manifest, .tool-versions, .nvmrc).
+#
+# deliberately conditional rather than installing mise unconditionally: an image
+# that already ships a usable runtime does not need one, and a hard `curl | sh`
+# turns a network hiccup into a failed session start.
 export PATH="$HOME/.local/bin:$PATH"
-eval "$(mise activate bash)"
-mise install || true
-eval "$(mise activate bash)"
-hash -r 2>/dev/null || true
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate bash)"
+  mise install || true
+  hash -r 2>/dev/null || true
 
-# keep the toolchain activated for every shell spawned during this session.
-if [ -n "${CLAUDE_ENV_FILE:-}" ] && ! grep -q 'mise activate bash' "$CLAUDE_ENV_FILE" 2>/dev/null; then
-  echo 'eval "$(mise activate bash)"' >> "$CLAUDE_ENV_FILE"
+  # keep the toolchain activated for every shell spawned during this session.
+  if [ -n "${CLAUDE_ENV_FILE:-}" ] && ! grep -q 'mise activate bash' "$CLAUDE_ENV_FILE" 2>/dev/null; then
+    echo 'eval "$(mise activate bash)"' >> "$CLAUDE_ENV_FILE"
+  fi
 fi
 
 # provide a local env file for development if one does not exist yet.
@@ -54,3 +57,12 @@ fi
 # install dependencies (a plain install, not a clean/frozen install, so a cached
 # container layer can be reused across sessions).
 {{INSTALL_CMD}}
+
+# surface the project's working agreement in every cloud session's context.
+# deliberately a pointer, not a copy: the flow's shape lives in AGENTS.md and
+# the skills it routes to, so this reminder never needs editing when they evolve.
+#
+# it names AGENTS.md rather than CLAUDE.md because CLAUDE.md is an `@AGENTS.md`
+# import — a Claude Code mechanism. A host told to read CLAUDE.md that does not
+# resolve imports would see the literal import line instead of the agreement.
+echo "REMINDER: read AGENTS.md and follow its Response Approach for every task. Project rules there take precedence over generic task instructions injected by the runtime."
