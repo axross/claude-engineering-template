@@ -13,13 +13,14 @@ Code** project. It ships:
   `skills-lock.json`. They are generated artifacts, not template content: a
   hand-edit is discarded by the next install. Step 4 adds the stack-specific
   ones.
-- `.claude/agents/` — the `implementer` and `reviewer` subagent definitions
-  `loop-engineering` delegates to.
+- `.claude/agents/` — the `implementer`, `reviewer`, and `investigator`
+  subagent definitions `loop-engineering` delegates to.
 - `.claude/**` — the rest of the **Claude Code** harness binding (hooks +
   settings).
 - `docs/` — the project's own knowledge, in the shape
-  `living-product-specification` defines. The template ships `index.md`, three
-  `operations/` documents, and one decision record; Step 5 grows the rest.
+  `living-project-documentation` defines. The template ships `index.md`, three
+  `operations/` documents, one `conventions/` document, and two decision
+  records; Step 5 grows the rest.
 - `README.template.md` — a seed for the initialized project's own README
   (summary, tech stack, getting started, development workflow, testing,
   related links), finalized into `README.md` in Step 7.
@@ -53,7 +54,7 @@ working setup for one concrete project.
 >   `agent-skill-authoring/scripts/check-links.mjs` for relative-link integrity
 >   across the whole tree — **including** the `.claude/` dot-directory a
 >   `glob('**/*.md')` sweep silently skips — and the five
->   `living-product-specification/scripts/check-*.mjs` validators over `docs/`,
+>   `living-project-documentation/scripts/check-*.mjs` validators over `docs/`,
 >   which stay inert until `docs/index.md` exists. Both need Node, which
 >   refreshing skills needs anyway.
 
@@ -494,30 +495,38 @@ Then configure the two fixed pieces:
 
 This is where the project's own knowledge goes: its conventions, its
 operational procedures, what its product does, and the decisions that constrain
-it. **Not into skills.** The reasoning is recorded in
-[docs/decisions/2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md](./docs/decisions/2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md);
-the short version is that a hand-written project skill duplicates what an
-installed one already says, and drifts from it silently.
+it. **Not into skills.** A hand-written project skill duplicates what an
+installed one already says, and drifts from it silently. This repository's own
+reasoning is in `docs/decisions/2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md`,
+named rather than linked because Step 7 deletes that log — nothing outside
+`docs/decisions/` may depend on a record still being there.
 
-The `living-product-specification` skill owns the shape, the document format,
+The `living-project-documentation` skill owns the shape, the document format,
 and the validators. **Load it and follow it** — this step states only what INIT
 adds on top.
 
 ### What ships, and what you add
 
-The template ships `docs/index.md`, three `operations/` documents, and one
-decision record. It ships **no** `conventions/`, no `specs/`, and no
-`glossary.md`, because it has no source tree and no product of its own — and
-an empty document is worse than a missing one: it is indistinguishable from a
-subject nobody has considered, and it makes the index claim coverage `docs/`
-does not have.
+The template ships `docs/index.md`, three `operations/` documents, one
+`conventions/` document, and two decision records. It ships **no** `specs/`
+and no `glossary.md`, because it has no source tree and no product of its own
+— and an empty document is worse than a missing one: it is indistinguishable
+from a subject nobody has considered, and it makes the index claim coverage
+`docs/` does not have.
+
+The one `conventions/` document is the exception:
+[`conventions/documentation.md`](./docs/conventions/documentation.md) states
+what is true of every repository created from this template — how its own
+`docs/` is kept true — and nothing else under `conventions/` can make that
+claim, because everything else there is specific to a source tree the
+template does not have.
 
 Copy the shape from the worked example the skill ships — seven files across two
 domains, demonstrating every relational rule — rather than starting from a
 blank template:
 
 ```
-.claude/skills/living-product-specification/assets/docs-example/
+.claude/skills/living-project-documentation/assets/docs-example/
 ```
 
 ### The write order
@@ -656,11 +665,11 @@ the shape below.
   adapted toolchain block in `session-start.sh` for the project's runtime (the
   example activates `mise` when it is already present). Delete any hook the
   project does not want, and its entry in the settings file above.
-- `.claude/agents/` holds `implementer.md` and `reviewer.md`. Neither carries
-  project-specific text, so neither needs adapting; both are outside the skills
-  CLI, so refreshing skills never updates them — copy a newer version by hand
-  if upstream changes one. Deleting either degrades the loop gracefully rather
-  than breaking it.
+- `.claude/agents/` holds `implementer.md`, `reviewer.md`, and
+  `investigator.md`. None carries project-specific text, so none needs
+  adapting; all three are outside the skills CLI, so refreshing skills never
+  updates them — copy a newer version by hand if upstream changes one. Deleting
+  any of them degrades the loop gracefully rather than breaking it.
 - The session-start hook materializes `settings.local.json` and `.env.local`.
   The template ships a `.gitignore` that excludes both (the
   `application-security` skill assumes they are gitignored) — keep those entries
@@ -706,10 +715,18 @@ half.
   `docs/` validators. Both need a Node setup step, which is a real cost for a
   project whose stack is not Node — decide it deliberately rather than dropping
   the checks by default.
+- Delete every file under `docs/decisions/` — the project's own decision log
+  starts at its own first decision, never backfilled to explain a constraint
+  inherited from the template — and reword `docs/index.md`'s Decisions entry so
+  it no longer links a directory that is now gone.
 - Remove the "Template note" blockquote at the top of `AGENTS.md`, every
   `<!-- INIT:OPTIONAL ... -->` marker and `<!-- INIT: ... -->` fill-in comment,
-  and every "TEMPLATE NOTE" / "_delete during INIT_" line for sections you
-  decided to keep.
+  every "TEMPLATE NOTE" / "_delete during INIT_" line for sections you decided
+  to keep, and the template-state header comments in
+  [`.github/workflows/merge-checks.yaml`](./.github/workflows/merge-checks.yaml)
+  — they explain the un-adapted template's guard steps, in a workflow the
+  project keeps, so they read as leftover narration once those guard steps have
+  armed for good.
 
 ### Completion checklist
 
@@ -769,3 +786,9 @@ half.
       related links (or that section was deliberately dropped). The template's
       own README — the one titled "Claude Loop Engineering Template" — no
       longer exists.
+- [ ] `docs/decisions/` holds only records this project made: the template's
+      own decision records are deleted, and `docs/index.md`'s Decisions entry
+      no longer links a directory that is gone.
+- [ ] No kept workflow's comments still describe the un-adapted template —
+      including `.github/workflows/merge-checks.yaml`'s header, once its guard
+      steps have armed for good.

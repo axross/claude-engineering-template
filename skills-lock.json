@@ -5,103 +5,103 @@
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/agent-skill-authoring/SKILL.md",
-      "computedHash": "844852232ffc26a56f6be673f39aaf50257ede7767f2e0e6e89a9187787930a2"
+      "computedHash": "68ecd82715e6f6b3c8dc0db63c5f25679509bf7c2c08a940c1eb209f8161fef9"
     },
     "agent-skill-management": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/agent-skill-management/SKILL.md",
-      "computedHash": "b77fa9c7dc7b97fc133bf68646e9eff486309b0ae703259d461b593945b8fb4b"
+      "computedHash": "262be1636cd3f0cede7f43ec025ddac5fb6b4103b4c128a62e286b18f8918a46"
     },
     "application-security": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/application-security/SKILL.md",
-      "computedHash": "6f08bd602a0999d516e6bdf4fced781cec799ee4e79f54ce965d23bd3f63958d"
+      "computedHash": "5dfc93de4eabc0a5af5ddda7cc16996fecc3c6a5ac91e1e178d8f8dd0da12bd2"
     },
     "code-maintainability": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/code-maintainability/SKILL.md",
-      "computedHash": "c6cc7e9d96a38fdacedcf488bc281812aa41ff4ae7f59fff0fd32a107656b9ad"
+      "computedHash": "85fdd473fe7688eef314e4bdbe47c7630137965eacb288c7601705d16b680be0"
     },
     "code-review": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/code-review/SKILL.md",
-      "computedHash": "72de5c8e8c255a4b9fac24b4d40155c7227f27c850a49949d60cddbc1419b076"
+      "computedHash": "350aa07b54c3163ad3aea1bea1846ab4aef98be27e36dce4ffc7b4ef634521f8"
     },
     "conventional-commits": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/conventional-commits/SKILL.md",
-      "computedHash": "6d2cbc6c2df94ee622ce5b347d9a9c40bd10742941e8e5543e7479f9dfa995d4"
+      "computedHash": "d84711e66582ffd92dd0bd158843936aa6c9d9c91255b8c5564f357496950c72"
     },
     "end-to-end-testing": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/end-to-end-testing/SKILL.md",
-      "computedHash": "cc8db69e7e10b2155d3c44c057e0b15193d0a22f6cb1f11673092d1243a83238"
+      "computedHash": "18303da8438400e9b514f4ab93bbfc343b6d577dd802e0e5bc70f1a0a212c1fc"
     },
     "github-operation": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/github-operation/SKILL.md",
-      "computedHash": "004c5431309cb9f6c238f7a78c577002a2c30952ec9cad5611e0d73969fbc3d9"
+      "computedHash": "d671cce3f1d95962d454dddf7f0196fb1a76e9f9148861bcc876ab693b9ebb6c"
     },
-    "living-product-specification": {
+    "living-project-documentation": {
       "source": "axross/skills",
       "sourceType": "github",
-      "skillPath": "skills/living-product-specification/SKILL.md",
-      "computedHash": "64e960e24220224b3f66d41967dfc9e6586993e4495b9bd5103110d779e77dec"
+      "skillPath": "skills/living-project-documentation/SKILL.md",
+      "computedHash": "6f6f989e4143a139c7a0ff962299f5d050945ffdcd98756e36bcb36883d5410f"
     },
     "loop-engineering": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/loop-engineering/SKILL.md",
-      "computedHash": "cb340e9a5610b3f80a228d9b3a146208992c84b018886cc3cad5df71d5ec3549"
+      "computedHash": "71db8e15f0eff15ddc28a94f10c25043fddb3aa4dbeb61b6e0d98e002c16ee4c"
     },
     "product-requirement-document-authoring": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/product-requirement-document-authoring/SKILL.md",
-      "computedHash": "7823f42037250287e25f7c923b346426bae176f87fe8390031dc4c19b8a34c2b"
+      "computedHash": "9f6856dca8e956fd70b514ca2f0f53c538aba09c48790bb260747ec34b308167"
     },
     "professional-behavior": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/professional-behavior/SKILL.md",
-      "computedHash": "0d9e1a53d6c371ebbb2e0dad14063187b9bb68ef47326d2ff558646d01d4c165"
+      "computedHash": "278ca2624a188c760b5d17c2952d3854e269c2468f58f9081bc1fa13510f4c34"
     },
     "quality-assurance": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/quality-assurance/SKILL.md",
-      "computedHash": "4e69b2f6ca9a49d5c0adeb94752dd65fe3836a54f92726d59b06e850384c1921"
+      "computedHash": "9336a90f449cdbcb2d9ab42d1cce70d77c53ca527e3f933fff44407d9f36690c"
     },
     "software-development": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/software-development/SKILL.md",
-      "computedHash": "da4a8a228ad34c27b3eed54e17d6254f886b808a775f93d4858a78bf8092d957"
+      "computedHash": "945c0e3e712f746ae3136e1d4847af4aadeabc063a5edbaaedbad620677cd925"
     },
     "software-instrumentation": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/software-instrumentation/SKILL.md",
-      "computedHash": "e81d884437eb1ab8584fc17f3b1bd922bdb4ba95201d7d3f9b16b2b0b12d429c"
+      "computedHash": "b7db47a3a73759425467c8ad8fe133a771f4770ff9036089839a9e84ab43561c"
     },
     "technical-document-authoring": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/technical-document-authoring/SKILL.md",
-      "computedHash": "757d6b587f77e9a9055d9567a0a2d6b2b13978bb06b773271b8ae7666256ae8e"
+      "computedHash": "f2e48f86036000952673ad5d76599c1951404fdefc811c2c7fb18a48645f97a1"
     },
     "unit-testing": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/unit-testing/SKILL.md",
-      "computedHash": "5487a4823d89e323f51045f77546a134855b4de69d230f0673307f526c36d46f"
+      "computedHash": "50a88494659014bfd59a9a4625723e752a29505e33802aa0a33625fb9ab483fc"
     }
   }
 }

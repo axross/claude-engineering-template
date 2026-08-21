@@ -11,8 +11,9 @@ State lives in this running session; GitHub carries a thin breadcrumb — invisi
 - MUST keep the run's state in a single **status block**: an HTML comment (`<!-- ... -->`) embedded in the pull request description — invisible in the rendered UI, present in the raw markdown. Before the pull request exists, keep the same block in the issue body. Record the current phase, the review-round count, what the run is waiting on, and any open question; update it in place.
 - MUST NOT post a separate status comment or @mention the maintainer for attention; convey ready-to-merge, dormancy, and non-convergence in the turn output instead. The archival comment above is not an exception to this — it carries the original description, never run state.
 - MUST NOT write the literal review trigger phrase anywhere except the dedicated review request — a comment-triggered workflow fires on that phrase appearing anywhere in a body. Refer to it as "the independent review" everywhere else.
-- MUST reconstruct state from GitHub before acting on a resume, and resume the one pending step the block names rather than restarting from Plan.
 - MUST read the status block through a channel adequate to what it carries, and reconstruct from the signals that survive where no such channel exists — [github-conventions.md](./github-conventions.md) owns that rule for every body the loop reads, and states it once. The block being an HTML comment is what makes it acute here: a sanitizing read removes it whole, returning a body that looks like one carrying no state at all.
+
+Reconstructing state and resuming the one pending step on an actual resume is [resuming-and-handoff.md](./resuming-and-handoff.md)'s own rule, stated there once rather than here as well.
 
 ## Delegated Run State
 
@@ -28,7 +29,7 @@ Where the pre-flight review runs, its round number and waiting state join that l
 
 - MUST NOT duplicate the commit list into the status block; Git history and the completion receipt stay authoritative for individual commits.
 - MUST keep opaque worker identifiers, transcript paths, and other ephemeral harness details in session state rather than writing them to GitHub.
-- MUST treat a status-block entry that names no determination as invalid; the delegation-permission field carries one of the three results — permitted, barred, or undetermined — together with the policy text quoted or the no-restricting-policy observation from [implementation-worker.md](./implementation-worker.md#a-spawn-the-harnesss-policy-blocks).
+- MUST treat a status-block entry that names no determination as invalid; the delegation-permission field carries one of the three results — permitted, barred, or undetermined — together with whichever of that determination's grounds it rests on, quoted or observed as [subagent-delegation.md](./subagent-delegation.md#harness-permission-determination) requires. That reference owns the set of grounds; read it there rather than from a list here, which would drift the next time it gains one.
 
 ## Reporting a Delegated Run
 
@@ -36,9 +37,8 @@ Execution detail belongs inside the existing report, not beside it. A separate a
 
 **Guidelines:**
 
-- MUST fold into the completion summary and the ready-to-merge handoff: whether the run was delegated, fell back to single-agent, or recovered; the worker-resolution source; the delegation-permission determination and, where a question was put, the human's answer; model and effort as verified, declared, or unknown; the fallback or recovery reason; whether the intended implementation-model saving was actually achieved; any skipped or unavailable verification; and residual worker or routing risk.
+- MUST fold into the completion summary and the ready-to-merge handoff: whether the run was delegated, fell back to single-agent, or recovered; the worker-resolution source; the delegation-permission determination and, where a question was put, the human's answer; model and effort as verified, declared, or unknown for every role the run spawned, including a pre-flight review worker where the stage ran; the fallback or recovery reason; any skipped or unavailable verification; and residual worker or routing risk.
 - MUST NOT duplicate that information into a separate verbose activity log.
-- MUST report, where the pre-flight review ran, how many findings it raised and how many were fixed, dismissed, or deferred — and, once the independent review lands, how many of its findings pre-flight had not raised. The second figure is what answers whether the stage earns its cost: a pre-flight that consistently misses what the external review then finds is not working.
 - MUST report a review worker's disclosure that it read run state — its own status block or another run's — while judging the diff (see [pre-flight-review.md](./pre-flight-review.md)'s Run State Is Not Input), so an exposure the write/clear pairing failed to prevent does not go unrecorded.
 
 ## Ready-to-Merge Handoff

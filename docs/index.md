@@ -6,17 +6,27 @@ something run or operated?** → `operations/`. **What does the product do?** �
 `specs/`. `decisions/` sits beside all three and holds why a constraint
 exists, for the constraints whose reasoning cannot be recovered from the code.
 
-<!-- INIT: this template ships only `operations/` and `decisions/`, because it
-has no source tree and no product of its own to describe. As the project grows
-`conventions/`, `specs/`, and `glossary.md`, add a heading below for each body
-the tree actually holds, and link `glossary.md` from the prose above — never
-under a heading of its own. Delete a sentence above naming a body the project
-decides not to keep. -->
+<!-- INIT: this template ships `conventions/`, `operations/`, and `decisions/`,
+because it has no product of its own to describe. As the project grows
+`specs/` and `glossary.md`, add a heading below for each body the tree
+actually holds, and link `glossary.md` from the prose above — never under a
+heading of its own. Delete a sentence above naming a body the project decides
+not to keep. Adaptation also deletes every file under `docs/decisions/` — your
+log starts at your own first decision — so reword the Decisions entry below to
+describe where records will go rather than linking a directory that no longer
+exists. -->
 
 Documents under `conventions/` and `operations/` use MUST, MUST NOT, SHOULD,
 SHOULD NOT, and MAY as [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119.html)
 describes. Documents under `specs/` describe rather than instruct, and use
 none of them.
+
+## Conventions
+
+- [conventions/documentation.md](./conventions/documentation.md) — how this
+  project's own documentation is kept true: correcting what a change
+  invalidated, making a new document reachable, and the checks a documentation
+  change owes.
 
 ## Operations
 

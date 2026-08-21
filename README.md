@@ -21,13 +21,13 @@ service.
 ├── CLAUDE.md                # @AGENTS.md + the Claude-Code-specific half
 ├── REVIEW.md                # fixed: posted-review policy for the independent-review channel
 ├── skills-lock.json         # what is installed under .claude/skills/, and from where
-├── docs/                    # this project's own knowledge — index, operations, decisions
+├── docs/                    # this project's own knowledge — index, conventions, operations, decisions
 ├── .github/
 │   └── workflows/           # fixed: CI reviewer, merge checks, branch-governance audit;
 │                            # plus template-checks.yaml, this repo's own CI (deleted during INIT)
 └── .claude/
     ├── skills/              # 17 skills INSTALLED from axross/skills — generated, never hand-edited
-    ├── agents/              # implementer + reviewer subagent definitions
+    ├── agents/              # implementer + reviewer + investigator subagent definitions
     ├── hooks/               # session-start (always on), format + check (opt-in)
     ├── settings.json        # SessionStart hook, default effort level, telemetry tagging
     └── settings.local-example.json  # opt-in: copied to settings.local.json by session-start
@@ -78,11 +78,16 @@ Three things keep it from collapsing into self-approval:
 
 ### Project knowledge goes in `docs/`, not in skills
 
-The template ships `docs/index.md`, three `operations/` documents, and one
-decision record, in the shape `living-product-specification` defines —
-`specs/`, `conventions/`, `operations/`, and `decisions/`. INIT Step 5 grows
-the rest. It does **not** ship empty directories: an empty document is
-indistinguishable from a subject nobody has considered.
+The template ships `docs/index.md`, three `operations/` documents, one
+`conventions/` document, and two decision records, in the shape
+`living-project-documentation` defines — `specs/`, `conventions/`,
+`operations/`, and `decisions/`. The `conventions/` document is the one
+exception to writing `docs/` during adaptation: it states what is true of
+every repository created from this template, and nothing else under
+`conventions/` can be, so it ships already written rather than waiting for
+INIT Step 5. INIT Step 5 grows the rest. It does **not** ship empty
+directories: an empty document is indistinguishable from a subject nobody has
+considered.
 
 The trade-off is discovery, and it is real. A skill loads because its
 `description` matched; a document loads only because `AGENTS.md` said to read

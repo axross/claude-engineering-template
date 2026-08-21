@@ -1,6 +1,6 @@
 ---
 name: end-to-end-testing
-description: Writing, reviewing, refactoring, or running end-to-end tests, or verifying a change through the e2e suite — including a prompt naming only snapshots, test IDs, selectors or locators, polling and waiting, flaky tests, scenario coverage, a runner (Playwright, Cypress, Maestro, Detox, WebdriverIO, Vitest), or a failing e2e run. Tests that drive the whole system as a real user or client does. Covers layout and naming, the test-id then role then copy locator hierarchy, poll-not-sleep waiting, server lifecycle, no live network, and a scenario catalog.
+description: Writing, reviewing, refactoring, or running end-to-end tests, or verifying a change through the e2e suite — whole-system checks that drive a running build the way a real user or client does. Triggers on snapshots, test IDs, selectors or locators, polling and waiting, flaky tests, scenario coverage, a runner (Playwright, Cypress, Maestro, Detox, WebdriverIO, Vitest), or a failing e2e run. For a test that mocks its dependencies to isolate one unit, use a unit-testing capability; for the runner's own config and reporters, that runner's own. Covers the test-id then role then copy locator hierarchy, poll-not-sleep waiting, and server lifecycle.
 user-invocable: false
 ---
 
@@ -30,6 +30,10 @@ See [commands.md](./references/commands.md) for:
 - Updating snapshots only for intentional visual changes
 - Targeting dev, a local production build, or a deployed environment through a base-URL environment variable
 
+**Guidelines:**
+
+- MUST read [commands.md](./references/commands.md) before invoking the e2e suite, before regenerating a snapshot, and before pointing a run at a production build or a deployed environment.
+
 ## Test Suite Structure
 
 See [structure.md](./references/structure.md) for:
@@ -37,6 +41,10 @@ See [structure.md](./references/structure.md) for:
 - Keeping e2e tests in their own directory with their own runner glob, separate from unit tests
 - The route-tree directory layout (default) and the purpose-based layout for single-route or journey-centric apps (smoke / happy-path / regressions / feature-area)
 - Test-file naming, test-case naming, and step granularity (multi-phase scenarios use steps; short atomic tests omit them)
+
+**Guidelines:**
+
+- MUST read [structure.md](./references/structure.md) before adding an e2e test file, choosing where it sits in the suite, or naming a file, a test case, or a step inside one.
 
 ## Test Authoring Conventions
 
@@ -47,6 +55,10 @@ See [conventions.md](./references/conventions.md) for:
 - Polling / wait-for-condition helpers instead of fixed sleeps, and why fixed sleeps are banned
 - Case-independent setup and cleanup hooks
 
+**Guidelines:**
+
+- MUST read [conventions.md](./references/conventions.md) before writing a locator, an assertion, a wait, or a setup or cleanup hook inside an e2e test.
+
 ## Test Environment and Fixtures
 
 See [test-environment.md](./references/test-environment.md) for:
@@ -56,6 +68,10 @@ See [test-environment.md](./references/test-environment.md) for:
 - The deterministic-by-default rule: no live external network, with a manual escape hatch for genuinely network-dependent journeys
 - Reusing one authenticated session across tests, and centralizing data/API helpers that return validated data
 
+**Guidelines:**
+
+- MUST read [test-environment.md](./references/test-environment.md) before starting or stopping the system under test from the suite, before letting a test reach an external network, and before adding an authentication, fixture, or data-setup helper the suite shares.
+
 ## Scenario Coverage
 
 See [scenario-coverage.md](./references/scenario-coverage.md) for:
@@ -63,3 +79,7 @@ See [scenario-coverage.md](./references/scenario-coverage.md) for:
 - The scenario-coverage metric (user journeys asserted, **not** e2e line coverage) and why line coverage was rejected
 - The human-authored journey catalog and the scenario join tag plus area/priority/smoke facet tags
 - The phased gate (`must`-priority journeys at 100% first), the catalog-to-tag join a project's own CI implements against a normalized `{ title, tags, status }` result shape, and an example catalog ([assets/scenarios.example.md](./assets/scenarios.example.md))
+
+**Guidelines:**
+
+- MUST read [scenario-coverage.md](./references/scenario-coverage.md) before adding or retiring a journey in the catalog, before tagging a test with a scenario or facet tag, and before reporting or gating on how much of the suite's journey coverage is met.

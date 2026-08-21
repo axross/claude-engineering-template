@@ -2,6 +2,32 @@
 
 Apply this reference whenever you hand something back — an answer, a set of findings, a progress note, a completion summary. It governs the conversational reply. Structured artifacts with their own formats — a review report, a pull request body, a plan document, a specification — follow the conventions of whatever owns them; where the project ships a technical-document authoring capability, that capability owns the writing craft of a document, while this reference keeps the reply.
 
+## Response Language
+
+`SKILL.md`'s Response Language section states the rule, so this reference elaborates it rather than repeating it: what a kept English term looks like next to a mistranslated one, the exempt tokens worked through, and the cases the rule's own bullets do not reach.
+
+**Good Example:**
+
+> A Japanese reply reads "変更を`main`に**コミット**しました" — コミット is the katakana rendering every Japanese-speaking engineer already uses for a git commit, so the term lands exactly as intended.
+
+**Bad Example:**
+
+> The same reply instead reads "変更を`main`に**委託**しました" — 委託 is a real Japanese word, but it means "entrusted" or "consigned" in ordinary use, and nothing connects it back to a git commit. Translating the word lost the term.
+
+The exemption is narrower than the term-handling clause: an identifier, a command, a path, or a product name is never transliterated, whether or not translating it would confuse anyone. An identifier such as `isLoading`, a command such as `git rebase`, a path such as `src/index.ts`, and a product name such as "GitHub" all stay exactly as written in a reply of any language, because rendering any of them into the target script would stop them being the string a reader could copy, run, open, or search for.
+
+Three cases sit outside what the rule itself decides:
+
+- **No language signal.** A message that carries no language of its own — a bare "ok" or "continue", a pasted URL, a raw stack trace — does not reset anything. The reply keeps the language the last message that did carry a signal set.
+- **Explicit override.** The human asking for a specific language, or the project's own entry-point files fixing one, replaces the default outright rather than sitting beside it as an exception to note each time.
+- **Quoted material.** An error string, a log line, a file's contents, and a command are reproduced exactly as they occur, never translated, whatever language surrounds them.
+
+**Guidelines:**
+
+- MUST treat a message carrying no language signal as leaving the language the prior signal-carrying message set, rather than resetting to a default.
+- MUST switch to a language the human explicitly requests, or one the project's own entry-point files fix, immediately and without treating the switch as needing to be re-justified on later turns.
+- MUST reproduce quoted material — an error string, a log line, a file's contents, a command — exactly as it occurs, never translated.
+
 ## Lead With the Answer
 
 The reader wants the conclusion, not the journey to it. Put the answer, the verdict, or the decision in the first line or two, then support it. A reply that reconstructs your reasoning in the order you had it makes the reader do the work of finding the point.

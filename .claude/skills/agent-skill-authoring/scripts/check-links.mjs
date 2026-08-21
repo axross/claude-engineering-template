@@ -150,12 +150,10 @@ async function listMarkdownFiles(root) {
 
   const found = [];
   const pending = [root.length > 1 ? root.replace(/\/+$/, "") : root];
-  // real paths already descended into. `withFileTypes` reports a symlinked
-  // directory as neither a file nor a directory, so a tree that installs one
-  // skill source into a second agent's root by symlinking it would be walked
-  // as if those skills held no Markdown at all. following the link fixes that
-  // and introduces the risk it always carries — a link pointing at an ancestor
-  // walks forever — so every descent is recorded by its resolved path.
+  // real paths already descended into, to catch a cycle. `withFileTypes` reports a
+  // symlinked directory as neither a file nor a directory, so a symlinked skill source
+  // would look empty of Markdown unless the link is followed — but following risks a
+  // cycle, since a link pointing at an ancestor walks forever.
   const descended = new Set();
 
   while (pending.length > 0) {

@@ -28,7 +28,7 @@ import {
 } from "./token-estimate.mjs";
 
 // structural advisories (warnings only — see the header note).
-//
+
 // the byte→token proxy behind the size budget — why bytes rather than a
 // tokenizer, how the divisor was calibrated, and why it is only good to
 // PROXY_UNCERTAINTY — belongs to token-estimate.mjs, which this imports rather
@@ -54,15 +54,16 @@ const PLAIN_LABEL_RE = /^(Guidelines|Examples?):\s*$/;
 const TEXT_FENCE_RE = /^text\b/i;
 
 // upstream-citation advisories (warnings only — see the header note).
-//
-// the rule pair these mechanize sits in body-content-style.md: a MUST to cite
-// the upstream URL in any section that pins a version or mirrors a vendor's
-// option surface, and a SHOULD to attach that URL to a `Verified against` line.
-// the SHOULD is checkable as written. the MUST is not: "mirrors a vendor's
-// option surface" is a judgment about content that no pattern decides, which is
-// exactly the exception clause the header says a threshold would misencode.
-// so the second signal proxies only the half that is mechanical — a version
-// pin — and only in its least ambiguous form, a document citing no URL at all.
+
+// the rule pair these mechanize sits in body-content-style.md: a MUST to
+// cite the upstream URL in any section that pins a version or mirrors a
+// vendor's option surface, and a SHOULD to attach that URL to a `Verified
+// against` line. the SHOULD is checkable as written; the MUST is not.
+
+// "mirrors a vendor's option surface" is a judgment no pattern decides —
+// exactly the exception clause a threshold would misencode. so this proxies
+// only the mechanical half — a version pin — and only in its least
+// ambiguous form, a document citing no URL at all.
 const VERIFIED_AGAINST_RE = /^\s*(?:[*_]{1,2})?Verified against\b/i;
 
 const URL_RE = /https?:\/\/[^\s)>\]"']+/g;
@@ -73,7 +74,7 @@ const HAS_URL_RE = /https?:\/\//i;
 
 // the RFC-2119 boilerplate every skill carries, and the tracker it redirects
 // through. counting these as documentation would make every skill look cited,
-// which is why #171's own table measured "non-RFC URLs" rather than URLs.
+// which is why the citation count below is "non-RFC URLs" rather than URLs.
 const SPEC_BOILERPLATE_HOST_RE = /^https?:\/\/(?:www\.)?(?:rfc-editor\.org|datatracker\.ietf\.org)\//i;
 
 // a version pin, in the four shapes this corpus actually writes. each requires

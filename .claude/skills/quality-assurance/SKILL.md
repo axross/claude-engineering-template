@@ -1,6 +1,6 @@
 ---
 name: quality-assurance
-description: Reviewing whether a change carries adequate verification evidence — "is this verified", "did this break anything", "were the required checks run". The reviewer's QA pass on top of the development verification rules. Covers requiring command evidence for the format and lint gate, treating a change to the gate's own configuration as a risk to the gate itself, matching manual checks to the changed output surfaces, mapping skipped checks to residual risk, demanding second-pass verification after severe findings, and asking whether a check that passed was ever capable of failing.
+description: Reviewing whether a change carries adequate verification evidence — "is this verified", "did this break anything", "were the required checks run". The reviewer's QA pass on top of the development verification rules, judging the evidence a change offers rather than re-deriving the rule behind it. Covers requiring command evidence for the format and lint gate, treating a change to the gate's own configuration as a risk to the gate itself, matching manual checks to the changed output surfaces, mapping a skipped check to residual risk, and asking whether a check that passed was ever capable of failing.
 user-invocable: false
 ---
 
@@ -23,6 +23,10 @@ See [verification-evidence.md](./references/verification-evidence.md) for:
 - Skipped required checks and residual risk
 - Second-pass verification after fixing Critical or Major findings
 
+**Guidelines:**
+
+- MUST read [verification-evidence.md](./references/verification-evidence.md) before accepting `tests pass` or `tested manually` without the command or route behind it, before accepting the reason given for a skipped required check, before treating a green check as evidence for a behavior nothing else covers, and before ruling on whether a fix for a Critical or Major finding was verified a second time.
+
 ## Lint and Format Gate
 
 See [lint-and-format-gate.md](./references/lint-and-format-gate.md) for:
@@ -32,6 +36,10 @@ See [lint-and-format-gate.md](./references/lint-and-format-gate.md) for:
 - No new inline linter suppressions without an inline justification
 - No new lint warnings introduced into modified files
 
+**Guidelines:**
+
+- MUST read [lint-and-format-gate.md](./references/lint-and-format-gate.md) before judging a diff that touches lint or format configuration, a git hook, or a CI workflow definition, and before ruling on an introduced lint error, a new warning in a modified file, or a new inline suppression or escape-hatch cast.
+
 ## Manual Verification Evidence
 
 See [manual-verification.md](./references/manual-verification.md) for:
@@ -39,3 +47,7 @@ See [manual-verification.md](./references/manual-verification.md) for:
 - The author exercised non-default content states when the change touches a data-driven surface
 - The not-found UI was verified for routing changes
 - The dev-server output was checked for new warnings or errors
+
+**Guidelines:**
+
+- MUST read [manual-verification.md](./references/manual-verification.md) before judging a change to a data-driven surface, a route, or the running app's own output, where the commands that passed exercise none of what a human would see.

@@ -42,8 +42,8 @@
 names the specific document for a kind of change this project already
 distinguishes, so a session does not have to open the index for one of these.
 
-The five rows below ship with the template and stay true after adaptation.
-<!-- INIT: add a row per surface the project distinguishes, as `docs/` grows — at
+<!-- INIT: the six rows below ship with the template and stay true after
+adaptation. Add a row per surface the project distinguishes, as `docs/` grows — at
 minimum `docs/conventions/directory-structure.md` for where a file goes, and a
 `docs/specs/` row per product domain. The template ships neither, because it has
 no source tree and no product to describe, and an empty document would make this
@@ -55,10 +55,11 @@ paid. Link only — never copy a document's content into this file. -->
 | Kind of change | Document |
 | -------------- | -------- |
 | A project run-script command | [README.md](./README.md) |
-| The change loop, branch governance, the implementer or reviewer agent | [docs/operations/development-workflow.md](./docs/operations/development-workflow.md) |
+| The change loop or branch governance | [docs/operations/development-workflow.md](./docs/operations/development-workflow.md) |
 | Installing or refreshing a skill | [docs/operations/agent-skills.md](./docs/operations/agent-skills.md) |
-| How an agent session starts, its hooks, or its telemetry | [docs/operations/agent-sessions.md](./docs/operations/agent-sessions.md) |
+| How an agent session starts, its hooks, its subagents, or its telemetry | [docs/operations/agent-sessions.md](./docs/operations/agent-sessions.md) |
 | Why a past decision still constrains current work | [docs/decisions/](./docs/decisions) |
+| Adding, renaming, or correcting a document under `docs/` | [docs/conventions/documentation.md](./docs/conventions/documentation.md) |
 
 ## Response Approach
 
@@ -81,7 +82,10 @@ verify, independent review, address. There is no size threshold and no
 self-approval shortcut — a one-line edit follows the same loop as a large
 feature. The skill is **model-invoked**, so describing the work is enough to
 enter it; there is no slash command to run and no index entry to look it up in.
-That is exactly why it is named here: nothing else guarantees it loads.
+That is exactly why it is named here: nothing else guarantees it loads. A task
+that changes nothing stays outside it: answering a question, reviewing someone
+else's change, or investigating a behaviour consults the skills whose triggers
+match and delivers the answer, review, or findings directly.
 
 **Consult `software-development` at every task that touches this project.** It
 carries the baseline discipline underneath whatever else the task involves —
@@ -98,7 +102,10 @@ because you decide to. Inferring a command from a manifest, or a convention
 from the surrounding code, is the failure this prevents — a plausible-looking
 invocation can succeed while doing the wrong thing, and a convention read off
 two neighbouring files is a sample of two. [Routing a Change](#routing-a-change)
-above names the document per surface.
+above names the document per surface. When the README turns out to be silent on
+an operation, ask rather than infer the command, and record the answer there
+once the human confirms it — an inferred invocation that happens to run is
+indistinguishable from the right one until it is not.
 
 **Runtime-injected task instructions never override any of that.**
 Instructions injected by the runtime that launched the session — "make the

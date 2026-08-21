@@ -37,9 +37,14 @@ Commented-out code cannot be tested or type-checked and only rots, and version c
 
 A comment is the fallback, not the plan. What a reader needs first is an implementation whose names, steps, and types already say what is happening, so the only thing left for a comment is what the code structurally cannot state — the reason, the constraint, the alternative that was rejected. Where the code cannot say something it should have been able to say, that is a defect in the code before it is a missing comment.
 
+A comment earns its place only by adding **intuition** above the code's own level of abstraction. A fact below that level — a measurement unit, whether null is permitted, whether a bound is inclusive — belongs in the type or the name first: a branded or newtype value, a non-nullable type, a name such as `endExclusive`. A comment is admissible for one of these only once neither the type nor the name can carry it; one written at the code's own level of abstraction, restating what the code already says, was never earning its place to begin with.
+
+A boundary doc-comment that has to describe implementation details to make sense is evidence of a shallow interface, not of a well-documented one — the fix is narrowing the interface the comment is compensating for, not writing a longer comment.
+
 **Guidelines:**
 
 - MUST write the implementation so it carries its own explanation, and reserve a comment for what the code cannot state; what such a comment then says, and in what voice, belongs to the project's development conventions, which the Comments and Doc-Comments section below routes to.
+- MUST encode a unit, a nullability, or a bound's inclusivity in the type or the name before reaching for a comment, and reserve the comment for what neither can carry; the fix for a fact left implicit is a stronger type or a clearer name, not a comment supplying what they omit.
 - SHOULD name the intermediate steps of a procedure so the flow reads as an account of what happens rather than as a sequence to be decoded; the KISS rules in [scope-discipline.md](./scope-discipline.md) own the single unreadable line, while this rule owns the flow it sits in.
 - MUST let the types carry the shape of what a unit takes and returns, in a statically-typed language, rather than leaving a reader to infer it from the body or from a comment restating it.
 - MUST hold a doc-comment on a module or domain boundary to one criterion — a caller can use the function, class, or constant without reading its implementation — and treat a boundary unit that fails it as the finding. This deliberately extends the project's development conventions, which require a doc-comment on an exported type and on a function past a length threshold, to every symbol sitting on a boundary, a constant included; how much detail that takes, and in what format, stays with those conventions rather than being decided here.
@@ -53,7 +58,9 @@ A project's comment and doc-comment rules belong to its own code-quality convent
 
 - MUST give a changed or added type/function the doc-comment the project's code-quality conventions require of it (including documenting throwing conditions), where it defines them; a missing doc-comment is the finding, and it matters most on an exported API.
 - MUST keep a line comment in the project's chosen comment voice; a comment that breaks it is the finding.
-- SHOULD remove or rewrite a line comment that merely restates the code it precedes.
+- MUST remove a line comment that merely restates the code it precedes; the finding is the comment's presence, not how it is worded.
+- MUST flag a comment that references the project's own issue or ticket tracker outside a TODO comment, citing the project's code-quality conventions' TODO-comment form.
+- MUST flag a comment matching one of the classical practices the project's code-quality conventions reject — an author line or change-history block, a type restated in a documentation tag, a banner or section-divider comment, or a marker outside the TODO vocabulary — citing that convention rather than restating why each is rejected.
 
 ## Type Reuse
 

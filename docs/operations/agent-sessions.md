@@ -23,6 +23,11 @@ a transient network failure into a failed session start — a failure that
 surfaces as every later command missing its tools rather than as an install
 error.
 
+The hook is wired in [`.claude/settings.json`](../../.claude/settings.json),
+which also sets the session's default reasoning effort — `effortLevel`, shipped
+as `xhigh`. Both are read at session start, so a change to either reaches only
+the next session.
+
 The reminder it echoes names `AGENTS.md` rather than `CLAUDE.md` on purpose.
 `CLAUDE.md` is an `@AGENTS.md` import, which is a Claude Code mechanism; a host
 that does not resolve imports would read the literal import line instead of the
@@ -53,9 +58,9 @@ saves.
 
 ## Subagents
 
-[`.claude/agents/`](../../.claude/agents/) holds two definitions, and it is the
-only home for either: an agent definition is not a skill, so the skills CLI
-never carries it, and it never appears in `skills-lock.json`.
+[`.claude/agents/`](../../.claude/agents/) holds three definitions, and it is
+the only home for any of them: an agent definition is not a skill, so the
+skills CLI never carries it, and it never appears in `skills-lock.json`.
 
 `implementer.md` is the worker `loop-engineering` delegates Code and Verify to.
 It pins a lower-cost model, because a worker inheriting the session's model runs
@@ -72,10 +77,22 @@ reviewer that cannot reach one of those does not fail to start — it returns a
 report short by exactly those checks, and an under-equipped review reads exactly
 like a clean one.
 
-Deleting either file degrades gracefully rather than breaking the loop. Without
-the implementer, the loop delegates to a generic agent or runs single-agent;
-without the reviewer, the pre-flight stage is skipped rather than performed by
-the main actor, which is what keeps it from collapsing into self-review.
+`investigator.md` is the reader for a payload the main actor needs only one
+conclusion from — a log, a long thread, a wide search across files or history,
+a file tree — so that payload never enters the main actor's own context. It
+returns a conclusion and a locator precise enough to go back to the source,
+never the payload itself, which is what keeps the read cheap on the caller's
+side. Like the reviewer, it denies editing and spawning; it decides nothing the
+material does not itself settle, sending an unresolved judgment call back to
+whoever asked.
+
+Deleting any of the three files degrades gracefully rather than breaking the
+loop. Without the implementer, the loop delegates to a generic agent or runs
+single-agent; without the reviewer, the pre-flight stage is skipped rather than
+performed by the main actor, which is what keeps it from collapsing into
+self-review; without the investigator, the main actor reads the payload itself,
+per read, paying in its own context what delegating the read would otherwise
+have saved.
 
 ## Telemetry Tagging
 

@@ -2,6 +2,11 @@
 status: accepted
 ---
 
+<!-- INIT: this record is this repository's own, decided before your project
+existed. Delete every file under `docs/decisions/` during adaptation — your log
+starts at your own first decision — and reword `docs/index.md`'s Decisions entry
+so it stops linking a directory that is no longer there. -->
+
 # Install skills from a shared library rather than authoring them here
 
 This template carried fourteen hand-written skills under `.claude/skills/` —
