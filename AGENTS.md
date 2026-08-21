@@ -42,8 +42,8 @@
 names the specific document for a kind of change this project already
 distinguishes, so a session does not have to open the index for one of these.
 
-The five rows below ship with the template and stay true after adaptation.
-<!-- INIT: add a row per surface the project distinguishes, as `docs/` grows — at
+<!-- INIT: the six rows below ship with the template and stay true after
+adaptation. Add a row per surface the project distinguishes, as `docs/` grows — at
 minimum `docs/conventions/directory-structure.md` for where a file goes, and a
 `docs/specs/` row per product domain. The template ships neither, because it has
 no source tree and no product to describe, and an empty document would make this
@@ -55,10 +55,11 @@ paid. Link only — never copy a document's content into this file. -->
 | Kind of change | Document |
 | -------------- | -------- |
 | A project run-script command | [README.md](./README.md) |
-| The change loop, branch governance, the implementer or reviewer agent | [docs/operations/development-workflow.md](./docs/operations/development-workflow.md) |
+| The change loop, branch governance, the implementer, reviewer, or investigator agent | [docs/operations/development-workflow.md](./docs/operations/development-workflow.md) |
 | Installing or refreshing a skill | [docs/operations/agent-skills.md](./docs/operations/agent-skills.md) |
 | How an agent session starts, its hooks, or its telemetry | [docs/operations/agent-sessions.md](./docs/operations/agent-sessions.md) |
 | Why a past decision still constrains current work | [docs/decisions/](./docs/decisions) |
+| Adding, renaming, or correcting a document under `docs/` | [docs/conventions/documentation.md](./docs/conventions/documentation.md) |
 
 ## Response Approach
 
