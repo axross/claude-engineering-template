@@ -22,20 +22,17 @@ section carries only what is true of Claude Code and of no other host.
   `description` and because the working agreement above names it. Do not wait
   for a command that does not exist, and do not treat its absence as the loop
   being optional.
-- **[`.claude/agents/`](./.claude/agents/) holds two subagent definitions** —
-  `implementer.md` and `reviewer.md` — that `loop-engineering` uses for
-  delegated implementation and the advisory pre-flight review. They are agent
-  definitions rather than skills, so the skills CLI does not carry them and
-  they never appear in `skills-lock.json`. Deleting either degrades gracefully:
-  without the implementer the loop delegates to a generic agent or runs
-  single-agent, and without the reviewer the pre-flight stage is skipped rather
-  than performed by the main actor.
-- **The opt-in quality hooks live in
-  [`.claude/settings.local-example.json`](./.claude/settings.local-example.json)**
-  and are materialized into the gitignored `settings.local.json` by
-  [`.claude/hooks/session-start.sh`](./.claude/hooks/session-start.sh) in a
-  cloud session. Local sessions skip that hook, so opting in stays manual.
-- **[`.claude/settings.json`](./.claude/settings.json) sets the default
-  reasoning effort** and wires the `SessionStart` hook. See
-  [docs/operations/agent-sessions.md](./docs/operations/agent-sessions.md) for
-  the session lifecycle and the telemetry-tagging block.
+- **[`.claude/agents/`](./.claude/agents/) holds three subagent definitions** —
+  `implementer.md`, `reviewer.md`, and `investigator.md` — that `loop-engineering`
+  uses for delegated implementation, the advisory pre-flight review, and reading
+  a large payload down to the one conclusion the main actor needs from it. They
+  are agent definitions rather than skills, so the skills CLI does not carry them
+  and they never appear in `skills-lock.json`. Deleting any of them degrades
+  gracefully: without the implementer the loop delegates to a generic agent or
+  runs single-agent, without the reviewer the pre-flight stage is skipped rather
+  than performed by the main actor, and without the investigator the main actor
+  reads the payload itself, per read, rather than a stage being skipped.
+- **How a Claude Code session starts here, its opt-in quality hooks, its
+  default reasoning effort, and its telemetry tagging are stated once in**
+  [`docs/operations/agent-sessions.md`](./docs/operations/agent-sessions.md)
+  **rather than here.**

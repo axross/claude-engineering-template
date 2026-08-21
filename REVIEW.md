@@ -65,6 +65,28 @@ skill in the finding.
   fix, per
   [Code Review](.claude/skills/code-review/SKILL.md).
 
+## Reading Beyond the Diff
+
+A change makes claims about its own boundaries — the module, document, or
+capability it names as owning a rule it defers to rather than restates. Those
+claims are checkable only against what it names, which by construction is not in
+the diff. A review confined to the changed files can confirm that a deferral was
+written; it cannot confirm the deferral is true, and it cannot see the places
+that should have carried one and do not.
+
+**Guidelines:**
+
+- MUST open whatever the change names as the owner of a rule it defers to, and
+  compare the change against what that owner actually states.
+- MUST additionally open anything whose declared scope overlaps the change's
+  topic, whether or not the change names it; a change that duplicates without
+  deferring names no owner to follow, and is the case this check most needs to
+  reach.
+- MUST treat a file being outside the diff as no exemption from reading it;
+  opening a neighbour is the cost of checking a boundary claim, not extra scope.
+- MUST NOT generalize from one compliant instance to the whole change — a single
+  correct deferral is evidence about that section and no other.
+
 ## What Is Not Evidence
 
 The author's own account of a change cannot corroborate it. A verification
@@ -93,6 +115,8 @@ bloat.
   disclosed the miss does not discharge it.
 - SHOULD re-derive a figure the review relies on rather than quoting the
   author's, and say so in the summary when it could not be re-derived.
+- MUST treat a fired tripwire as a finding wherever the expectation was recorded
+  — a band that lived only in issue prose still binds the review.
 
 ## Do Not Report
 
