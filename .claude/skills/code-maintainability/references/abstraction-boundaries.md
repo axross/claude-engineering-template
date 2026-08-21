@@ -16,6 +16,8 @@ Cohesion is what the parts of a unit are grouped by, and it decides whether an a
 | Logical                 | they are the same kind of thing, picked by a flag | not a basis for an abstraction               |
 | Coincidental            | they happened to be sitting together              | not a basis for an abstraction               |
 
+The scale is **non-linear**: functional cohesion sits far stronger than the rest, and coincidental and logical sit far weaker than the intermediate levels — so a procedural grouping should not read as nearly as strong as a communicational one just because the table lists it one row down.
+
 A unit's own name is the cheapest test of where it sits, and it reads straight off the diff without reconstructing the design:
 
 | The name                                                        | What it says about the unit                                             |

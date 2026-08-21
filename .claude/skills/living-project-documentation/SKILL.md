@@ -1,15 +1,16 @@
 ---
-name: living-product-specification
-description: Updating a project's product documentation when a change alters what it says, and reading it before planning one — a behaviour, a domain term, or a decision that constrains future work; also placing or updating a project's conventions or operational procedures once they share one docs/ tree with that documentation. Triggers on "docs/", "spec", "domain model", "glossary", "ubiquitous language", "ADR", "supersede", "the docs are stale", "is this documented anywhere", "conventions/", "operations/". Not spec-driven development — a plan drives the change and this records what became true, so "spec-first" and "generate from the spec" route elsewhere. Covers the docs/ shape, its invariants, decision records, conventions and operations, and five single-purpose validators.
+name: living-project-documentation
+description: Updating a project's own documentation when a change alters what it says, and reading it before planning one — the `docs/` tree recording what the project is and how it works now, and the mechanism that corrects it when a change makes it wrong. Triggers on "docs/", "spec", "domain model", "glossary", "ubiquitous language", "ADR", "supersede", "the docs are stale", "is this documented anywhere", "conventions/", "operations/". Not spec-driven development — a plan drives the change and this records what became true, so "spec-first" and "generate from the spec" route elsewhere; the plan document itself belongs to a PRD capability, and sentence-level craft to a technical-writing one. Covers decision records, conventions and operations, and five single-purpose validators.
 user-invocable: true
 ---
 
-# Living Product Specification
+# Living Project Documentation
 
-Use this capability to keep a project's own description of its product — what it
-is, the language its domain speaks, how it currently behaves, and the decisions
-that constrain it — true as the code changes, and to read that description
-before planning a change rather than discovering it afterwards.
+Use this capability to keep a project's own documentation — what the product is,
+the language its domain speaks, how it currently behaves, the decisions that
+constrain it, and the conventions and operational procedures the project keeps
+alongside them — true as the code changes, and to read it before planning a
+change rather than discovering it afterwards.
 
 The weight is on **upkeep**. Documentation that is only ever created is a
 liability: it accumulates claims nobody re-checks, and a reader cannot tell

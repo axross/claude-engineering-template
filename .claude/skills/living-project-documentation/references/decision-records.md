@@ -17,10 +17,20 @@ Without the second condition a log accretes one record per change and becomes
 noise the log carries forever; without the first it fills with observations
 nobody is bound by.
 
+A project whose code-quality conventions evict rationale from a code comment
+is naming a **source** of candidates, not a third condition. A comment stops
+being where that reasoning lives, but whether it still constrains future work
+and is otherwise unrecoverable from the code is exactly what the two
+conditions above already test — eviction alone earns a rationale nothing it
+would not already have earned sitting in the comment.
+
 **Guidelines:**
 
 - MUST test a candidate decision against both conditions before writing a
   record, and leave it to the change's own history when either fails.
+- MUST test rationale displaced from a code comment against both conditions
+  above like any other candidate; being evicted from a comment is never by
+  itself a reason to write a record.
 - MUST NOT write a record for a choice the code states plainly — a library's
   API, a naming convention a linter enforces, a refactor with no trade-off.
 - SHOULD write the record at the moment the decision is made, while the rejected

@@ -1,6 +1,6 @@
 ---
 name: technical-document-authoring
-description: Drafting, structuring, editing, or reviewing a technical document — a design doc, RFC, ADR, runbook, README, API reference, changelog, or post-mortem. Triggers on "make this clearer", "how should I structure this", "is this readable", "too wordy", "passive voice", "hard to follow", "tighten this prose". While authoring, each rule is a practice to uphold; while reviewing, a finding to raise against the draft. Covers naming the reader, the four Divio document types, leading with the answer, sentence-level style, choosing between prose and tables, and a plain-English vocabulary ceiling. Self-contained.
+description: Drafting, structuring, editing, or reviewing a technical document — a design doc, RFC, ADR, runbook, README, API reference, changelog, or post-mortem — and the sentence-level craft that makes any of them readable. Triggers on "make this clearer", "how should I structure this", "is this readable", "too wordy", "passive voice", "hard to follow", "tighten this prose". Not for non-software writing — marketing copy, blog posts, talks, fiction, academic papers outside software — nor for a spec's section skeleton, which a PRD capability owns. Covers naming the reader, the four Divio document types, leading with the answer, and a plain-English vocabulary ceiling. Self-contained.
 user-invocable: false
 ---
 
@@ -38,6 +38,10 @@ See [audience-and-document-types.md](./references/audience-and-document-types.md
 - Mapping common software-engineering doc forms (RFC, ADR, runbook, README, API reference) to the four types
 - The "if it isn't documented, it doesn't exist" rule and what it implies for completeness
 
+**Guidelines:**
+
+- MUST read [audience-and-document-types.md](./references/audience-and-document-types.md) before starting a new document or reorganizing an existing one — naming its reader, stating its scope and prerequisites, and settling which of the four document types it is.
+
 ## Structure and Flow
 
 See [structure-and-flow.md](./references/structure-and-flow.md) for:
@@ -49,6 +53,10 @@ See [structure-and-flow.md](./references/structure-and-flow.md) for:
 - Skimmability — descriptive headings, key concept first in the paragraph, short paragraphs
 - Progressive disclosure within a document — concept near instruction, simple before complex
 - Descriptive link text and stable anchors for addressability
+
+**Guidelines:**
+
+- MUST read [structure-and-flow.md](./references/structure-and-flow.md) before ordering a document's sections, writing or renaming a heading, opening a section that must lead with its answer, or adding a link the reader is expected to follow.
 
 ## Sentence and Word Craft
 
@@ -62,6 +70,10 @@ See [sentence-and-word-craft.md](./references/sentence-and-word-craft.md) for:
 - Acronym discipline (spell out on first use; only abbreviate when significantly shorter and reused)
 - Eliminating ambiguous pronouns (`it`, `this`, `that`, `they`) by repeating the noun or placing it near the referent
 
+**Guidelines:**
+
+- MUST read [sentence-and-word-craft.md](./references/sentence-and-word-craft.md) before editing a document at the sentence level — its voice and tense, its verbs, a term it introduces, an acronym, or a pronoun whose referent is not adjacent.
+
 ## Lists, Tables, and Code Examples
 
 See [lists-tables-and-code.md](./references/lists-tables-and-code.md) for:
@@ -74,6 +86,10 @@ See [lists-tables-and-code.md](./references/lists-tables-and-code.md) for:
 - Inline code formatting, UI-element formatting, and figure / table captions
 - Authoring diagrams in [Mermaid](https://mermaid.ai/open-source/intro/) — picking the right diagram type, embedding in ` ```mermaid ` fenced blocks, and pairing with captions and prose summaries
 
+**Guidelines:**
+
+- MUST read [lists-tables-and-code.md](./references/lists-tables-and-code.md) before turning a passage into a list, a table, a code example, or a Mermaid diagram, and before writing the lead-in sentence or caption that introduces one.
+
 ## Voice, Tone, and Maintenance
 
 See [voice-tone-and-maintenance.md](./references/voice-tone-and-maintenance.md) for:
@@ -85,3 +101,7 @@ See [voice-tone-and-maintenance.md](./references/voice-tone-and-maintenance.md) 
 - Accessibility — alt text, descriptive link text, not relying on color alone
 - Maintenance — currency over completeness, ARID (accept some repetition), single source of truth
 - Self-editing — multiple drafts, read aloud, take a break before review, cut on the second pass
+
+**Guidelines:**
+
+- MUST read [voice-tone-and-maintenance.md](./references/voice-tone-and-maintenance.md) before judging a draft's vocabulary level, its alt text, or its inclusive and non-idiomatic phrasing, and before revising a document whose content has fallen out of date.

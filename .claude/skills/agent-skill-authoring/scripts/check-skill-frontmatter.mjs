@@ -24,32 +24,24 @@ const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 const NAME_MAX = 64;
 
-// the spec states 1024 characters. it is measured here in bytes instead,
-// because that is the stricter reading and the one a host has been observed to
-// apply: Codex rejects a skill outright with "invalid description: exceeds
-// maximum length of 1024 characters", and its limit is reported to be
-// byte-measured, so a description of 1024 characters carrying any non-ASCII
-// punctuation fails to load. UTF-8 never encodes a character in fewer than one
-// byte, so a byte-conformant description is character-conformant too and one
-// check covers both readings.
+// the spec states 1024 characters; this measures bytes instead — the
+// stricter reading, and the one Codex enforces (its own rejection reports
+// "1024 characters", byte-measured). UTF-8 never encodes a character in
+// under one byte, so byte-conformant implies character-conformant too.
 const DESCRIPTION_MAX_BYTES = 1024;
 
-// a plain (unquoted) YAML scalar is read specially when it carries one of the
-// constructs below, so a `description` containing one either fails to parse or
-// — worse — parses to something other than what was written. either way the
-// skill does not load with the text its author meant, while a regex-based
-// reader like this one sees nothing wrong.
-//
-// the set is empirical, derived by running each construct through a real YAML
-// parser rather than from the specification's indicator table, because the two
-// disagree in both directions. `\` and `~` lead a plain scalar perfectly
-// legally and rejecting them would fail correct skills; `#`, and `-`/`?`/`:`
-// before a space, are hazards the indicator table alone does not obviously
-// predict. a construct is listed here only if a parser was observed to reject
-// or silently transform it.
-//
-// silent transformation is the reason this is a failure rather than a warning.
-// `a #b` parses to `a` and `&x text` parses to `text`: no error anywhere, and
+// a plain (unquoted) YAML scalar is read specially when it carries one of
+// the constructs below: it then either fails to parse, or — worse — parses
+// to something other than what was written, so the skill loads with a
+// description its author never wrote while a regex-based reader sees nothing wrong.
+
+// the set is empirical, derived from a real YAML parser rather than the
+// spec's indicator table — the two disagree in both directions. `\` and `~`
+// lead a plain scalar legally, so rejecting them would fail correct skills;
+// `#` and `-`/`?`/`:` before a space are hazards the table alone would miss.
+
+// silent transformation is why this is a failure rather than a warning:
+// `a #b` parses to `a` and `&x text` parses to `text`, no error anywhere, so
 // the skill loads carrying a description its author never wrote.
 
 // `:` before whitespace or at end of value — opens a nested mapping.
@@ -65,14 +57,13 @@ const YAML_LEADING_ALWAYS = new Set(["[", "{", "]", "}", ",", "&", "*", "!", "|"
 // `- x` is a list item, `? x` a complex key, `: x` a value.
 const YAML_LEADING_BEFORE_SPACE = new Set(["-", "?", ":"]);
 
-// the escapes YAML defines inside a double-quoted scalar, mapped to what they
-// produce. the set is closed: `\d`, `\s`, `\w` and every other undefined
-// sequence is a parse error rather than a literal backslash. accepting them
-// would reintroduce this check's own defect through the quoting path — a value
-// the validator passes and no host can load.
-//
-// verified against a real parser rather than transcribed, on the same reasoning
-// as the hazard set above.
+// the escapes YAML defines inside a double-quoted scalar, mapped to what they produce.
+// the set is closed: `\d`, `\s`, `\w`, and any other undefined sequence is a parse
+// error, not a literal backslash — accepting them would reintroduce this check's
+// defect: a value the validator passes and no host can load.
+
+// verified against a real parser rather than transcribed, on the same
+// reasoning as the hazard set above.
 const YAML_DQUOTE_ESCAPES = new Map([
   ["0", "\0"],
   ["a", "\x07"],
@@ -129,10 +120,9 @@ const DOC_VOICE_DESC_RE =
  */
 function readScalar(raw) {
   // whitespace around a scalar is syntax, not value — a parser strips it on
-  // both sides. trimming each of them matters: with only the trailing side
-  // stripped, `description:  "x"` (a second space before the quote) would not
-  // be seen as quoted at all, and would be read as plain text that happens to
-  // start with a quote character.
+  // both sides. both matter: with only the trailing side stripped,
+  // `description:  "x"` (a second space before the quote) would not be seen
+  // as quoted, and would read as plain text starting with a quote character.
   const text = raw.trim();
   if (text === "") return { value: "", error: null };
 

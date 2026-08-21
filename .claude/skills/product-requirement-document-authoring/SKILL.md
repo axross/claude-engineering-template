@@ -1,6 +1,6 @@
 ---
 name: product-requirement-document-authoring
-description: Writing, refining, or reviewing a PRD, feature spec, plan document, RFC, design doc, or issue description — including the plan-writing or issue-drafting step of any delivery workflow. Triggers on "write a PRD", "draft a spec", "refine this issue", "structure this plan", "write acceptance criteria", "how do I verify this is done", "is this requirement testable". Not for writing the code, only the document that specifies it. A canonical tool-agnostic section structure and the craft behind each section.
+description: Writing, refining, or reviewing a PRD, feature spec, plan document, RFC, design doc, or issue description — the canonical tool-agnostic section structure such a document takes, and the craft behind each section. Includes the plan-writing or issue-drafting step of any delivery workflow. Triggers on "write a PRD", "draft a spec", "refine this issue", "structure this plan", "write acceptance criteria", "how do I verify this is done", "is this requirement testable". Not for writing the code, only the document that specifies it; UI markup, module placement, and test mechanics stay with the project's own conventions.
 user-invocable: false
 ---
 

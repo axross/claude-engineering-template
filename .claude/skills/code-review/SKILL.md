@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Reviewing a code change — a pull request, a branch or commit-range diff, or a post-implementation self-review of your own work before calling it done. Not for writing the change, only for judging one that already exists. Covers the reviewer-mode reset and diff scoping, a four-tier severity scale with fixed floors, evidence-based reporting with file-line citations and fix snippets, escalation for high-risk changes, a posted/CI overlay that collapses to Important/Nit, and lenses for correctness, maintainability, security, testing, and performance. Self-contained, so it works installed on its own.
+description: Reviewing a code change — a pull request, a branch or commit-range diff, or a post-implementation self-review of your own work before calling it done. The methodology for judging whether a change already written is safe to merge, and for reporting why. Not for writing the change, only for judging one that already exists. Covers the reviewer-mode reset, diff scoping, a four-tier severity scale with fixed floors, file-line evidence with fix snippets, escalation for high-risk changes, and lenses for correctness, maintainability, security, testing, and performance. Self-contained, so it works installed on its own.
 user-invocable: false
 ---
 

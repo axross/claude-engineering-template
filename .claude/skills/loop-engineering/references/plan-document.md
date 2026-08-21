@@ -60,6 +60,27 @@ The **canonical plan content** is the issue body from its first section heading 
 - MUST decode HTML character references, numeric and named alike, before comparing — and apply no other normalization, since each further rule is another way for a real difference to be masked.
 - MUST stop before editing on a mismatch, whichever of its two causes applies: the plan moved, or the channel degraded the read. Distinguishing them is the main actor's job, not the reader's.
 
+## Plan Amendment
+
+A plan amends another issue's already-approved plan when it changes text inside an umbrella plan a different, earlier run approved — most often a later step whose plan opens against decisions an earlier step recorded. Plan Revision Identity above governs a plan revising **itself**, where the run holding the plan and the run seeking approval are the same run throughout. An amendment is different in kind: the plan being changed carries an approval of its own, granted to a human who is not the one approving the amending plan, and the amending plan's own edit is what invalidates that earlier approval.
+
+The default: the amending plan's approval carries the amendment's approval too, when **all three** of these hold.
+
+- Every replacement block the amendment will write appears **verbatim**, quoted, in the amending plan — the human approving reads the exact text the write will store, not a description of it.
+- The amended plan's **resulting** revision identity — what it will be once the write lands — is named in the amending plan **before** approval.
+- The amended plan's **current** revision identity was reproduced from its stored bytes before that replacement text was drafted, so the named resulting identity is derived rather than asserted.
+
+When any one of the three fails, the amendment MUST instead take its own approval against the amended plan's own revision identity, separately from the amending plan's approval. This is not a lesser path taken only when the default is unavailable — it is what the three conditions exist to let a run skip, and only when skipping it costs the human approving nothing they would otherwise see at a separate gate.
+
+After the write, the amended plan's stored bytes MUST be re-fetched and its revision identity re-derived from them, then compared against the identity named before approval; a mismatch MUST stop the run rather than being reconciled after the fact. The amending run's status block records the amendment's target and the resulting identity alongside whatever it already carries for a revision of its own plan.
+
+**Guidelines:**
+
+- MUST treat a plan that changes another issue's already-approved plan as an amendment, distinct from a revision of the run's own plan under Plan Revision Identity above, and identifiable without consulting either issue's history.
+- MUST let the amending plan's approval carry the amendment's approval only when all three hold: every replacement block quoted verbatim in the amending plan, the amended plan's resulting revision identity named before approval, and the amended plan's current revision identity reproduced from its stored bytes before that replacement text was drafted.
+- MUST take a separate approval against the amended plan's own revision identity whenever any one of the three conditions fails.
+- MUST re-derive the amended plan's revision identity from its stored bytes after the write, compare it against the identity named before approval, and stop the run on a mismatch rather than reconciling it after the fact.
+
 ## Archiving the Original Description
 
 The original description is provenance rather than specification, and the canonical content above already excludes it. Where the body cannot spare the room, it belongs in a marked comment instead of a collapsed section — a comment is reachable through any read channel, and a collapsed section is not.

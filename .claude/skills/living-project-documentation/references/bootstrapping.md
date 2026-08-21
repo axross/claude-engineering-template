@@ -1,6 +1,6 @@
 # Bootstrapping docs/
 
-Apply this reference when a project has no product specification and one is
+Apply this reference when a project has no `docs/` tree of its own and one is
 being started.
 
 ## Detect Before Proposing

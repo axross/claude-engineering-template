@@ -68,13 +68,13 @@ A symbol named or cased unlike its neighbors makes the reader stop to check whet
 
 A project with an established convention has already answered these questions, and its convention wins. So does a capability that owns the kind of value being named, and so does a platform or host API the value crosses into: this table is the fallback for a name nothing else governs, never an override of something that already does. Where nothing governs it, a stated vocabulary keeps two contributors from inventing two — and it makes a name carry its kind, so a reader learns what a value is without chasing its declaration.
 
-| Pattern              | Names                                                                       | Example                     |
-| -------------------- | --------------------------------------------------------------------------- | --------------------------- |
-| `is<Noun>`           | a boolean, or a function returning one, saying the subject is that noun     | `isUser`                    |
-| `is<Adjective>`      | a boolean, or a function returning one, saying the subject is in that state | `isEnabled`, `isApplicable` |
-| `<pastParticiple>At` | the instant an event happened, or will happen                               | `expiredAt`                 |
-| `<verb>In`           | the span remaining until an event happens                                   | `expiresIn`                 |
-| `<plural>`           | a list- or array-shaped value                                               | `users`                     |
+| Pattern              | Names                                                                       | Example                                     |
+| -------------------- | --------------------------------------------------------------------------- | ------------------------------------------- |
+| `is<Noun>`           | a boolean, or a function returning one, saying the subject is that noun     | `isUser`                                    |
+| `is<Adjective>`      | a boolean, or a function returning one, saying the subject is in that state | `isEnabled`, `isProcessing`, `isApplicable` |
+| `<pastParticiple>At` | the instant an event happened, or will happen                               | `expiredAt`                                 |
+| `<verb>In`           | the span remaining until an event happens                                   | `expiresIn`                                 |
+| `<plural>`           | a list- or array-shaped value                                               | `users`                                     |
 
 **Guidelines:**
 

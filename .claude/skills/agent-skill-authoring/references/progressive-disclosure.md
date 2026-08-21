@@ -2,9 +2,29 @@
 
 Apply this reference when deciding whether to split a `SKILL.md` into reference files, how to wire those files, and when a small skill should remain a single file.
 
+## The Load-Bearing Test
+
+`SKILL.md` states the test itself, as a rule — which is where the test belongs, so this section elaborates it rather than repeating it. The table still sorts a topic's content into two sides, but both sides now live in the reference: a load-bearing rule's presence is what earns that reference a conditional MUST-read obligation in `SKILL.md`, worded to the condition under which missing the rule would produce wrong output.
+
+| Load-bearing — earns a conditional MUST-read obligation in `SKILL.md` | Elaboration — stays in the reference, covered by the same obligation     |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| the rule statement itself, and its RFC-2119 bullets                   | worked examples, and the code that shows the rule applied                |
+| a fixed order, list, or closed set the output must match              | rationale, and what was rejected                                         |
+| a constraint whose violation is not self-evident from the output      | edge cases, platform adapters, and per-option tables consulted on demand |
+
+## The Unconditional-Scope Carve-Out
+
+A conditional read obligation costs a read only when its condition fires. A rule whose condition is unconditional within its own skill's scope — true on every turn that skill governs, never narrower — gains nothing from moving to a reference: the pointer would fire every time, costing a read while shaking nothing that staying in `SKILL.md` would not already have shaken.
+
+**Guidelines:**
+
+- MUST keep a rule's own statement in `SKILL.md`, not behind a reference pointer, when the rule applies on every turn within its skill's scope rather than under some narrower condition.
+- MUST still route that rule's worked examples, rationale, and edge cases into `references/`, exactly as a load-bearing rule elsewhere does; the carve-out moves where the obligation's cost falls, not the elaboration.
+- MUST treat the carve-out as the exception rather than a default: an author reaching for it states, in the change that applies it, why the rule's condition is unconditional rather than merely broad.
+
 ## References Directory Pattern
 
-Progressive disclosure keeps discovery cheap and detail available. The standard split layout is a parent `SKILL.md` plus Markdown topic files directly under a `references/` subdirectory. The parent routes agents to the right reference; each reference carries the detailed examples, edge cases, and normative rules for one topic.
+Progressive disclosure keeps discovery cheap and detail available. The standard split layout is a parent `SKILL.md` plus Markdown topic files directly under a `references/` subdirectory. The parent routes agents to the right reference and carries the conditional obligation to read it; each reference carries a load-bearing rule's own statement together with what elaborates it — worked examples, edge cases, rationale — per the test above.
 
 ```
 skill-name/
@@ -19,8 +39,8 @@ skill-name/
 - MUST use either a single `SKILL.md` or a short `SKILL.md` plus one-level-deep topic references under `references/`.
 - MUST use `references/` as the subdirectory name for split Markdown topic files unless the host project explicitly establishes a different convention.
 - MUST keep reference files directly under `references/`; do not create deeper reference nesting such as `references/security/input-validation.md`.
-- SHOULD keep parent `SKILL.md` focused on scope, routing, and when to load each reference.
-- MUST move detailed rule content into reference files once progressive disclosure is introduced.
+- SHOULD keep parent `SKILL.md` focused on scope, routing, and the conditional obligation to read each reference.
+- MUST move a topic's full content — both sides of the load-bearing test above — into reference files once progressive disclosure is introduced; `SKILL.md` states no rule's content of its own, only the obligation to read it, except under the carve-out above.
 - SHOULD keep examples, edge cases, lengthy checklists, and topic-specific procedures in reference files rather than in the parent `SKILL.md`.
 
 ## Size Thresholds
@@ -48,7 +68,7 @@ Splitting adds indirection. A small skill that is easy to scan should stay singl
 
 ## Wiring Reference Files from the Index
 
-The index should let the agent decide what to load without opening every reference. In a split skill, each reference-routing section in `SKILL.md` should use a predictable shape: a topic heading, one `See [file.md](./references/file.md) for:` line, and plain descriptive bullets that name situations, practical use cases, or specific conditions.
+The index should let the agent decide what to load without opening every reference. In a split skill, each reference-routing section in `SKILL.md` should use a predictable shape: a topic heading, one `See [file.md](./references/file.md) for:` line, plain descriptive bullets that name situations, practical use cases, or specific conditions, and — where the reference holds a load-bearing rule — a `**Guidelines:**` block carrying the obligation to read it.
 
 **Example:**
 
@@ -60,6 +80,10 @@ See [input-validation.md](./references/input-validation.md) for:
 - changing input schemas or URL decoding
 - tracing untrusted input fields into metadata, UI, and links
 - checking source URL protocol filtering and length limits
+
+**Guidelines:**
+
+- MUST read [input-validation.md](./references/input-validation.md) before changing an input schema, decoding a URL, or tracing an untrusted input field into metadata, UI, or a link.
 ```
 
 **Guidelines:**
@@ -68,7 +92,7 @@ See [input-validation.md](./references/input-validation.md) for:
 - MUST use a stable leading-dot relative link that resolves from the parent file, such as `./references/input-validation.md`.
 - MUST use the reference file name as the link label in parent routing sections, such as `[input-validation.md](./references/input-validation.md)`.
 - MUST keep parent routing bullets descriptive; do not use RFC-2119-style requirement keywords such as MUST, SHOULD, MAY, REQUIRED, RECOMMENDED, or OPTIONAL in these routing bullets.
-- MUST put normative requirement bullets in the detailed reference file, not in the parent routing section.
+- MUST place a load-bearing rule's own statement and its RFC-2119 bullets in the reference file, never in `SKILL.md`'s routing bullet list — the `See […] for:` line and the bullets under it — nor loose in `SKILL.md` outside a `**Guidelines:**` block. `SKILL.md`'s `**Guidelines:**` block, placed after that routing list, carries the obligation to read the reference instead — one bullet per reference, naming the reference and a triggering condition narrow enough to be skippable; a condition reading "before any work" or its equivalent is a defect, not a safety margin.
 - SHOULD name reference files in kebab-case.
 - SHOULD order parent sections by likely consultation order.
 
@@ -108,6 +132,6 @@ Anti-patterns are useful when they name the failure mode and the cost. They shou
 **Guidelines:**
 
 - MUST NOT split a skill for visual symmetry alone.
-- MUST NOT put detailed normative rules in both the index and a reference file.
+- MUST NOT state the same normative rule in both the index and a reference file — name which side wins rather than allowing both. A rule is stated once, in the reference that governs it; `SKILL.md`'s `**Guidelines:**` block states only the obligation to read that reference, never the rule itself. The one exception is the unconditional-scope carve-out above, where the rule is stated once in `SKILL.md` and the reference does not restate it.
 - MUST NOT create nested reference directories unless the host project has explicitly adopted that structure.
 - SHOULD remove or merge over-fragmented references before adding more.

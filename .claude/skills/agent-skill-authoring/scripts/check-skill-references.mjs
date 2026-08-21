@@ -29,24 +29,18 @@ import {
 const EXTERNAL_TARGET_RE = /^([a-z][a-z0-9+.-]*:|\/\/)/i;
 
 // routing-concreteness advisory (warnings only — see the header note).
-//
-// the abstract nouns a gestural routing bullet reaches for, held to the set the
-// rule and its examples actually enumerate. wider sets were measured on this
-// corpus and cost more than they found: `function`, `property`, `value`,
-// `field`, and `parameter` all appear in bullets that name their subject
-// perfectly well ("separating the properties a component owns from the ones its
-// consumer owns"), so including them bought noise only.
+
+// the abstract nouns a gestural routing bullet reaches for, held to the set the rule
+// and its examples enumerate. wider sets were tried and cost more than they found:
+// `function`, `property`, `value`, `field`, and `parameter` already name their subject
+// well enough, so including them bought only noise.
 const GESTURE_NOUNS =
   "flags?|limits?|files?|rules?|options?|settings?|approaches|details?|caveats?|conditions?|requirements?|thresholds?|caps?";
 
-// three refinements, each measured against the corpus rather than assumed:
-//   * emphasis markers are skipped, so a bolded gesture ("the **flag**") reads
-//     the same as a plain one — the defect is the word, not its weight;
-//   * `(?![\w-])` rather than `\b`, or "the file-notation set" matches on its
-//     "file" prefix and reports a bullet for a noun it never used;
-//   * a gerund immediately before it exempts the phrase, because "naming the
-//     file" and "separating the properties" describe an activity performed on
-//     the thing rather than withholding its name.
+// three refinements, measured against the corpus: emphasis markers are skipped, so a
+// bolded gesture still reads as one; `(?![\w-])` not `\b`, so "the file-notation set"
+// doesn't match on its "file" prefix; and a gerund right before it exempts the phrase
+// — "naming the file" performs the naming, not withholds it.
 const ROUTING_GESTURE_RE = new RegExp(
   `(?<!ing\\s)\\bthe\\s+[*_]{0,2}(?:${GESTURE_NOUNS})(?![\\w-])`,
   "i",
@@ -56,12 +50,11 @@ const ROUTING_GESTURE_RE = new RegExp(
 // breaking it. `agent-skill-authoring`'s own A2 bullet — "the flag, limit, or
 // rule by name" — is the case every hand-run count of this defect has
 // mis-flagged, so the exclusion is deliberate rather than incidental.
-//
-// held to that one phrase. "rather than" and "instead of" were tried alongside
-// it and silenced a real gesture — next-app-development's "the options that
-// change behaviour rather than tune it" — because those phrases carry no
-// connection to naming. an exclusion that hides the defect it was meant to
-// measure around is worse than the false positive it was buying off.
+
+// held to that one phrase: "rather than" and "instead of" were tried and
+// silenced a real gesture — next-app-development's "the options that change
+// behaviour rather than tune it" — because those carry no connection to
+// naming, and hiding a defect this way is worse than the false positive it bought.
 const ROUTING_META_RE = /\bby name\b/i;
 
 /**

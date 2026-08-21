@@ -23,6 +23,8 @@ Maintainability is about the next person to touch this code. Flag structure that
 
 - MUST flag a name that misdescribes what a value or function does, and identifier or file names that break the surrounding directory's established convention.
 - MUST flag dead code introduced by the change — unused imports and variables, unreachable branches, and commented-out blocks.
+- MUST flag a comment that only restates the code it sits beside; the fix is deleting the comment, not rewording it.
+- MUST flag a reference to the project's own issue or ticket tracker left in a comment outside a `TODO(#123):` comment, or outside whatever TODO convention the project documents in its place; an SPDX identifier, a linter-suppression reason, a documentation standard's reference link, and a citation of an upstream bug or specification are not violations.
 - MUST flag a magic number or string where a shared constant or token already exists, or where one clearly should.
 - SHOULD flag a new shared abstraction with fewer than two real call sites (speculative generality) and, conversely, genuinely duplicated logic that should be consolidated — but only when the duplicates are the same concern, not merely similar-looking.
 - SHOULD flag a unit whose complexity or length crosses the project's configured threshold, or that mixes several responsibilities at one level.

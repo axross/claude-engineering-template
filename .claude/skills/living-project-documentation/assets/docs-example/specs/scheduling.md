@@ -1,4 +1,4 @@
-<!-- Example. Part of the example docs tree shipped with living-product-specification. -->
+<!-- Example. Part of the example docs tree shipped with living-project-documentation. -->
 
 # Scheduling
 

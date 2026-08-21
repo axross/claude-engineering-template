@@ -1,6 +1,6 @@
 ---
 name: agent-skill-management
-description: Deciding whether material belongs in a skill at all, or in the project's own documentation instead, before deciding its tier; adding, editing, renaming, moving, or removing an agent skill in a project that keeps skills in two tiers; a `git status` showing installed copies or `skills-lock.json` out of sync with their source; or a skill you loaded turning out to be wrong, outdated, or missing a rule — including mid-task, and including when its upstream is one you do not own. The skill-or-document question, the storage and install model, the drift check, and how to route a defect found in an installed skill.
+description: Deciding whether material belongs in a skill at all or in the project's own documentation, and then which tier it lives in — the storage, install, and drift model for a project keeping skills in two tiers. Triggers on adding, editing, renaming, moving, or removing an agent skill; a `git status` showing installed copies or `skills-lock.json` out of sync with their source; and a skill you loaded turning out to be wrong, outdated, or missing a rule, including mid-task and including when its upstream is one you do not own. Covers the skill-or-document question, `npx skills` install and refresh, the drift check, and how to route a defect found in an installed skill.
 user-invocable: false
 ---
 
@@ -25,7 +25,7 @@ Before asking which tier a skill belongs in, ask whether the material should be 
 | The material is…                                               | Route it to                                                     |
 | -------------------------------------------------------------- | --------------------------------------------------------------- |
 | A rule that has to fire while a surface is being edited        | A skill — continue to [Choosing a Tier](#choosing-a-tier) below |
-| What the product is, means, does, and is constrained by        | The project's product-specification documentation               |
+| What the product is, means, does, and is constrained by        | The project's own living documentation of the product           |
 | How the project is laid out, written, built, operated, and run | The project's contributor documentation                         |
 
 The portability question below cannot make this call. A repository-layout _document_ is exactly as unportable as a repository-layout _skill_, so portability returns "no" for both — asking it first leaves a reader concluding the material must be a repository-local skill, having never asked whether it should be a skill in the first place.
@@ -34,7 +34,7 @@ The portability question below cannot make this call. A repository-layout _docum
 
 - MUST answer this question before [Choosing a Tier](#choosing-a-tier), for new material and for material a change is about to add to an existing skill.
 - MUST NOT write a skill for material an always-loaded instruction file can already route to on demand; that routing costs one line there and nothing in every other session's listing.
-- MUST retire an existing skill into documentation when this question reclassifies it — move its content into the project's product-specification or contributor documentation, and remove the skill rather than leaving both in place.
+- MUST retire an existing skill into documentation when this question reclassifies it — move its content into the project's own living documentation or its contributor documentation, and remove the skill rather than leaving both in place.
 
 ## Choosing a Tier
 

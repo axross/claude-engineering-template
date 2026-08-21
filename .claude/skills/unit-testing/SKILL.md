@@ -1,6 +1,6 @@
 ---
 name: unit-testing
-description: Writing, refactoring, reviewing, or running unit tests — including mocks and fakes, fixtures, schema and codec tests, snapshot choices, coverage questions, assertion design, or deciding whether a behavior belongs in a unit test at all. Not for end-to-end or browser tests, and not for judging overall verification-evidence adequacy. Fast, isolated checks that exercise one small exported contract from the caller's point of view, across runners such as Jest, Vitest, or Node's built-in runner. Covers naming and grouping, refactor-surviving design, boundary fakes, async assertions, and a review checklist.
+description: Writing, refactoring, reviewing, or running unit tests — fast, isolated checks that exercise one small exported contract from the caller's point of view. Triggers on mocks and fakes, fixtures, schema and codec tests, snapshot choices, coverage questions, assertion design, spec naming, or whether a behavior belongs in a unit test at all. For runner configuration and mocking APIs, use that runner's own capability — Jest, Vitest; for browser or device journeys, an end-to-end-testing one; for verification-evidence adequacy, a quality-assurance one. Covers refactor-surviving design, boundary fakes, and async assertions.
 user-invocable: false
 ---
 
