@@ -706,10 +706,18 @@ half.
   `docs/` validators. Both need a Node setup step, which is a real cost for a
   project whose stack is not Node — decide it deliberately rather than dropping
   the checks by default.
+- Delete every file under `docs/decisions/` — the project's own decision log
+  starts at its own first decision, never backfilled to explain a constraint
+  inherited from the template — and reword `docs/index.md`'s Decisions entry so
+  it no longer links a directory that is now gone.
 - Remove the "Template note" blockquote at the top of `AGENTS.md`, every
   `<!-- INIT:OPTIONAL ... -->` marker and `<!-- INIT: ... -->` fill-in comment,
-  and every "TEMPLATE NOTE" / "_delete during INIT_" line for sections you
-  decided to keep.
+  every "TEMPLATE NOTE" / "_delete during INIT_" line for sections you decided
+  to keep, and the template-state header comments in
+  [`.github/workflows/merge-checks.yaml`](./.github/workflows/merge-checks.yaml)
+  — they explain the un-adapted template's guard steps, in a workflow the
+  project keeps, so they read as leftover narration once those guard steps have
+  armed for good.
 
 ### Completion checklist
 
@@ -769,3 +777,9 @@ half.
       related links (or that section was deliberately dropped). The template's
       own README — the one titled "Claude Loop Engineering Template" — no
       longer exists.
+- [ ] `docs/decisions/` holds only records this project made: the template's
+      own decision records are deleted, and `docs/index.md`'s Decisions entry
+      no longer links a directory that is gone.
+- [ ] No kept workflow's comments still describe the un-adapted template —
+      including `.github/workflows/merge-checks.yaml`'s header, once its guard
+      steps have armed for good.
