@@ -53,9 +53,9 @@ saves.
 
 ## Subagents
 
-[`.claude/agents/`](../../.claude/agents/) holds two definitions, and it is the
-only home for either: an agent definition is not a skill, so the skills CLI
-never carries it, and it never appears in `skills-lock.json`.
+[`.claude/agents/`](../../.claude/agents/) holds three definitions, and it is
+the only home for any of them: an agent definition is not a skill, so the
+skills CLI never carries it, and it never appears in `skills-lock.json`.
 
 `implementer.md` is the worker `loop-engineering` delegates Code and Verify to.
 It pins a lower-cost model, because a worker inheriting the session's model runs
@@ -72,18 +72,32 @@ reviewer that cannot reach one of those does not fail to start — it returns a
 report short by exactly those checks, and an under-equipped review reads exactly
 like a clean one.
 
-Deleting either file degrades gracefully rather than breaking the loop. Without
-the implementer, the loop delegates to a generic agent or runs single-agent;
-without the reviewer, the pre-flight stage is skipped rather than performed by
-the main actor, which is what keeps it from collapsing into self-review.
+`investigator.md` is the reader for a payload the main actor needs only one
+conclusion from — a log, a long thread, a wide search across files or history,
+a file tree — so that payload never enters the main actor's own context. It
+returns a conclusion and a locator precise enough to go back to the source,
+never the payload itself, which is what keeps the read cheap on the caller's
+side. Like the reviewer, it denies editing and spawning; it decides nothing the
+material does not itself settle, sending an unresolved judgment call back to
+whoever asked.
+
+Deleting any of the three files degrades gracefully rather than breaking the
+loop. Without the implementer, the loop delegates to a generic agent or runs
+single-agent; without the reviewer, the pre-flight stage is skipped rather than
+performed by the main actor, which is what keeps it from collapsing into
+self-review; without the investigator, the main actor reads the payload itself,
+per read, paying in its own context what delegating the read would otherwise
+have saved.
 
 ## Telemetry Tagging
 
-[`.claude/settings.json`](../../.claude/settings.json) carries an `env` block
+[`.claude/settings.json`](../../.claude/settings.json) also sets the session's
+default reasoning effort (`effortLevel`; ships as `xhigh`) and wires the
+`SessionStart` hook described above. Its telemetry piece is an `env` block
 stamping the repository name and the session's launch surface onto the
 OpenTelemetry resource attributes Claude Code exports, so this project's usage
 separates from every other repository sharing an account or a cloud
-environment. It configures nothing else — no endpoint, no credential, no
+environment. That block configures nothing else — no endpoint, no credential, no
 `CLAUDE_CODE_ENABLE_TELEMETRY` — so a contributor who has never set telemetry
 up sees no behavior change from it.
 

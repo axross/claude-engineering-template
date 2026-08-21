@@ -9,8 +9,15 @@ library and are copied in with the
 [vercel-labs/skills](https://github.com/vercel-labs/skills) CLI, pinned by
 [`skills-lock.json`](../../skills-lock.json). This project owns no skill of its
 own — its conventions and operating procedures are the documents you are
-reading. Why that is so, and what it costs, is in
-[../decisions/2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md](../decisions/2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md).
+reading. Two costs come with that choice. Refreshing needs Node and network
+access, because `npx skills` fetches from the library over the network; the
+installed skills themselves are plain Markdown, so this cost falls on
+refreshing, not on every session. And the library is not this project's own: a
+rule that turns out wrong, outdated, or silent on a case here cannot be fixed by
+editing the installed copy, because the next install discards the edit while it
+poses as a rule the library agrees with — see
+[Deviations and Gaps](#deviations-and-gaps) below for how that is handled
+instead.
 
 ## Install and Refresh
 
@@ -52,6 +59,38 @@ Installing a skill does not prove a host loaded it. That is not observable from
 inside the session that changed the tree, because skills are read at session
 start — so confirm it once in a **fresh** session with `/context`, which is what
 proves the installed directories were picked up.
+
+### When Upstream Renames a Skill
+
+The refresh command above breaks on a rename rather than absorbing it: the
+lockfile still holds the old name, so the `--skill` list it derives asks the
+library for a name that no longer resolves in its catalogue, and the run fails
+on that one name instead of refreshing anything. Run the install once by hand
+in that case, naming every surviving skill plus the new name explicitly, rather
+than deriving the list from the lockfile:
+
+```bash
+npx skills add axross/skills --agent claude-code --yes --copy \
+  --skill <surviving-skill> --skill <surviving-skill> --skill <new-name>
+```
+
+Remove the stale skill with `npx skills remove <old-name>` rather than deleting
+its directory by hand — the CLI is what rewrites `skills-lock.json`, and a
+directory removed without it leaves the lockfile still claiming a skill that is
+no longer on disk.
+
+The rename is not finished at the lockfile. Every repository-side reference to
+the old name — a workflow step or script that executes the skill's own scripts
+by path, and any prose that names it — is carried in the same change, not left
+for later. That includes the `for check in
+.claude/skills/<name>/scripts/check-*.mjs` pattern this project uses to run a
+skill's validators: pointed at a directory that no longer exists, the glob
+expands to nothing, and — without `nullglob` — the shell passes the literal,
+unexpanded pattern through, so the command that receives it fails loudly (a
+"cannot find module" error, not a silent no-op). A stale path here is caught,
+not swallowed, but only once something runs the command; naming the old
+directory in `skills-lock.json` and in the affected files is what prevents that
+in the first place.
 
 ## Deviations and Gaps
 
@@ -106,8 +145,8 @@ for a project that has not departed from an installed rule. -->
 `application-security` presents itself as an OWASP Top 10 lens, and OWASP's
 A07 is Identification and Authentication Failures. Its references cover
 secrets, input validation, injection, SSRF, privacy and exposure, and supply
-chain — but nothing on authentication itself. Two rule classes this template
-previously carried have no home in the installed set:
+chain — but nothing on authentication itself. Two rule classes this project
+needs have no home in the installed set:
 
 - **Lockout thresholds.** A lockout duration below 5 minutes, a max-attempt
   count above 5, or the removal of the lockout configuration block entirely.
