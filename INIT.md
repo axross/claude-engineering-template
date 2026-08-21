@@ -495,10 +495,11 @@ Then configure the two fixed pieces:
 
 This is where the project's own knowledge goes: its conventions, its
 operational procedures, what its product does, and the decisions that constrain
-it. **Not into skills.** The reasoning is recorded in
-[docs/decisions/2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md](./docs/decisions/2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md);
-the short version is that a hand-written project skill duplicates what an
-installed one already says, and drifts from it silently.
+it. **Not into skills.** A hand-written project skill duplicates what an
+installed one already says, and drifts from it silently. This repository's own
+reasoning is in `docs/decisions/2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md`,
+named rather than linked because Step 7 deletes that log — nothing outside
+`docs/decisions/` may depend on a record still being there.
 
 The `living-project-documentation` skill owns the shape, the document format,
 and the validators. **Load it and follow it** — this step states only what INIT
