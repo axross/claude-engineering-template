@@ -178,7 +178,7 @@ PY
     # so this section is inert until the project adopts docs/ (INIT Step 5).
     if command -v node >/dev/null 2>&1; then
       docs_failed=0
-      for check in "$ROOT"/.claude/skills/living-product-specification/scripts/check-*.mjs; do
+      for check in "$ROOT"/.claude/skills/living-project-documentation/scripts/check-*.mjs; do
         node "$check" || docs_failed=1
       done
       # same reason as above: report, do not abort the run.

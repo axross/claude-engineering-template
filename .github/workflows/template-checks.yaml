@@ -58,7 +58,7 @@ jobs:
       - name: Check docs/
         run: |
           failed=0
-          for check in .claude/skills/living-product-specification/scripts/check-*.mjs; do
+          for check in .claude/skills/living-project-documentation/scripts/check-*.mjs; do
             echo "::group::$(basename "$check")"
             node "$check" || failed=1
             echo "::endgroup::"
