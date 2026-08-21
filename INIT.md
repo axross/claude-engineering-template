@@ -13,13 +13,14 @@ Code** project. It ships:
   `skills-lock.json`. They are generated artifacts, not template content: a
   hand-edit is discarded by the next install. Step 4 adds the stack-specific
   ones.
-- `.claude/agents/` — the `implementer` and `reviewer` subagent definitions
-  `loop-engineering` delegates to.
+- `.claude/agents/` — the `implementer`, `reviewer`, and `investigator`
+  subagent definitions `loop-engineering` delegates to.
 - `.claude/**` — the rest of the **Claude Code** harness binding (hooks +
   settings).
 - `docs/` — the project's own knowledge, in the shape
-  `living-product-specification` defines. The template ships `index.md`, three
-  `operations/` documents, and one decision record; Step 5 grows the rest.
+  `living-project-documentation` defines. The template ships `index.md`, three
+  `operations/` documents, one `conventions/` document, and two decision
+  records; Step 5 grows the rest.
 - `README.template.md` — a seed for the initialized project's own README
   (summary, tech stack, getting started, development workflow, testing,
   related links), finalized into `README.md` in Step 7.
@@ -53,7 +54,7 @@ working setup for one concrete project.
 >   `agent-skill-authoring/scripts/check-links.mjs` for relative-link integrity
 >   across the whole tree — **including** the `.claude/` dot-directory a
 >   `glob('**/*.md')` sweep silently skips — and the five
->   `living-product-specification/scripts/check-*.mjs` validators over `docs/`,
+>   `living-project-documentation/scripts/check-*.mjs` validators over `docs/`,
 >   which stay inert until `docs/index.md` exists. Both need Node, which
 >   refreshing skills needs anyway.
 
@@ -499,25 +500,32 @@ it. **Not into skills.** The reasoning is recorded in
 the short version is that a hand-written project skill duplicates what an
 installed one already says, and drifts from it silently.
 
-The `living-product-specification` skill owns the shape, the document format,
+The `living-project-documentation` skill owns the shape, the document format,
 and the validators. **Load it and follow it** — this step states only what INIT
 adds on top.
 
 ### What ships, and what you add
 
-The template ships `docs/index.md`, three `operations/` documents, and one
-decision record. It ships **no** `conventions/`, no `specs/`, and no
-`glossary.md`, because it has no source tree and no product of its own — and
-an empty document is worse than a missing one: it is indistinguishable from a
-subject nobody has considered, and it makes the index claim coverage `docs/`
-does not have.
+The template ships `docs/index.md`, three `operations/` documents, one
+`conventions/` document, and two decision records. It ships **no** `specs/`
+and no `glossary.md`, because it has no source tree and no product of its own
+— and an empty document is worse than a missing one: it is indistinguishable
+from a subject nobody has considered, and it makes the index claim coverage
+`docs/` does not have.
+
+The one `conventions/` document is the exception:
+[`conventions/documentation.md`](./docs/conventions/documentation.md) states
+what is true of every repository created from this template — how its own
+`docs/` is kept true — and nothing else under `conventions/` can make that
+claim, because everything else there is specific to a source tree the
+template does not have.
 
 Copy the shape from the worked example the skill ships — seven files across two
 domains, demonstrating every relational rule — rather than starting from a
 blank template:
 
 ```
-.claude/skills/living-product-specification/assets/docs-example/
+.claude/skills/living-project-documentation/assets/docs-example/
 ```
 
 ### The write order
@@ -656,11 +664,11 @@ the shape below.
   adapted toolchain block in `session-start.sh` for the project's runtime (the
   example activates `mise` when it is already present). Delete any hook the
   project does not want, and its entry in the settings file above.
-- `.claude/agents/` holds `implementer.md` and `reviewer.md`. Neither carries
-  project-specific text, so neither needs adapting; both are outside the skills
-  CLI, so refreshing skills never updates them — copy a newer version by hand
-  if upstream changes one. Deleting either degrades the loop gracefully rather
-  than breaking it.
+- `.claude/agents/` holds `implementer.md`, `reviewer.md`, and
+  `investigator.md`. None carries project-specific text, so none needs
+  adapting; all three are outside the skills CLI, so refreshing skills never
+  updates them — copy a newer version by hand if upstream changes one. Deleting
+  any of them degrades the loop gracefully rather than breaking it.
 - The session-start hook materializes `settings.local.json` and `.env.local`.
   The template ships a `.gitignore` that excludes both (the
   `application-security` skill assumes they are gitignored) — keep those entries
