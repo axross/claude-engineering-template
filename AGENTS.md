@@ -55,9 +55,9 @@ paid. Link only — never copy a document's content into this file. -->
 | Kind of change | Document |
 | -------------- | -------- |
 | A project run-script command | [README.md](./README.md) |
-| The change loop, branch governance, the implementer, reviewer, or investigator agent | [docs/operations/development-workflow.md](./docs/operations/development-workflow.md) |
+| The change loop or branch governance | [docs/operations/development-workflow.md](./docs/operations/development-workflow.md) |
 | Installing or refreshing a skill | [docs/operations/agent-skills.md](./docs/operations/agent-skills.md) |
-| How an agent session starts, its hooks, or its telemetry | [docs/operations/agent-sessions.md](./docs/operations/agent-sessions.md) |
+| How an agent session starts, its hooks, its subagents, or its telemetry | [docs/operations/agent-sessions.md](./docs/operations/agent-sessions.md) |
 | Why a past decision still constrains current work | [docs/decisions/](./docs/decisions) |
 | Adding, renaming, or correcting a document under `docs/` | [docs/conventions/documentation.md](./docs/conventions/documentation.md) |
 

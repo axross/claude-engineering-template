@@ -145,8 +145,8 @@ for a project that has not departed from an installed rule. -->
 `application-security` presents itself as an OWASP Top 10 lens, and OWASP's
 A07 is Identification and Authentication Failures. Its references cover
 secrets, input validation, injection, SSRF, privacy and exposure, and supply
-chain — but nothing on authentication itself. Two rule classes this project
-needs have no home in the installed set:
+chain — but nothing on authentication itself. Two rule classes any project with
+a login needs have no home in the installed set:
 
 - **Lockout thresholds.** A lockout duration below 5 minutes, a max-attempt
   count above 5, or the removal of the lockout configuration block entirely.

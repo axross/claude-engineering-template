@@ -23,6 +23,11 @@ a transient network failure into a failed session start — a failure that
 surfaces as every later command missing its tools rather than as an install
 error.
 
+The hook is wired in [`.claude/settings.json`](../../.claude/settings.json),
+which also sets the session's default reasoning effort — `effortLevel`, shipped
+as `xhigh`. Both are read at session start, so a change to either reaches only
+the next session.
+
 The reminder it echoes names `AGENTS.md` rather than `CLAUDE.md` on purpose.
 `CLAUDE.md` is an `@AGENTS.md` import, which is a Claude Code mechanism; a host
 that does not resolve imports would read the literal import line instead of the
@@ -91,13 +96,11 @@ have saved.
 
 ## Telemetry Tagging
 
-[`.claude/settings.json`](../../.claude/settings.json) also sets the session's
-default reasoning effort (`effortLevel`; ships as `xhigh`) and wires the
-`SessionStart` hook described above. Its telemetry piece is an `env` block
+[`.claude/settings.json`](../../.claude/settings.json) carries an `env` block
 stamping the repository name and the session's launch surface onto the
 OpenTelemetry resource attributes Claude Code exports, so this project's usage
 separates from every other repository sharing an account or a cloud
-environment. That block configures nothing else — no endpoint, no credential, no
+environment. It configures nothing else — no endpoint, no credential, no
 `CLAUDE_CODE_ENABLE_TELEMETRY` — so a contributor who has never set telemetry
 up sees no behavior change from it.
 

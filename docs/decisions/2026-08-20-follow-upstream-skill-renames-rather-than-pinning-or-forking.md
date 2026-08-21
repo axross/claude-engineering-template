@@ -16,6 +16,12 @@ example tree under the new name. The rename did not stay inside the library.
 Two files here ran that skill's `docs/` validators by path, and four documents
 named it in prose, so a rename made upstream was a rename owed here.
 
+Installing these skills from a shared library rather than authoring them here
+was settled in
+`2026-08-11-install-skills-from-a-shared-library-rather-than-authoring-them.md`,
+and that still holds. What it left open is what this project owes when the
+library renames one of the skills it installs.
+
 Reinstalled every skill under the new name and carried the rename through this
 repository in the same change. The alternative of pinning the previous upstream
 revision was rejected: it would freeze eleven other skills' improvements to
