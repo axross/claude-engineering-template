@@ -13,23 +13,6 @@ one. -->
 <!-- INIT: expand the one-liner above into a short paragraph from the Step-1
 interview — what the project is, who it serves, and its current goal. -->
 
-## Tech stack
-
-| Area | Tool |
-| ---- | ---- |
-| Language | {{PRIMARY_LANGUAGE}} |
-| App framework / runtime | {{APP_FRAMEWORK}} |
-| Package manager | {{PACKAGE_MANAGER}} |
-| Linting & formatting | {{LINTER}} / {{FORMATTER}} |
-| Unit tests | {{UNIT_TEST_FRAMEWORK}} <!-- INIT:OPTIONAL key=UNIT_TESTS — fill the token OR delete this row if the project has no unit suite. --> |
-| E2E tests | {{E2E_TEST_FRAMEWORK}} <!-- INIT:OPTIONAL key=E2E_TESTS — fill the token OR delete this row if the project has no e2e suite. --> |
-| Data / content layer | {{CMS_OR_DATA_LAYER}} <!-- INIT:OPTIONAL key=DATA_LAYER — fill the token OR delete this row if the project has no data/content layer. --> |
-| Hosting | {{HOSTING_PLATFORM}} <!-- INIT:OPTIONAL key=HOSTING — fill the token OR delete this row if the project has no hosting platform yet. --> |
-
-<!-- INIT: add rows a newcomer needs from the Stack Decision Record (state
-management, styling, ORM/db wrapper, error tracker, logger, …); keep the table
-to what the project actually uses. -->
-
 ## Getting started
 
 1. Install dependencies: `{{INSTALL_CMD}}`
@@ -136,6 +119,23 @@ reading this file before running any of them.
 
 If a required command cannot be run, say so — naming the command, the reason,
 and the residual risk — rather than presenting the change as fully verified.
+
+## Tech stack
+
+| Area | Tool |
+| ---- | ---- |
+| Language | {{PRIMARY_LANGUAGE}} |
+| App framework / runtime | {{APP_FRAMEWORK}} |
+| Package manager | {{PACKAGE_MANAGER}} |
+| Linting & formatting | {{LINTER}} / {{FORMATTER}} |
+| Unit tests | {{UNIT_TEST_FRAMEWORK}} <!-- INIT:OPTIONAL key=UNIT_TESTS — fill the token OR delete this row if the project has no unit suite. --> |
+| E2E tests | {{E2E_TEST_FRAMEWORK}} <!-- INIT:OPTIONAL key=E2E_TESTS — fill the token OR delete this row if the project has no e2e suite. --> |
+| Data / content layer | {{CMS_OR_DATA_LAYER}} <!-- INIT:OPTIONAL key=DATA_LAYER — fill the token OR delete this row if the project has no data/content layer. --> |
+| Hosting | {{HOSTING_PLATFORM}} <!-- INIT:OPTIONAL key=HOSTING — fill the token OR delete this row if the project has no hosting platform yet. --> |
+
+<!-- INIT: add rows a newcomer needs from the Stack Decision Record (state
+management, styling, ORM/db wrapper, error tracker, logger, …); keep the table
+to what the project actually uses. -->
 
 ## Related links
 
