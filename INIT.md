@@ -6,8 +6,8 @@ Code** project. It ships:
 - `AGENTS.md` — the working agreement plus the **Routing a Change** table that
   points at `docs/`. It carries no skill index: installed skills route on their
   own `description`, and a second list would only be a ledger to keep in sync.
-- `CLAUDE.md` — `@AGENTS.md`, plus the half of the agreement that is true of
-  Claude Code and of no other host.
+- `CLAUDE.md` — `@AGENTS.md`, and nothing else: the working agreement lives
+  entirely in `AGENTS.md`, host-neutral.
 - `.claude/skills/**` — **17 skills installed from
   [axross/skills](https://github.com/axross/skills)**, pinned by
   `skills-lock.json`. They are generated artifacts, not template content: a
@@ -22,7 +22,7 @@ Code** project. It ships:
   `operations/` documents, one `conventions/` document, and two decision
   records; Step 5 grows the rest.
 - `README.template.md` — a seed for the initialized project's own README
-  (summary, tech stack, getting started, development workflow, testing,
+  (summary, getting started, development workflow, testing, tech stack,
   related links), finalized into `README.md` in Step 7.
 
 Everything project-specific has been replaced with `{{TOKEN}}` placeholders or
@@ -89,8 +89,8 @@ merge rather than clobber:
   file stays committable.
 - **Existing `README.md`** (a real project README, not this template's own) —
   do **not** let Step 7's finalize clobber it: fold `README.template.md`'s
-  sections (summary, tech stack, getting started, development workflow,
-  testing, related links) into the existing README there instead of renaming
+  sections (summary, getting started, development workflow, testing, tech
+  stack, related links) into the existing README there instead of renaming
   the seed over it, then delete the seed.
 - **Existing `.claude/`** — merge directory-by-directory; never
   replace wholesale.
@@ -680,8 +680,8 @@ The Claude Code binding is the only one to set up — there is no per-agent choi
 to make. A project that later wants to drive the same `AGENTS.md`, skills, and
 `docs/` from another agent adds that binding itself, outside INIT, by pointing
 the agent at `AGENTS.md`; the portable substance already supports it, which is
-why `AGENTS.md` holds the agreement and `CLAUDE.md` holds only the Claude-specific
-half.
+why `AGENTS.md` holds the whole agreement and `CLAUDE.md` holds nothing but the
+import.
 
 ---
 
@@ -692,14 +692,14 @@ half.
   README — but when the repository already had its own real README, merge the
   seed's sections into it instead and delete the seed; see Step 0),
   then complete it against the Stack Decision Record and the Step-1 answers —
-  expand the quick summary into a short paragraph, trim the Tech stack table
-  to what the project actually uses, verify the Getting-started commands run,
-  resolve the Development-workflow and Testing markers against the kept
-  capabilities, and fill Related links (or delete that section) — and delete
+  expand the quick summary into a short paragraph, verify the Getting-started
+  commands run, resolve the Development-workflow and Testing markers against
+  the kept capabilities, trim the Tech stack table to what the project
+  actually uses, and fill Related links (or delete that section) — and delete
   every `<!-- INIT… -->` comment in it. The finished README MUST cover: a
-  quick summary, the tech stack, getting started, the development workflow
-  (including the change loop, which is fixed infrastructure), the testing
-  strategy and its commands, and related links (when applicable).
+  quick summary, getting started, the development workflow (including the
+  change loop, which is fixed infrastructure), the testing strategy and its
+  commands, the tech stack, and related links (when applicable).
 - Run `./init.sh check` and resolve everything it reports.
 - Walk the completion checklist below **while the INIT tooling still exists** —
   several items run `./init.sh check`, and checking them after the deletion
@@ -781,8 +781,8 @@ half.
 - [ ] The README seed is finalized: `README.template.md` is gone (renamed
       over — or merged into — `README.md`), no `<!-- INIT… -->` comment or
       `{{TOKEN}}` remains in
-      `README.md`, and it covers the quick summary, tech stack, getting
-      started, development workflow, testing strategy and commands, and
+      `README.md`, and it covers the quick summary, getting started,
+      development workflow, testing strategy and commands, tech stack, and
       related links (or that section was deliberately dropped). The template's
       own README — the one titled "Claude Loop Engineering Template" — no
       longer exists.

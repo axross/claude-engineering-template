@@ -18,7 +18,7 @@ service.
 ├── README.template.md       # seed for the initialized project's README (finalized in INIT Step 7)
 ├── .gitignore               # ignores settings.local.json + .env.local (see INIT Step 6)
 ├── AGENTS.md                # working agreement + the Routing a Change table
-├── CLAUDE.md                # @AGENTS.md + the Claude-Code-specific half
+├── CLAUDE.md                # nothing but the @AGENTS.md import
 ├── REVIEW.md                # fixed: posted-review policy for the independent-review channel
 ├── skills-lock.json         # what is installed under .claude/skills/, and from where
 ├── docs/                    # this project's own knowledge — index, conventions, operations, decisions
