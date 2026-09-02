@@ -19,8 +19,7 @@ A functional requirement describes the state of the world after the work — fro
 
 **Guidelines:**
 
-- MUST phrase each requirement as an observable "what should be" statement from the user's perspective, not a "what to do" task.
-- MUST NOT name components, functions, files, or other implementation vehicles inside a functional requirement; those belong in System design or the implementation itself.
+- MUST phrase each requirement as an observable "what should be" statement from the user's perspective, not a "what to do" task, per [Beneficiary Framing](../SKILL.md#beneficiary-framing).
 - MUST keep each requirement atomic and concretely checkable, per [problem-and-scope.md › Concrete, Checkable Language](./problem-and-scope.md#concrete-checkable-language).
 
 ## Guide-Level Before Reference-Level

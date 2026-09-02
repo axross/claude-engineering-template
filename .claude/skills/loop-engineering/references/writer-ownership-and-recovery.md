@@ -22,7 +22,7 @@ The run tracks exactly one writer at a time: no writer, the main actor, or one w
 
 A harness may run the worker in the background, which makes the main actor _look_ free. It is not: the worker holds the only writer lease, and anything the main actor does to the checkout races it.
 
-After spawning, the main actor waits for completion, a decision escalation, a permission request, an interruption, or an explicit failure. [subagent-delegation.md](./subagent-delegation.md#writer-versus-reader) states why a read-only reviewer is not the second implementation worker this window's prohibition reaches, and why the pre-flight stage that spawns one runs only once this window has closed.
+After spawning, the main actor waits for completion, a decision escalation, a permission request, an interruption, or an explicit failure. [subagent-delegation.md](./subagent-delegation.md#writer-versus-reader) states why a read-only reviewer is not the second implementation worker this window's prohibition reaches, and why the pre-flight stage that spawns one runs only once this window has closed. This window is a machine wait like any other in the loop; [waiting-and-dormancy.md](./waiting-and-dormancy.md) covers how to hold it open — polling inside the cache boundary, or collapsing into a single dormancy — without paying more than the wait requires.
 
 **Guidelines:**
 

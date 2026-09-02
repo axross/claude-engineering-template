@@ -14,7 +14,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 
 import { scanLines } from "./commonmark.mjs";
-import { RFC2119_RE } from "./guidelines.mjs";
+import { RFC2119_RE, ROUTING_LINE_RE } from "./guidelines.mjs";
 import {
   isDir,
   runCli,
@@ -138,7 +138,12 @@ function documentLinks(body) {
  * `**Guidelines:**` boundary: two readers ask different questions of a routing
  * bullet — "does it open with an RFC-2119 keyword?" (a failure) and "does it
  * name what it points at?" (an advisory) — and a second copy of this boundary
- * would let them disagree about which bullets are routing bullets at all.
+ * would let them disagree about which bullets are routing bullets at all. A
+ * third reader now asks a third question of the routing list itself — "what
+ * `**Guidelines:**` block, if any, does this list introduce?" — in
+ * check-skill-body.mjs's routing-block rule, which is why the `See […] for:`
+ * line pattern lives in guidelines.mjs as `ROUTING_LINE_RE` rather than here:
+ * that boundary must not be defined twice either.
  *
  * @yields {{ line: number, section: string, rule: string }} `line` is 1-based
  *   within `body`; `rule` is the bullet's trimmed text.
@@ -158,7 +163,7 @@ function* routingBullets(body) {
       seenBullet = false;
       continue;
     }
-    if (/See \[[^\]]+\.md\]\(\.\/references\/[^)]+\) for:/.test(text)) {
+    if (ROUTING_LINE_RE.test(text)) {
       inRouting = true;
       seenBullet = false;
       continue;

@@ -20,7 +20,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 You are the only long-lived actor, and stay so even when implementation is delegated: Code + Verify and mechanical fixes MAY run in one bounded worker at a time where the harness exposes a qualifying one, and in you where it does not. Delegation changes who edits, never what must be approved, verified, or independently reviewed (see [Delegated Implementation](#delegated-implementation)).
 
-Advance the work as far as you can autonomously within each phase, and stop the turn whenever the next step needs a human, so an idle run consumes nothing. A stopped run is resumed by one of three triggers:
+Advance the work as far as you can autonomously within each phase, and stop the turn whenever the next step needs a human — ending the turn this way costs nothing until they return. Going dormant to wait on a machine event is a different outcome, priced differently; the two are not one class, and [waiting-and-dormancy.md](./references/waiting-and-dormancy.md) below states why. A stopped run is resumed by one of three triggers:
 
 - **A machine event that completes on its own** — CI, or the independent review this flow requests. Take the event where the harness delivers it into the session, and keep a scheduled self-wake as the backstop for the transitions delivery does not carry (in Claude Code, a pull-request activity subscription alongside `send_later`; in Codex, its own equivalents, and where a harness provides neither, end the turn instead of waiting) — see [Phase 3](#phase-3--request-independent-review); only when a machine event is _stuck_ do you record state, end the turn, and wait for the human.
 - **The mandatory plan-approval gate** — after the plan is written the run **always** stops for the human to verify it before any implementation (see [Phase 1](#phase-1--plan)). Record the plan in the issue, mark the status block `awaiting plan approval`, and end the turn.
@@ -37,6 +37,17 @@ Advance the work as far as you can autonomously within each phase, and stop the 
 - MUST treat the running session as the primary state store; write durable status to GitHub only as a recovery breadcrumb (see [Run State and Reporting](#run-state-and-reporting)), not as the mechanism of record.
 - MUST keep each externally observable step idempotent, so a resume re-reads state and continues rather than duplicating work.
 - MUST keep judgment, human interaction, approval, GitHub delivery, and merge readiness with you whether or not implementation is delegated; a worker never becomes a second loop driver, and single-agent execution weakens no gate.
+
+See [waiting-and-dormancy.md](./references/waiting-and-dormancy.md) for:
+
+- the three-tier cache-cost model behind every wait, and how to measure your own project's boundary
+- choosing between polling inside that boundary and collapsing into a single dormancy, given as a derivation rather than a fixed interval
+- the ten waiting places in this loop, classified as a human wait or a machine wait, each with the mechanism that family uses
+- why ending a turn and going dormant carry opposite costs
+
+**Guidelines:**
+
+- MUST read [waiting-and-dormancy.md](./references/waiting-and-dormancy.md) before choosing how to wait at any point this loop stops — a human gate, a delegated worker, a machine event, or the CI-and-review tail.
 
 ## Asking the Human
 
@@ -123,11 +134,13 @@ See [context-ownership.md](./references/context-ownership.md) for:
 
 - which reads stay in the main actor's own context, and which go to an investigator instead
 - the investigator role, defined by nothing but what it is given to read and what it returns
+- narrowing a read at the tool boundary, when exact bytes of only part of a payload are wanted, rather than delegating it or reading it whole
+- the investigator task protocol — target, question, and return shape as its three inputs; `verdict`, `list`, and `extract` as its three output shapes; and why it gets no read budget
 - the return contract that keeps an investigator from handing back source text in place of a conclusion
 
 **Guidelines:**
 
-- MUST read [context-ownership.md](./references/context-ownership.md) before deciding whether to read a large payload itself or hand it to an investigator, and before reading back what an investigator returns.
+- MUST read [context-ownership.md](./references/context-ownership.md) before deciding whether to read a large payload itself or hand it to an investigator, before tasking an investigator, and before reading back what an investigator returns.
 
 ## Intake — Identify the Unit of Work
 
@@ -161,8 +174,14 @@ See [resuming-and-handoff.md](./references/resuming-and-handoff.md) for:
 
 Turn the target into a buildable specification recorded in the issue. Two gates stop the run for the human before Code, in order: the clarify-before-building gate, then the plan-approval gate.
 
+**Guidelines:**
+
+- MUST establish the harness-permission determination from [Delegated Implementation](#delegated-implementation) before the first Phase 1 investigation read a subagent could carry, on every run and regardless of whether a policy statement was noticed, landing on permitted, barred, or undetermined; where that determination needs a question, the single per-run question covers every role the run may spawn, the investigator included, so no later executor resolution re-asks it.
+- MUST settle where a wide investigation read lands before making it, as the investigation step below directs, rather than letting the question surface once the payload is already in your own context.
+
 See [plan-document.md](./references/plan-document.md) for:
 
+- writing the plan as the change its beneficiary observes, who that beneficiary is, and the two exceptions — a path or identifier that is itself an acceptance criterion, and an illustrative System design snippet
 - the canonical plan structure and each section's craft
 - writing acceptance criteria as a plain, checkable bullet list
 - the canonical plan content's boundary, the revision identity approval binds to, and the one normalization applied before comparing
@@ -173,12 +192,10 @@ See [plan-document.md](./references/plan-document.md) for:
 **Guidelines:**
 
 - MUST read [plan-document.md](./references/plan-document.md) before writing or revising the plan in the issue body, before comparing a plan revision's identity, and before writing a plan that amends another issue's already-approved plan.
-- MUST establish the harness-permission determination from [Delegated Implementation](#delegated-implementation) before the first Phase 1 investigation read a subagent could carry, on every run and regardless of whether a policy statement was noticed, landing on permitted, barred, or undetermined; where that determination needs a question, the single per-run question covers every role the run may spawn, the investigator included, so no later executor resolution re-asks it.
-- MUST settle where a wide investigation read lands before making it, as the investigation step below directs, rather than letting the question surface once the payload is already in your own context.
 
 Then step through the phase:
 
-- Read the issue (or the tracking issue) and its full thread, classify the work — UI-bearing, implementation-only, exploratory, or mixed — and investigate the smallest useful code and documentation context before proposing a plan. Consult every project skill whose routing condition matches the surface, and research current external docs when behavior depends on a fast-moving framework or platform the project uses. Where a read is wide only for one conclusion — a broad code search, a long thread, a file tree merely being located in — route it per [context-ownership.md](./references/context-ownership.md#the-boundary-and-the-return-contract) rather than carrying it into your own context directly.
+- Read the issue (or the tracking issue) and its full thread, classify the work — UI-bearing, implementation-only, exploratory, or mixed — and investigate the smallest useful code and documentation context before proposing a plan. Consult every project skill whose routing condition matches the surface, and research current external docs when behavior depends on a fast-moving framework or platform the project uses. Where a read is wide only for one conclusion — a broad code search, a long thread, a file tree merely being located in — route it per [context-ownership.md](./references/context-ownership.md#the-boundary) rather than carrying it into your own context directly.
 - **Clarify before building — required gate.** Investigation resolves _how_ to build; it does not resolve _what the product should do_. Before finalizing the plan, list every open item the spec leaves and sort each one:
   - **Settle-and-note** — a fact the environment can answer: code, project conventions, documentation, or the output of a command. Resolve it by investigation and record the choice as a stated assumption in the plan.
   - **Must-ask** — a decision needing human judgment: a product outcome, a UX or interaction choice, a scope boundary or non-goal, empty/error/edge-case behavior, a data-model or persistence/migration decision, a trade-off between competing goods, or anything privacy-, platform-, security-, or compatibility-sensitive the issue does not pin down.
@@ -203,6 +220,10 @@ Then step through the phase:
 - **Reviewer-mode self-check.** Before opening the pull request, stop editing, reread the request, inspect `git status` and `git diff`, and review only the produced diff as if another author wrote it — fixing obvious Critical/Major issues. A delegated worker performs this on its own diff and reports it in the receipt; you then run the completion-evidence check against repository state rather than repeating the full review. Either way this is a self-check to avoid trivial hand-backs, NOT the authoritative review; that is the independent reviewer in Phase 3.
 - **Pre-flight review — advisory.** Where implementation was delegated and the harness exposes a second worker that qualifies as a reader, one review-only worker judges the diff before the pull request opens, driving an implement→review loop until every finding it raises reaches a terminal state. It buys a reviewer that does not carry the implementer's reasoning state — as far as the reference's own write/clear pairing holds, never outright — and nothing else; it is not the independent review and never reported as one. With no compatible review worker the stage is skipped and the run continues from the self-check above.
 
+**Guidelines:**
+
+- MUST reuse the harness-permission determination [Phase 1](#phase-1--plan) already established for a run that passed through Phase 1, rather than establishing it again, and MUST establish it — regardless of whether a policy statement was noticed, landing on permitted, barred, or undetermined — for any run that did not pass through Phase 1, before whichever comes first of that run's first project-file edit and its first delegated fix. An open-pull-request target is such a run and reaches neither this phase nor Phase 1: [Intake](#intake--identify-the-unit-of-work) routes it to the [Phase 4](#phase-4--address) tail, where a delegated fix is the first action a spawn licenses.
+
 See [pre-flight-review.md](./references/pre-flight-review.md) for:
 
 - the input contract that excludes the implementer's receipt
@@ -215,7 +236,6 @@ See [pre-flight-review.md](./references/pre-flight-review.md) for:
 **Guidelines:**
 
 - MUST read [pre-flight-review.md](./references/pre-flight-review.md) before resolving, running, or reading back a pre-flight review worker.
-- MUST reuse the harness-permission determination [Phase 1](#phase-1--plan) already established for a run that passed through Phase 1, rather than establishing it again, and MUST establish it — regardless of whether a policy statement was noticed, landing on permitted, barred, or undetermined — for any run that did not pass through Phase 1, before whichever comes first of that run's first project-file edit and its first delegated fix. An open-pull-request target is such a run and reaches neither this phase nor Phase 1: [Intake](#intake--identify-the-unit-of-work) routes it to the [Phase 4](#phase-4--address) tail, where a delegated fix is the first action a spawn licenses.
 
 ## Phase 3 — Request Independent Review
 
@@ -261,10 +281,20 @@ See [run-state-and-reporting.md](./references/run-state-and-reporting.md) for:
 - which comments the run may author, and why the review trigger phrase appears in exactly one
 - the ready-to-merge brief: naming the issue, pull request, and review outcome, and what to exercise
 - judging a change human-observable, and handing over a preview URL without fabricating one
+- why a turn costs the same whether it acts or only reports, and the worked line separating a forbidden report-only turn from each of its three exceptions and both boundaries
 
 **Guidelines:**
 
 - MUST read [run-state-and-reporting.md](./references/run-state-and-reporting.md) before writing or reading the status block, and before composing a completion summary or the ready-to-merge handoff.
+
+What follows is the rule itself, not a further reading obligation: it binds every turn this loop takes rather than some narrower situation, so it stands here directly instead of behind a pointer an agent might not yet have opened. An observation and the action it justifies belong in the same turn. A turn that carries text and calls no tool is not a turn taken while the work continues — the run has not stopped, so reporting first and acting next merely splits one turn's cost across two turns instead of doing the work in the one that already had it.
+
+**Guidelines:**
+
+- MUST act, in the same turn, on any observation that has a next step while the run continues — do not end a turn that reports and calls no tool when there is more to do.
+- MUST treat exactly three cases as exceptions to that rule rather than violations of it: ending the turn at a required human gate (the plan-approval gate, or a machine event escalated to one — see [Execution Model](#execution-model)); recording state before going dormant (see [Termination Guard](#termination-guard)); and the completion report that closes the run.
+- MUST NOT apply this rule to a progress note posted while an asynchronous machine event is still outstanding — CI, the independent review, or a delegated worker's run — that turn is not deferring a next step, since none is due until the event resolves.
+- MUST NOT read this rule as barring reasoning alongside a tool call: it forbids splitting one turn into a text-only turn followed by the turn that acts, not writing prose in the same turn that also calls a tool.
 
 ## Termination Guard
 
@@ -272,10 +302,10 @@ An autonomous run has no natural stopping point: a review that keeps finding new
 
 **Guidelines:**
 
-- MUST cap the address↔review loop at **8** rounds; on non-convergence, record what still fails in the status block, state the summary in the turn output, and end the turn.
+- MUST cap the address↔review loop at **4** rounds; on non-convergence, record what still fails in the status block, state the summary in the turn output, and end the turn.
 - MUST cap autonomous waiting at the awaited work's own declared timeout plus a margin wherever one is observable — a workflow's `timeout-minutes`, or whatever ceiling the platform states — and at **2 hours** where none is, going dormant rather than waiting indefinitely; reset the budget when a check produces a result and a new push starts a fresh run.
 - MUST cap delegated execution at one initial attempt plus **2** retries per approved plan revision and task phase, and recover in single-agent mode rather than spawning a fourth worker.
 - MUST cap the pre-flight implement↔review loop at one initial implementation plus **3** autonomous rounds, then ask the human once per further round; this is a pre-pull-request cap and is distinct from the address↔review cap above.
 - MUST NOT cap the [Phase 1](#phase-1--plan) clarify-before-building gate with a question budget — unlike the loops above, it is deliberately uncapped.
-- MUST end the turn (never loop-block) whenever waiting on a human — the plan-approval gate, a stuck machine event, or a dormancy cap.
+- MUST end the turn (never loop-block) whenever waiting on a human — the plan-approval gate, or a stuck machine event escalated to one — and MUST go dormant, a different outcome with a different cost, once the dormancy cap above is reached rather than treating that cap as one more case of waiting on a human; see [waiting-and-dormancy.md](./references/waiting-and-dormancy.md).
 - MUST keep edits to the smallest surface that satisfies the acceptance criteria, never push to the default branch, and never merge the pull request.

@@ -19,7 +19,7 @@ Todo is the reader's early map of the work: an actionable list of the deliverabl
 **Guidelines:**
 
 - MUST place Todo immediately after Summary and write its items as ordinary Markdown bullets, not task-list checkboxes.
-- MUST describe each item at the deliverable or change-surface level, avoiding file, function, internal algorithm, or other implementation detail likely to change during delivery.
+- MUST describe each item at the deliverable or change-surface level, per [Beneficiary Framing](../SKILL.md#beneficiary-framing).
 - MUST keep Todo distinct from Functional requirements, Acceptance criteria, and Verification strategy: do not repeat finished behavior or verification steps there.
 - MUST treat Todo as a static part of the approved plan, not update its items to report implementation progress.
 

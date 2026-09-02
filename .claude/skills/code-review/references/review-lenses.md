@@ -19,8 +19,11 @@ Correctness is the lens no change can skip: the other lenses assume the code doe
 
 Maintainability is about the next person to touch this code. Flag structure that will cost future readers, but do not block a merge over taste the project has not codified.
 
+On a change that adds content, this lens also asks what should be **cut**, not only whether what is present is correct. Every other lens in this reference confirms that what the diff added is right; only this one is positioned to see what should not have been added at all — a rule a neighbour already owns, documentation copied in from upstream, restated general knowledge, a routing bullet that gestures instead of stating, an obligation count out of proportion to the change. The question is asked on every content-adding change regardless of output: silence is a claim that nothing should be cut, not the absence of one, so the internal review report records an explicit "checked, none" the same as any other lens. A posted review writes nothing for that null answer — a round with nothing to cut is already carried by the tally, and by nothing else; a positive answer is a finding, and goes inline like any other.
+
 **Guidelines:**
 
+- MUST, for a change that adds content, ask what should be cut on every review and record the answer in the internal review report — a positive answer with what and why, a null answer as an explicit "nothing" — but never write that null answer into a posted review's summary; a positive answer there is a finding, reported inline like any other and anchored to the added content.
 - MUST flag a name that misdescribes what a value or function does, and identifier or file names that break the surrounding directory's established convention.
 - MUST flag dead code introduced by the change — unused imports and variables, unreachable branches, and commented-out blocks.
 - MUST flag a comment that only restates the code it sits beside; the fix is deleting the comment, not rewording it.

@@ -14,15 +14,19 @@ Derive each wake from the checks still pending, not from a fixed ladder: place t
 
 The flip out of draft turns on **three** conditions: green CI, a clean independent review with no blocking findings, and the approved plan revision still being the one the work implements. The third is the one a waiting tail forgets, because it is not a machine event and nothing in the tail moves it: a plan revised mid-flight — [writer-ownership-and-recovery.md](./writer-ownership-and-recovery.md)'s Case B — leaves CI green and the review clean, so a run checking only the two machine outcomes would flip work ready against a plan nobody approved. The condition holds when the canonical plan content has not moved since the approval the work was built against and no revision is awaiting approval; [plan-document.md](./plan-document.md)'s Plan Revision Identity owns how that revision is derived and compared.
 
+The machinery armed above cannot outlive the tail it was armed for. Three stops end the tail: the ready flip once all three conditions above hold, and — both in the skill's Termination Guard — non-convergence at the round cap and the dormancy cap. None of them leaves a machine event this tail is still waiting on. What follows the first two is one of the human waits [waiting-and-dormancy.md](./waiting-and-dormancy.md) classifies as ending the turn — a human's comment after work has been handed back once, and a loop that has stopped converging with no further round available — and that reference's account of what such a wait costs, and of why nothing is scheduled against one, governs from there. The third stop is that reference's machine wait having spent the outer cap bounding it, and stopping for exactly that reason. So an armed subscription or self-wake left standing past any of the three buys nothing toward what comes next: it only spends against a pull request the tail has already finished with, since every unrelated event that still fires on it afterward, a base-branch push, a bot comment, a check re-run among them, wakes the session for nothing and pays the context rebuild.
+
 **Guidelines:**
 
 - MUST resolve the waiting mechanism before the first wake: subscribe where the harness delivers pull-request activity, and schedule a self-wake where it provides one. Where it provides neither, end the turn and wait for the human to resume.
 - MUST keep that self-wake scheduled wherever the harness provides one, even while a subscription is active, and record in the status block when only delivery is available.
 - SHOULD derive each wake from the pending checks' own completion profiles as above, measuring them from the project's recent runs rather than carrying another project's figures over.
-- SHOULD NOT tune a wake to the harness's prompt-cache TTL: it is a property of the session rather than of the awaited work, and on a harness whose cache outlives the wait it separates no two intervals.
+- MUST consult [waiting-and-dormancy.md](./waiting-and-dormancy.md) for how the wake interval derived above interacts with the harness's prompt-cache TTL, and let that reference's mechanism choice — poll inside the boundary, or collapse to a single dormancy — decide the wait's shape rather than tuning the interval by feel.
 - MUST flip the pull request to ready once all three conditions above hold and not before, then update the status block, deliver the Ready-to-Merge Handoff in the turn output, and end the turn.
 - MUST, on review findings or red CI, enter the addressing mechanics below; on only some checks resolved, keep waiting for the rest.
 - MUST stop waiting at the dormancy cap in the skill's Termination Guard and go dormant with a status-block note rather than wait indefinitely.
+- MUST tear down, in the same turn as the stop, whichever waiting mechanism was armed for the tail — cancel the scheduled self-wake and end the pull-request activity subscription, wherever the harness provides either — at each of the three stops above: the ready flip, non-convergence at the round cap, and the dormancy cap. This holds with no exception, including where post-merge follow-up work on the same change is already anticipated.
+- MUST NOT keep either mechanism armed to catch a human's comment on a pull request the tail has already flipped ready; such a comment reaches the run through the human's own resume, per the loop-engineering skill's Phase 4 guideline for that case, never through a subscription or self-wake left standing for it.
 
 ## Addressing Findings
 
@@ -31,10 +35,20 @@ When the independent review's comments land, read them (their author is the revi
 **Guidelines:**
 
 - MUST address and resolve each blocking finding (whatever the posted-review policy marks merge-blocking) and every unmet acceptance criterion, pushing fixes to the same branch and re-running the relevant verification after each batch.
-- MUST, for every review comment a commit resolves, reply on that comment's thread with a marked comment — the project's agent-comment marker line, then a line beginning **`Resolved in <short-hash>`** (the 7-character hash of the fixing commit) and a one-sentence summary — then resolve the thread. Reference the same hash on each comment one commit resolves.
-- MUST re-request review by posting the review trigger phrase again after a batch of fixes, and repeat up to the round cap in the skill's Termination Guard; on non-convergence, record what still fails and go dormant.
+- MUST, for every review comment a commit resolves, reply on that comment's thread with a marked comment — the project's agent-comment marker line, then a line beginning **`Resolved in <short-hash>`** (the 7-character hash of the fixing commit) and a summary sized per [Resolution Reply Length](#resolution-reply-length) below — then resolve the thread. Reference the same hash on each comment one commit resolves.
+- MUST re-request review by posting the review trigger phrase again after a batch of fixes, and repeat up to the round cap in the skill's Termination Guard; on non-convergence, record what still fails and end the turn.
 - MUST escalate through the question UI when a finding or human comment is ambiguous or needs a product or architecture decision, rather than guessing.
 - MUST NOT gate the ready flip on your own assessment — only the three conditions stated above flip draft→ready.
+
+## Resolution Reply Length
+
+The one-sentence summary in a resolution reply is a default, not a floor: for most fixes the hash and the diff at that commit already show what happened, and nothing more is needed. More is warranted only when the hash alone would leave the commenter unable to tell what happened from it — the fix diverges from what the comment proposed, the finding was addressed only in part, or the fix landed away from the line the comment anchors to, so the hash does not lead to it.
+
+**Guidelines:**
+
+- SHOULD keep the resolution reply to the marker line, the `Resolved in <short-hash>` line, and one sentence, by default.
+- SHOULD extend the reply past one sentence when the fix diverges from what the comment proposed, when the finding was addressed only in part, or when the fix landed away from the line the comment anchors to.
+- MUST NOT use that extra room to restate the finding, re-explain why it mattered, or recount verification the pull request already records.
 
 ## Keeping the Branch Mergeable
 

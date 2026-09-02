@@ -2,6 +2,35 @@
 
 Apply these rules whenever you author or update a pull request body. They govern the description only; the title follows the same header format as a commit — consult the project's Conventional Commits practices when writing it.
 
+## Who the Description Is For
+
+A pull request description is written for the developer who is about to read this diff. What it carries is what that reviewer needs before opening the Files tab: why the change was made, where to start reading, what to watch for, what was verified, and what is risky — and nothing beyond that.
+
+[Why Over What](#why-over-what) below names two more readers: someone who reaches the change through its description long after the thread's participants are gone, and a machine reviewer that consumes it as review context. Both read it for the same thing the developer reviewing the diff does — the why nothing in the diff can show — so writing for that reviewer serves the other two rather than trading against them. What serves none of the three is a second telling of the change.
+
+The diff is the authoritative account of what changed, and it is regenerated on every push. A prose account of the same thing is a second copy that is not regenerated: it goes stale the moment the branch moves, has to be rewritten every round, and buys the reviewer nothing the Files tab does not already show. That gives a test to apply to a specific passage: content a reviewer would have recovered by reading the diff is the redundancy being forbidden; why the change was made, where to begin reading, and what to watch for are not recoverable from the diff, and stay.
+
+Naming a file, module, or symbol as a destination — where to begin reading — is exactly what [Reviewer Guidance](#reviewer-guidance) recommends, and it stays; narrating what that file now does is the second telling. The distinction is what a sentence does, not which nouns it contains: concreteness is never what is wrong with a pull request description, length and repetition are.
+
+This is not the rule that governs a plan or an issue body, which are written from the change's beneficiary's viewpoint and keep implementation vehicles — file and symbol names — out of it. A pull request description is written for a developer, who needs exactly those vehicles to navigate the diff.
+
+**Bad Example:**
+
+> Updated `src/session/refresh.ts` to wrap the refresh call in a mutex. Updated `src/session/index.ts` to export the new mutex helper. Updated `src/session/refresh.test.ts` to cover the new locking path. Tests added.
+
+**Good Example:**
+
+> Two tabs waking from sleep both saw an expired token and raced to refresh it; the loser's refresh invalidated the winner's new token and logged the user out. Start in `src/session/refresh.ts` — it serializes refreshes through a single in-flight promise rather than locking storage, which is the decision worth arguing with. The rest of the diff follows from that choice.
+
+**Guidelines:**
+
+- MUST write the description for the developer about to read this diff: what a reviewer needs before opening the Files tab, and nothing beyond it.
+- MUST NOT restate in prose what the diff already shows. Apply the test above to a specific passage: content the reviewer would have recovered by reading the diff is the redundancy; why the change was made, where to begin reading, and what to watch for are not recoverable from the diff and stay.
+- MUST NOT read that prohibition as barring a file, module, or symbol name: naming one as a destination to start reading at is [Reviewer Guidance](#reviewer-guidance)'s recommendation, and stays owned there; narrating what that file now does is the second telling.
+- MUST NOT read the redundancy prohibition as licence to omit or shorten what [Verification Evidence](#verification-evidence), [Risk Disclosure](#risk-disclosure), and [Settled Decisions](#settled-decisions) require — those sections are not the redundancy being targeted here.
+- SHOULD keep the description's prose — the motivation, the orientation, and the risk notes — to about 200 words, roughly three short paragraphs. Links, verification-evidence transcripts, and per-criterion status lists are not prose and are not counted against that ceiling; they run at whatever length the reviewer needs.
+- MUST NOT apply the beneficiary-viewpoint rule that governs a plan or an issue body here: those keep file and symbol names out because they are written for the change's beneficiary; a pull request description is written for a developer, who needs them.
+
 ## Why Over What
 
 The diff already shows _what_ changed; the description carries the _why_ — the one thing reviewers consistently name as their biggest obstacle, and the thing no diff can show. It is also a permanent artifact: future readers reach the change through its description long after the thread's participants are gone, and machine reviewers consume it as review context, so a vague body degrades automated review the same way it degrades human review.
@@ -21,7 +50,7 @@ The diff already shows _what_ changed; the description carries the _why_ — the
 **Guidelines:**
 
 - MUST state the problem or motivation and why this approach was chosen, not only what changed.
-- MUST NOT restate the diff mechanically (file-by-file narration adds nothing the Files tab lacks); summarize at orientation level instead.
+- MUST NOT restate the diff mechanically; see [Who the Description Is For](#who-the-description-is-for) for the redundancy prohibition, its reason, and the test that applies it.
 - SHOULD name known trade-offs, shortcomings, or deliberately deferred work so the reviewer does not rediscover them as findings.
 - MUST keep the description self-contained: when linking an external page for context, summarize its load-bearing points inline — links rot and sit behind access walls.
 
@@ -96,7 +125,7 @@ The description is the author's one chance to shape the review before it starts.
 
 **Guidelines:**
 
-- SHOULD name the file or change to start reading from when the diff spans more than a few files.
+- SHOULD name the file or change to start reading from when the diff spans more than a few files — a destination to start at, never a narration of what it now does; see [Who the Description Is For](#who-the-description-is-for) for that distinction.
 - SHOULD state the kind of feedback wanted (quick sanity check, deep design critique, copy review) when it is not the default full review.
 - SHOULD surface genuinely open questions as explicit questions, not buried caveats — a decision already settled with a stakeholder is not one of them.
 

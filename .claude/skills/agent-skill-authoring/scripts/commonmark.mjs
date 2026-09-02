@@ -123,8 +123,13 @@ export function* scanLines(body) {
  * every fence closed.
  *
  * an unterminated fence is legal CommonMark — the block simply runs to the end
- * of the document — so this is a caller's cue to WARN rather than fail. it
- * matters because everything after that opener went unread.
+ * of the document — so this module states only the fact; how a caller
+ * responds to it is that caller's own contract, not a rule handed down here.
+ * check-links.mjs treats it as a WARN, because the links it did see before
+ * the opener still answer its question. check-skill-body.mjs treats the same
+ * signal as a failure, because its own checks cannot see past the fence and
+ * would otherwise report a false PASS. Either way, everything after that
+ * opener went unread.
  *
  * @param {string} body
  * @returns {number | null}
