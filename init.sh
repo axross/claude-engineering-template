@@ -9,9 +9,10 @@
 # AFTER you have the answers.
 #
 # Why a script instead of `sed`: four tokens ({{CODE_FILE_GLOB}},
-# {{CODE_FILE_REGEX}}, {{LINT_FIX_FILE_GLOB}}, {{LINT_FIX_CMD}}) contain
+# {{CODE_FILE_REGEX}}, {{LINT_FIX_FILE_GLOB}}, {{LINT_FIX_CMD}}) can contain
 # shell/regex metacharacters ( | * ( ) \ $ ), which break a naive
-# `sed s|...|...|` sweep. This script substitutes literally.
+# `sed s|...|...|` sweep when they do. A project's own value may carry none,
+# but a sweep does not know that in advance. This script substitutes literally.
 #
 # Usage:
 #   ./init.sh init     # write init.values.json (a fill-in-the-blanks template)
