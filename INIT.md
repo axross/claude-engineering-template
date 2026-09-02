@@ -314,11 +314,13 @@ stack not listed.
 > **Use `./init.sh`, not a `sed` sweep.** Four tokens — `{{CODE_FILE_GLOB}}`
 > (`*.ts | *.tsx | *.css`), `{{CODE_FILE_REGEX}}` (`\.(ts|tsx|css)$`),
 > `{{LINT_FIX_FILE_GLOB}}` (`*.md`), and `{{LINT_FIX_CMD}}`
-> (`npm run lint:fix --`) — contain shell/regex metacharacters (`| * ( ) \ $`)
-> that break a naive `sed s|...|...|` replacement. Run `./init.sh init`, fill
-> `init.values.json`, then `./init.sh apply`; it substitutes literally and then
-> runs the gates. If you must replace by hand, do these four literally and
-> verify with `./init.sh check`.
+> (`npm run lint:fix --`) — can contain shell/regex metacharacters
+> (`| * ( ) \ $`) that break a naive `sed s|...|...|` replacement when they do
+> (the project's own value may carry none, as the example above does for
+> `{{LINT_FIX_CMD}}`, but a `sed` sweep does not know that in advance). Run
+> `./init.sh init`, fill `init.values.json`, then `./init.sh apply`; it
+> substitutes literally and then runs the gates. If you must replace by hand,
+> do these four literally and verify with `./init.sh check`.
 
 > **No dedicated formatter?** If the project lints but has no separate formatter
 > (common for a default `create-next-app`: ESLint, no Prettier), set
@@ -383,8 +385,8 @@ the Stack Decision Record and the README, not in a token.
 | ----- | --------- | -------------- |
 | `{{CODE_FILE_GLOB}}` | Shell `case` pattern of formatted extensions (`format.sh`) | `*.ts \| *.tsx \| *.css` · `*.py` · `*.go` |
 | `{{CODE_FILE_REGEX}}` | Extended-regex of source extensions (`check.sh`) | `\.(ts\|tsx\|css)$` · `\.py$` · `\.go$` |
-| `{{LINT_FIX_CMD}}` (optional) | Linter autofix invocation, taking one file as a trailing argument (`format.sh`) — drop together with `{{LINT_FIX_FILE_GLOB}}` and the block that uses them if `{{FORMAT_CMD}}` already subsumes the linter's autofix | `npm run lint:fix --` · `biome check --write --` · `ruff check --fix` |
-| `{{LINT_FIX_FILE_GLOB}}` (optional) | Shell `case` pattern, relative to `$PROJECT_DIR/`, of the files `{{LINT_FIX_CMD}}` applies to (`format.sh`) — each `\|`-joined alternative needs its own `"$PROJECT_DIR"/` prefix | `*.md` · `*.py` · `*.go` |
+| `{{LINT_FIX_CMD}}` (optional) | Linter autofix invocation, taking one file as a trailing argument (`format.sh`) — if `{{FORMAT_CMD}}` already subsumes the linter's autofix, drop this together with `{{LINT_FIX_FILE_GLOB}}` by editing two places: remove `{{LINT_FIX_FILE_GLOB}}` from `format.sh`'s early-exit filter, and delete the autofix block that uses them | `npm run lint:fix --` · `biome check --write --` · `ruff check --fix` |
+| `{{LINT_FIX_FILE_GLOB}}` (optional) | Shell `case` pattern of the files `{{LINT_FIX_CMD}}` applies to, appearing in two places in `format.sh`: the early-exit filter (matched directly) and the autofix guard (matched relative to `$PROJECT_DIR/`) — each `\|`-joined alternative in the latter needs its own `"$PROJECT_DIR"/` prefix | `*.md` · `*.py` · `*.go` |
 
 A find-and-replace sweep is the fastest path. After replacing, search the tree
 for `{{` to confirm none remain (the completion checklist does this).

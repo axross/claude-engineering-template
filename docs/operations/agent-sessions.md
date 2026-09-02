@@ -60,12 +60,16 @@ its repair needs an authoring decision or is purely mechanical.
 
 - `{{LINT_CMD}}`'s violations that `{{LINT_FIX_CMD}}` repairs are
   **non-blocking when `format.sh` reaches the file first** — see
-  [`format.sh`](../../.claude/hooks/format.sh)'s per-file autofix step, gated
-  on `{{LINT_FIX_FILE_GLOB}}`. `{{LINT_FIX_FILE_GLOB}}` is a shell `case`
-  pattern: where it lists alternatives, each one needs its own
-  `"$PROJECT_DIR"/` prefix, because a `case` pattern does not distribute a
-  prefix across `|`-joined alternatives — see
-  [`tokens.json`](../../tokens.json).
+  [`format.sh`](../../.claude/hooks/format.sh)'s per-file autofix step. The
+  hook's early-exit filter admits a file matching **either**
+  `{{CODE_FILE_GLOB}}` or `{{LINT_FIX_FILE_GLOB}}`, since `{{FORMAT_CMD}}`
+  formats the whole project and takes no file argument; the autofix step
+  itself runs only for a file that also matches `{{LINT_FIX_FILE_GLOB}}` and
+  lives under the project root, before `{{FORMAT_CMD}}` runs.
+  `{{LINT_FIX_FILE_GLOB}}` is a shell `case` pattern: where it lists
+  alternatives, each one needs its own `"$PROJECT_DIR"/` prefix, because a
+  `case` pattern does not distribute a prefix across `|`-joined alternatives
+  — see [`tokens.json`](../../tokens.json).
 - The violations `{{LINT_FIX_CMD}}` cannot repair are **blocking**, because the
   correct repair is an authoring decision no hook can make.
 - `{{UNIT_TEST_CMD}}` is **blocking** for the same reason: a failing test has
