@@ -7,12 +7,9 @@
 # replace the `{{...}}` tokens below with the project's real values, or delete this
 # hook (and its entry in .claude/settings.local-example.json) if the project
 # has no formatter. CODE_FILE_GLOB, PACKAGE_MANAGER, and FORMAT_CMD are
-# required; LINT_FIX_CMD and LINT_FIX_FILE_GLOB are optional — dropping both
-# means editing three places: remove the "$PROJECT_DIR"/LINT_FIX_FILE_GLOB
-# alternative from the early-exit filter's case pattern below; trim its
-# comment, which explains why that alternative is unioned in, back to
-# describing CODE_FILE_GLOB alone; and delete the lint-autofix case block
-# further down that uses LINT_FIX_CMD and LINT_FIX_FILE_GLOB.
+# required; LINT_FIX_CMD and LINT_FIX_FILE_GLOB are optional — see INIT.md
+# Step 3's "Dropping the lint-autofix step?" callout for what dropping both
+# involves.
 set -uo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"

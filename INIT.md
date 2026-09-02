@@ -385,8 +385,19 @@ the Stack Decision Record and the README, not in a token.
 | ----- | --------- | -------------- |
 | `{{CODE_FILE_GLOB}}` | Shell `case` pattern of formatted extensions (`format.sh`) | `*.ts \| *.tsx \| *.css` · `*.py` · `*.go` |
 | `{{CODE_FILE_REGEX}}` | Extended-regex of source extensions (`check.sh`) | `\.(ts\|tsx\|css)$` · `\.py$` · `\.go$` |
-| `{{LINT_FIX_CMD}}` (optional) | Linter autofix invocation, taking one file as a trailing argument (`format.sh`) — if `{{FORMAT_CMD}}` already subsumes the linter's autofix, drop this together with the LINT_FIX_FILE_GLOB token by editing three places in `format.sh`: remove the `"$PROJECT_DIR"/`-anchored LINT_FIX_FILE_GLOB alternative from the early-exit filter's `case` pattern, trim that filter's comment (which explains the union) back to describing CODE_FILE_GLOB alone, and delete the autofix block that uses both tokens | `npm run lint:fix --` · `biome check --write --` · `ruff check --fix` |
-| `{{LINT_FIX_FILE_GLOB}}` (optional) | Shell `case` pattern of the files `{{LINT_FIX_CMD}}` applies to, appearing in two places in `format.sh`, both matched relative to `$PROJECT_DIR/`: the early-exit filter and the autofix guard further down — each `\|`-joined alternative in both needs its own `"$PROJECT_DIR"/` prefix | `*.md` · `*.py` · `*.go` |
+| `{{LINT_FIX_CMD}}` (optional) | Linter autofix invocation, taking one file as a trailing argument (`format.sh`) — see the callout below if the project drops it | `npm run lint:fix --` · `biome check --write --` · `ruff check --fix` |
+| `{{LINT_FIX_FILE_GLOB}}` (optional) | Shell `case` pattern of the files `{{LINT_FIX_CMD}}` applies to, appearing in two places in `format.sh`, both matched relative to `$PROJECT_DIR/`: the early-exit filter and the autofix guard further down — each `\|`-joined alternative in both needs its own `"$PROJECT_DIR"/` prefix — see the callout below if the project drops it | `*.md` · `*.py` · `*.go` |
+
+> **Dropping the lint-autofix step?** If `{{FORMAT_CMD}}` already subsumes the
+> linter's autofix, drop `{{LINT_FIX_CMD}}` and `{{LINT_FIX_FILE_GLOB}}`
+> together — this is the only place that states how. Edit three places in
+> `format.sh`: remove the `"$PROJECT_DIR"/`-anchored `LINT_FIX_FILE_GLOB`
+> alternative from the early-exit filter's `case` pattern, trim that filter's
+> comment (which explains the union) back to describing `CODE_FILE_GLOB`
+> alone, and delete the autofix block further down that uses both tokens.
+> Then remove both tokens' rows from `tokens.json` — `./init.sh apply` refuses
+> to run while a manifest-listed token has no value, whether or not it still
+> occurs in the tree.
 
 A find-and-replace sweep is the fastest path. After replacing, search the tree
 for `{{` to confirm none remain (the completion checklist does this).
