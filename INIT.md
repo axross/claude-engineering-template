@@ -386,7 +386,7 @@ the Stack Decision Record and the README, not in a token.
 | `{{CODE_FILE_GLOB}}` | Shell `case` pattern of formatted extensions (`format.sh`) | `*.ts \| *.tsx \| *.css` · `*.py` · `*.go` |
 | `{{CODE_FILE_REGEX}}` | Extended-regex of source extensions (`check.sh`) | `\.(ts\|tsx\|css)$` · `\.py$` · `\.go$` |
 | `{{LINT_FIX_CMD}}` (optional) | Linter autofix invocation, taking one file as a trailing argument (`format.sh`) — see the callout below if the project drops it | `npm run lint:fix --` · `biome check --write --` · `ruff check --fix` |
-| `{{LINT_FIX_FILE_GLOB}}` (optional) | Shell `case` pattern of the files `{{LINT_FIX_CMD}}` applies to, appearing in two places in `format.sh`, both matched relative to `$PROJECT_DIR/`: the early-exit filter and the autofix guard further down — each `\|`-joined alternative in both needs its own `"$PROJECT_DIR"/` prefix — see the callout below if the project drops it | `*.md` · `*.py` · `*.go` |
+| `{{LINT_FIX_FILE_GLOB}}` (optional) | Shell `case` pattern of the files `{{LINT_FIX_CMD}}` applies to, appearing in two places in `format.sh`, both matched relative to `$PROJECT_DIR/`: the early-exit filter and the autofix guard further down — `format.sh` prefixes the token with `"$PROJECT_DIR"/` once, immediately before it, in both places, so leave the first alternative bare and prefix only the second and later ones (e.g. `*.md \| "$PROJECT_DIR"/*.mdx`) — see the callout below if the project drops it | `*.md` · `*.py` · `*.go` |
 
 > **Dropping the lint-autofix step?** If `{{FORMAT_CMD}}` already subsumes the
 > linter's autofix, drop `{{LINT_FIX_CMD}}` and `{{LINT_FIX_FILE_GLOB}}`

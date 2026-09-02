@@ -8,8 +8,7 @@
 # hook (and its entry in .claude/settings.local-example.json) if the project
 # has no formatter. CODE_FILE_GLOB, PACKAGE_MANAGER, and FORMAT_CMD are
 # required; LINT_FIX_CMD and LINT_FIX_FILE_GLOB are optional — see INIT.md
-# Step 3's "Dropping the lint-autofix step?" callout for what dropping both
-# involves.
+# for what dropping both involves.
 set -uo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
