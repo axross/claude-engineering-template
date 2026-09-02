@@ -311,13 +311,14 @@ row gives several example values across different stacks so the substitution is
 unambiguous — pick the one matching the project, or follow the same shape for a
 stack not listed.
 
-> **Use `./init.sh`, not a `sed` sweep.** Two tokens — `{{CODE_FILE_GLOB}}`
-> (`*.ts | *.tsx | *.css`) and `{{CODE_FILE_REGEX}}` (`\.(ts|tsx|css)$`) —
-> contain shell/regex metacharacters (`| * ( ) \ $`) that break a naive
-> `sed s|...|...|` replacement. Run `./init.sh init`, fill `init.values.json`,
-> then `./init.sh apply`; it substitutes literally and then runs the gates. If
-> you must replace by hand, do these two literally and verify with
-> `./init.sh check`.
+> **Use `./init.sh`, not a `sed` sweep.** Four tokens — `{{CODE_FILE_GLOB}}`
+> (`*.ts | *.tsx | *.css`), `{{CODE_FILE_REGEX}}` (`\.(ts|tsx|css)$`),
+> `{{LINT_FIX_FILE_GLOB}}` (`*.md`), and `{{LINT_FIX_CMD}}`
+> (`npm run lint:fix --`) — contain shell/regex metacharacters (`| * ( ) \ $`)
+> that break a naive `sed s|...|...|` replacement. Run `./init.sh init`, fill
+> `init.values.json`, then `./init.sh apply`; it substitutes literally and then
+> runs the gates. If you must replace by hand, do these four literally and
+> verify with `./init.sh check`.
 
 > **No dedicated formatter?** If the project lints but has no separate formatter
 > (common for a default `create-next-app`: ESLint, no Prettier), set
@@ -382,6 +383,8 @@ the Stack Decision Record and the README, not in a token.
 | ----- | --------- | -------------- |
 | `{{CODE_FILE_GLOB}}` | Shell `case` pattern of formatted extensions (`format.sh`) | `*.ts \| *.tsx \| *.css` · `*.py` · `*.go` |
 | `{{CODE_FILE_REGEX}}` | Extended-regex of source extensions (`check.sh`) | `\.(ts\|tsx\|css)$` · `\.py$` · `\.go$` |
+| `{{LINT_FIX_CMD}}` (optional) | Linter autofix invocation, taking one file as a trailing argument (`format.sh`) — drop together with `{{LINT_FIX_FILE_GLOB}}` and the block that uses them if `{{FORMAT_CMD}}` already subsumes the linter's autofix | `npm run lint:fix --` · `biome check --write --` · `ruff check --fix` |
+| `{{LINT_FIX_FILE_GLOB}}` (optional) | Shell `case` pattern, relative to `$PROJECT_DIR/`, of the files `{{LINT_FIX_CMD}}` applies to (`format.sh`) — each `\|`-joined alternative needs its own `"$PROJECT_DIR"/` prefix | `*.md` · `*.py` · `*.go` |
 
 A find-and-replace sweep is the fastest path. After replacing, search the tree
 for `{{` to confirm none remain (the completion checklist does this).
@@ -661,10 +664,12 @@ the shape below.
   tools `loop-engineering` uses to wake itself while waiting on CI. The
   session-start hook copies it to `settings.local.json` in cloud sessions.
 - `.claude/hooks/*.sh` need the token fill — `{{CODE_FILE_GLOB}}`,
-  `{{CODE_FILE_REGEX}}`, `{{INSTALL_CMD}}`, and the command tokens — plus an
-  adapted toolchain block in `session-start.sh` for the project's runtime (the
-  example activates `mise` when it is already present). Delete any hook the
-  project does not want, and its entry in the settings file above.
+  `{{CODE_FILE_REGEX}}`, `{{INSTALL_CMD}}`, and the command tokens, plus the
+  optional `{{LINT_FIX_CMD}}` and `{{LINT_FIX_FILE_GLOB}}` if the project keeps
+  `format.sh`'s per-file lint-autofix step — plus an adapted toolchain block in
+  `session-start.sh` for the project's runtime (the example activates `mise`
+  when it is already present). Delete any hook the project does not want, and
+  its entry in the settings file above.
 - `.claude/agents/` holds `implementer.md`, `reviewer.md`, and
   `investigator.md`. None carries project-specific text, so none needs
   adapting; all three are outside the skills CLI, so refreshing skills never
