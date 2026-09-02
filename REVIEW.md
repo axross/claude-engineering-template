@@ -54,8 +54,9 @@ skill in the finding.
 - **Acceptance criteria** — verify the diff against **every** acceptance
   criterion in the linked issue (the pull request body's `Closes #<n>`), when
   the pull request links one. Each criterion that is unmet, or that cannot be
-  confirmed from the diff, is an **Important** finding named explicitly in the
-  summary. If the pull request links no issue, say so in the summary.
+  confirmed from the diff, is an **Important** finding — anchored inline where
+  it attaches to a diff line, and carried by the summary's no-line entry
+  otherwise. If the pull request links no issue, say so in the summary.
 
 **Guidelines:**
 
@@ -154,17 +155,14 @@ reviewer on that rule.
 
 ## Reporting
 
-Anchor each finding as an inline comment on the diff, and post one summary that
-opens with a one-line tally (e.g. `2 important, 7 nits`). There is no nit cap
-and nothing is summarized away — the tally counts every finding.
+[Code Review](.claude/skills/code-review/SKILL.md)'s
+[Posted and CI Reviews](.claude/skills/code-review/SKILL.md#posted-and-ci-reviews)
+section owns the reporting shape: inline comments anchored to the diff, one
+summary comment opening with a tally, and a summary closed to that tally, what
+could not be checked, and a finding with no diff line to anchor to.
 
 **Guidelines:**
 
-- MUST report **every** finding; the same nit repeated across the diff MAY
-  share one inline comment that lists each occurrence.
-- MUST keep reporting to two shapes — inline comments for the findings, one
-  comment for the summary — and MUST NOT scatter individual findings across
-  separate top-level conversation comments.
 - MUST post any pull-request review as a **COMMENT**-type review — never
   APPROVE or REQUEST_CHANGES — per
   [GitHub Operation](.claude/skills/github-operation/SKILL.md); this reviewer
