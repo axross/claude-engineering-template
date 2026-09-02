@@ -8,9 +8,11 @@
 # hook (and its entry in .claude/settings.local-example.json) if the project
 # has no formatter. CODE_FILE_GLOB, PACKAGE_MANAGER, and FORMAT_CMD are
 # required; LINT_FIX_CMD and LINT_FIX_FILE_GLOB are optional — dropping both
-# means editing two places: remove ` | {{LINT_FIX_FILE_GLOB}}` from the
-# early-exit filter below, and delete the lint-autofix case block further
-# down that uses LINT_FIX_CMD and LINT_FIX_FILE_GLOB.
+# means editing three places: remove the "$PROJECT_DIR"/LINT_FIX_FILE_GLOB
+# alternative from the early-exit filter's case pattern below; trim its
+# comment, which explains why that alternative is unioned in, back to
+# describing CODE_FILE_GLOB alone; and delete the lint-autofix case block
+# further down that uses LINT_FIX_CMD and LINT_FIX_FILE_GLOB.
 set -uo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
@@ -21,17 +23,15 @@ PROJECT_DIR="${PROJECT_DIR%/}"
 # read the edited file path from the tool payload on stdin.
 FILE_PATH="$(jq -r '.tool_input.file_path // empty' 2>/dev/null || true)"
 
-# run below only when this file is one either action cares about; skip the
-# rest. the pattern is the union of two tokens — CODE_FILE_GLOB (e.g.
-# "*.ts | *.tsx | *.js | *.css"), which {{FORMAT_CMD}} below always runs for,
-# and LINT_FIX_FILE_GLOB (e.g. "*.md"), which only the lint-autofix step
-# further down acts on. naming both here is required, not redundant:
-# {{FORMAT_CMD}} is a whole-project formatter with no file argument, so
-# running it for a LINT_FIX_FILE_GLOB-only file is correct, but a filter
-# narrowed to CODE_FILE_GLOB alone would exit before either action ever saw
-# the file.
+# skip below unless this file matters to either action. the pattern unions
+# CODE_FILE_GLOB and LINT_FIX_FILE_GLOB — narrowing to CODE_FILE_GLOB alone
+# would exit before FORMAT_CMD (whole-project, no file argument) ever ran
+# for a LINT_FIX_FILE_GLOB-only file. LINT_FIX_FILE_GLOB is anchored to
+# "$PROJECT_DIR"/, matching the autofix guard below, since the per-file
+# autofix needs a project-relative path; CODE_FILE_GLOB stays unanchored,
+# as FORMAT_CMD takes none.
 case "$FILE_PATH" in
-  {{CODE_FILE_GLOB}} | {{LINT_FIX_FILE_GLOB}}) ;;
+  {{CODE_FILE_GLOB}} | "$PROJECT_DIR"/{{LINT_FIX_FILE_GLOB}}) ;;
   *) exit 0 ;;
 esac
 
@@ -48,11 +48,8 @@ fi
 # without the toolchain provisioned).
 command -v {{PACKAGE_MANAGER}} >/dev/null 2>&1 || exit 0
 
-# use a PROJECT_DIR-relative path, not the absolute one (an absolute path
-# commonly bypasses the linter's own ignore configuration); the
-# "$PROJECT_DIR"/… guard also excludes a file outside the project root.
-# {{LINT_FIX_FILE_GLOB}} is the token below (cf. the CODE_FILE_GLOB comment
-# above).
+# use a PROJECT_DIR-relative path, not the absolute one — an absolute path
+# commonly bypasses the linter's own ignore configuration.
 case "$FILE_PATH" in
   "$PROJECT_DIR"/{{LINT_FIX_FILE_GLOB}})
     FILE_REL="${FILE_PATH#"$PROJECT_DIR"/}"
