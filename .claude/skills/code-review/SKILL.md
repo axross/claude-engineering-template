@@ -25,6 +25,7 @@ See [scoping.md](./references/scoping.md) for:
 - performing the reviewer-mode reset and establishing scope from `git status` / `git diff` / a PR diff
 - distinguishing in-scope (the diff) from out-of-scope (pre-existing) code
 - reading the full file and every caller/callee around a changed hunk
+- checking a change's boundary claims — the neighbours it names as owners — against what those neighbours actually state, not only against the diff
 - handling untracked files, an empty or unclear diff, and generated / tool-managed files
 
 ## Severity Classification
@@ -41,7 +42,7 @@ See [severity.md](./references/severity.md) for:
 See [review-lenses.md](./references/review-lenses.md) for:
 
 - the correctness lens: logic errors, edge cases, error and async handling, contract changes
-- the maintainability lens: naming, organization, abstraction boundaries, complexity, dead code, scope discipline
+- the maintainability lens: naming, organization, abstraction boundaries, complexity, dead code, scope discipline, and naming what a content-adding change should cut
 - the security and privacy lens: secrets, input validation, access control, injection, SSRF, auth, data exposure, supply chain
 - the testing and verification lens: coverage, stable test hooks, snapshots, flakiness, manual checks
 - the performance and reliability lens: data-access cost, concurrency, caching, asset and bundle weight, failure modes
@@ -54,13 +55,14 @@ See [evidence-and-reporting.md](./references/evidence-and-reporting.md) for:
 - diff-style (`-`/`+`) fix snippets for every Critical and Major finding
 - the exact review-report section order, from Summary through Recommended Actions
 - what counts as evidence versus assertion, and how to mark findings the reviewer could not verify
+- what the author's own account of a change — a verification table, self-authored acceptance criteria, a disclosed figure — does and does not establish
 
 ## Review Tone
 
 See [tone.md](./references/tone.md) for:
 
 - addressing the code, not the author, and stating the concrete risk behind each finding
-- acknowledging real strengths without inflating trivial ones
+- acknowledging real strengths without inflating trivial ones, an obligation the internal review report carries and a posted review's summary does not
 - keeping style and preference out of blocking severities
 - flagging assumptions explicitly and leaving human-authored copy to its authors
 
@@ -79,5 +81,6 @@ See [posted-review-policy.md](./references/posted-review-policy.md) for:
 
 - when a review is _posted_ to a pull request (a CI reviewer or a managed review product) rather than kept as internal self-review
 - collapsing the internal four-tier triage to a two-label Important / Nit report with a one-line tally
-- running the repository's mandatory checks and honoring its do-not-report exclusions
-- keeping a posted review advisory: comment-only, never an approving or blocking formal review
+- running the repository's mandatory checks and honoring its do-not-report exclusions, built as an enumerated list of checks each coextensive with the finding it silences, never a blanket "anything CI enforces" clause
+- posting the whole review as one submission of the platform's review mechanism able to carry diff-anchored comments, chosen before the diff is read, with the submission's verdict kept non-gating for an advisory reviewer as a separate decision that never falls back to a looser container
+- keeping the summary to a closed three-entry allowlist — the tally, what could not be checked, and a finding with no line to anchor to — with one exception for a host-mandated per-round enumeration

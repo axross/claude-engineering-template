@@ -1,8 +1,17 @@
 #!/bin/bash
 
-# stop hook: before the task completes, run the unit tests and lint whenever
-# code changed in this session. failures block completion and are reported back
-# on stderr so the agent addresses them before finishing.
+# stop hook: before the task completes, run the checks that need an authoring
+# decision rather than a mechanical repair, whenever code changed in this
+# session. `PostToolUse`'s format.sh already repairs the mechanically-fixable
+# lint violations for a file edited through `Edit`, `Write`, or `MultiEdit`, so
+# those usually never reach this gate; a file changed another way (a Bash
+# heredoc, `sed -i`) still lands here uncorrected. This hook never repairs
+# anything itself, by design rather than oversight: a repair applied here can
+# land in the working tree after the agent has already committed and pushed,
+# so the pushed commit would keep the violation while the hook reported
+# success. See docs/operations/agent-sessions.md for the full
+# blocking/non-blocking classification. Failures here block completion and are
+# reported back on stderr so the agent addresses them before finishing.
 #
 # TEMPLATE NOTE: this is an example Claude Code harness binding. During INIT,
 # replace the `{{...}}` tokens below with the project's real values, or delete this

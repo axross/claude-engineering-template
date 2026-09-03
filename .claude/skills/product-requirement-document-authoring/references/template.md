@@ -23,10 +23,10 @@ _(See problem-and-scope.md → Summary.)_
 ## Todo
 
 - <An actionable deliverable or change surface, written as an ordinary bullet.>
-- <Another thing to change or create, without file, function, algorithm, completed
-  behavior, or verification detail.>
+- <Another thing to change or create, without completed behavior or verification
+  detail.>
   _(Static after plan approval; not a progress checklist. See problem-and-scope.md →
-  Todo.)_
+  Todo and SKILL.md → Beneficiary Framing.)_
 
 ## Background
 

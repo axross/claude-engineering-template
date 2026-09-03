@@ -1,6 +1,17 @@
 # Plan Document
 
-Apply this reference when writing the Phase 1 plan into the issue body. A plan states **what** is needed and **how completion is verified**, not how it is built. This structure is self-contained; when the host project ships its own product-requirement guideline, defer to it for section craft and use this as the fallback.
+Apply this reference when writing the Phase 1 plan into the issue body. A plan states **what** is needed and **how completion is verified**, not how it is built. This reference is self-contained: it carries the plan's own abstraction-level rule below, so the loop stays installable and usable where the host project ships no richer guideline for it.
+
+## Beneficiary Framing
+
+A plan is written as the change its **beneficiary** observes, not as the file, function, line, component, internal algorithm, or other implementation vehicle that produces it, in any of its sections — though a module- or service-level ownership statement, the kind a System design section calls for, is not such a vehicle. The beneficiary is whoever the change is for: the end user when the plan is for an application feature, the developer when the plan is for a development-environment improvement.
+
+A plan that names an implementation detail has to be revised whenever the implementation shifts, which makes the plan subordinate to the work it is supposed to judge. Two exceptions are narrow and real. Where a path or an identifier **is** itself an acceptance criterion — a rule that must live in a particular file, an exported name that is part of the contract — naming it is correct, not a violation. And an illustrative snippet or diagram in a **System design** section may show the shape of a mechanism — a cache-key, a signature, a transition table — since it illustrates the mechanism the plan will be judged on rather than pre-writing the implementation the coding phase produces. Neither exception reaches a name that merely reflects where the beneficiary-observable outcome happens to be implemented today. Writing at the beneficiary's altitude raises the plan's abstraction level without lowering its concreteness: an observable outcome is a stronger requirement than an implementation step, not a vaguer one.
+
+**Guidelines:**
+
+- MUST write every section of the plan as the change its beneficiary observes, naming who the beneficiary is for the change at hand, never a file name, line number, function name, component, internal algorithm, or other implementation vehicle, except in the two cases named above — a path or identifier that is itself an acceptance criterion, and an illustrative System design snippet or diagram.
+- MUST load the project's product-requirement capability, where the host project ships one, before writing or revising the plan, and follow its fuller treatment of this rule for section craft; proceed on this reference alone where the project ships no such capability.
 
 ## Canonical Structure
 
@@ -33,7 +44,7 @@ Todo tells the reader what will be changed or created without duplicating what t
 **Guidelines:**
 
 - MUST place Todo immediately after Summary and write actionable deliverables or change surfaces as ordinary bullets, not task-list checkboxes.
-- MUST keep file, function, internal algorithm, completed-behavior, acceptance, and verification detail out of Todo.
+- MUST keep completed-behavior, acceptance, and verification detail out of Todo — Todo's own scope boundary, distinct from [Beneficiary Framing](#beneficiary-framing) above, which already governs naming a file, function, or other implementation detail in any section, Todo included.
 - MUST keep Todo fixed after plan approval rather than updating it as an implementation-progress tracker.
 
 ## Acceptance Criteria

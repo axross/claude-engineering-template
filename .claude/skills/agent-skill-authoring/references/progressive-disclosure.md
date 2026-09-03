@@ -2,6 +2,69 @@
 
 Apply this reference when deciding whether to split a `SKILL.md` into reference files, how to wire those files, and when a small skill should remain a single file.
 
+## The Role Contract
+
+`SKILL.md` states the contract itself — the three things a body carries, and the "needed before the routing decision" test for keeping a rule in it — as a rule, which is where a contract belongs; this section elaborates it rather than repeating it.
+
+This test subsumes, rather than competes with, the load-bearing test and the unconditional-scope carve-out `SKILL.md` already states. A rule that fails the carve-out — one whose triggering condition is narrower than "every turn within the skill's scope" — is also a rule the reader does not need before every routing decision, so it moves to a reference regardless of how important it is. The two tests agree on every case in this corpus; the role contract is the frame that explains why they agree, not a third, competing rule.
+
+### Where a Body-Resident Rule Goes
+
+A rule that passes the contract's test takes one of two positions relative to the section's routing list, and both leave the routing list's own `**Guidelines:**` block — where one exists — carrying nothing but that reference's read obligations.
+
+**Before the routing list**, when the rule stands on its own:
+
+```markdown
+## Topic
+
+<prose that demonstrates the topic>
+
+**Guidelines:**
+
+- MUST … (a rule the reader needs before deciding what to open)
+
+See [topic.md](./references/topic.md) for:
+
+- what the reference covers
+
+**Guidelines:**
+
+- MUST read [topic.md](./references/topic.md) before <narrow condition>.
+```
+
+**After the routing list**, when the rule reads better once the reference's scope is already in view. The paragraph in between is not decoration — it is the justification the unconditional-scope carve-out already requires an author to state, saying why the rule below stands in the body rather than behind a pointer:
+
+```markdown
+See [topic.md](./references/topic.md) for:
+
+- what the reference covers
+
+**Guidelines:**
+
+- MUST read [topic.md](./references/topic.md) before <narrow condition>.
+
+<a paragraph saying why the rule below stands in the body rather than behind a pointer>
+
+**Guidelines:**
+
+- MUST … (the body-resident rule)
+```
+
+What both shapes rule out is the rule folded in among the read obligations themselves, where a reader looking for "what do I open, and when" finds a requirement instead:
+
+```markdown
+See [topic.md](./references/topic.md) for:
+
+- what the reference covers
+
+**Guidelines:**
+
+- MUST read [topic.md](./references/topic.md) before <narrow condition>.
+- MUST … (anything that is not a read obligation) ← rejected
+```
+
+A **read obligation** is an RFC-2119 bullet whose keyword is followed by `read` and a link to a reference file — the shape `MUST read [name.md](./references/name.md) before …`. Anything else inside the `**Guidelines:**` block a routing list introduces is a rejection: the body-prose validator (`check-skill-body.mjs`) checks exactly that block, and fails the build on it.
+
 ## The Load-Bearing Test
 
 `SKILL.md` states the test itself, as a rule — which is where the test belongs, so this section elaborates it rather than repeating it. The table still sorts a topic's content into two sides, but both sides now live in the reference: a load-bearing rule's presence is what earns that reference a conditional MUST-read obligation in `SKILL.md`, worded to the condition under which missing the rule would produce wrong output.

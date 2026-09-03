@@ -28,8 +28,8 @@ A UI design section describes hierarchy, layout intent, and content priority in 
 
 **Guidelines:**
 
-- MUST describe hierarchy and content priority in spec-level terms (primary/secondary/optional), not component names or markup.
-- MUST NOT prescribe implementation details (specific components, CSS properties, class names) that belong to the implementation.
+- MUST describe hierarchy and content priority in spec-level terms (primary/secondary/optional), per [Beneficiary Framing](../SKILL.md#beneficiary-framing).
+- MUST NOT prescribe a specific CSS property or class name; those belong to the implementation.
 - SHOULD state layout intent as relationships between elements (e.g., "the confirmation sits below the primary action") rather than pixel positions.
 
 ## Interaction States

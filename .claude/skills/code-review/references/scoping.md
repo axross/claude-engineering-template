@@ -47,6 +47,18 @@ Correctness lives in context: a hunk that reads correctly on its own can still b
 - SHOULD read the surrounding modules a changed unit participates in — its parent, its siblings, and any shared entry point — because cross-module assumptions (trust boundaries, lifecycle order, concurrency) span files even when the diff touches only a leaf.
 - SHOULD read the matching test for a changed unit to confirm whether existing tests still cover the changed behavior.
 
+## Boundary Claims
+
+A change that adds or edits any unit — a module, a skill, a service, a config file — makes claims about its own boundaries: the neighbours it names as owners, the rules it says it defers to rather than restates. Those claims are checkable only against the neighbour's text, which by construction is not in the diff. A review confined to changed files can confirm that a deferral was written; it cannot confirm the deferral is true, and it cannot see the sections that should have had one and do not.
+
+**Guidelines:**
+
+- MUST open every unit the change's own boundary text names as an owner, and compare the change against what that owner actually states, section by section.
+- MUST additionally open every unit whose declared scope overlaps the change's topic, whether or not the change names it; a change that duplicates without deferring names no owner to follow, and is the case this check most needs to reach.
+- MUST treat a file being outside the diff as no exemption from reading it; opening a neighbour is the cost of checking a boundary claim, not extra scope.
+- MUST NOT generalize from one compliant instance to the whole change — a single correct deferral is evidence about that section and no other.
+- MUST report a duplicated rule as a finding even where the change cites the owner, whenever the citation sits beside a restatement instead of replacing it — a restatement standing beside a citation is still a duplicated rule.
+
 ## Out-of-Scope Findings
 
 Charging the current change with blocking severity for problems it did not introduce holds it hostage to unrelated work.

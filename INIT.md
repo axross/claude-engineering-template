@@ -311,13 +311,16 @@ row gives several example values across different stacks so the substitution is
 unambiguous — pick the one matching the project, or follow the same shape for a
 stack not listed.
 
-> **Use `./init.sh`, not a `sed` sweep.** Two tokens — `{{CODE_FILE_GLOB}}`
-> (`*.ts | *.tsx | *.css`) and `{{CODE_FILE_REGEX}}` (`\.(ts|tsx|css)$`) —
-> contain shell/regex metacharacters (`| * ( ) \ $`) that break a naive
-> `sed s|...|...|` replacement. Run `./init.sh init`, fill `init.values.json`,
-> then `./init.sh apply`; it substitutes literally and then runs the gates. If
-> you must replace by hand, do these two literally and verify with
-> `./init.sh check`.
+> **Use `./init.sh`, not a `sed` sweep.** Four tokens — `{{CODE_FILE_GLOB}}`
+> (`*.ts | *.tsx | *.css`), `{{CODE_FILE_REGEX}}` (`\.(ts|tsx|css)$`),
+> `{{LINT_FIX_FILE_GLOB}}` (`*.md`), and `{{LINT_FIX_CMD}}`
+> (`npm run lint:fix --`) — can contain shell/regex metacharacters
+> (`| * ( ) \ $`) that break a naive `sed s|...|...|` replacement when they do
+> (the project's own value may carry none, as the example above does for
+> `{{LINT_FIX_CMD}}`, but a `sed` sweep does not know that in advance). Run
+> `./init.sh init`, fill `init.values.json`, then `./init.sh apply`; it
+> substitutes literally and then runs the gates. If you must replace by hand,
+> do these four literally and verify with `./init.sh check`.
 
 > **No dedicated formatter?** If the project lints but has no separate formatter
 > (common for a default `create-next-app`: ESLint, no Prettier), set
@@ -382,6 +385,19 @@ the Stack Decision Record and the README, not in a token.
 | ----- | --------- | -------------- |
 | `{{CODE_FILE_GLOB}}` | Shell `case` pattern of formatted extensions (`format.sh`) | `*.ts \| *.tsx \| *.css` · `*.py` · `*.go` |
 | `{{CODE_FILE_REGEX}}` | Extended-regex of source extensions (`check.sh`) | `\.(ts\|tsx\|css)$` · `\.py$` · `\.go$` |
+| `{{LINT_FIX_CMD}}` (optional) | Linter autofix invocation, taking one file as a trailing argument (`format.sh`) — see the callout below if the project drops it | `npm run lint:fix --` · `biome check --write --` · `ruff check --fix` |
+| `{{LINT_FIX_FILE_GLOB}}` (optional) | Shell `case` pattern of the files `{{LINT_FIX_CMD}}` applies to, appearing in two places in `format.sh`, both matched relative to `$PROJECT_DIR/`: the early-exit filter and the autofix guard further down — `format.sh` prefixes the token with `"$PROJECT_DIR"/` once, immediately before it, in both places, so leave the first alternative bare and prefix only the second and later ones (e.g. `*.md \| "$PROJECT_DIR"/*.mdx`) — see the callout below if the project drops it | `*.md` · `*.py` · `*.go` |
+
+> **Dropping the lint-autofix step?** If `{{FORMAT_CMD}}` already subsumes the
+> linter's autofix, drop `{{LINT_FIX_CMD}}` and `{{LINT_FIX_FILE_GLOB}}`
+> together — this is the only place that states how. Edit three places in
+> `format.sh`: remove the `"$PROJECT_DIR"/`-anchored `LINT_FIX_FILE_GLOB`
+> alternative from the early-exit filter's `case` pattern, trim that filter's
+> comment (which explains the union) back to describing `CODE_FILE_GLOB`
+> alone, and delete the autofix block further down that uses both tokens.
+> Then remove both tokens' rows from `tokens.json` — `./init.sh apply` refuses
+> to run while a manifest-listed token has no value, whether or not it still
+> occurs in the tree.
 
 A find-and-replace sweep is the fastest path. After replacing, search the tree
 for `{{` to confirm none remain (the completion checklist does this).
@@ -661,10 +677,12 @@ the shape below.
   tools `loop-engineering` uses to wake itself while waiting on CI. The
   session-start hook copies it to `settings.local.json` in cloud sessions.
 - `.claude/hooks/*.sh` need the token fill — `{{CODE_FILE_GLOB}}`,
-  `{{CODE_FILE_REGEX}}`, `{{INSTALL_CMD}}`, and the command tokens — plus an
-  adapted toolchain block in `session-start.sh` for the project's runtime (the
-  example activates `mise` when it is already present). Delete any hook the
-  project does not want, and its entry in the settings file above.
+  `{{CODE_FILE_REGEX}}`, `{{INSTALL_CMD}}`, and the command tokens, plus the
+  optional `{{LINT_FIX_CMD}}` and `{{LINT_FIX_FILE_GLOB}}` if the project keeps
+  `format.sh`'s per-file lint-autofix step — plus an adapted toolchain block in
+  `session-start.sh` for the project's runtime (the example activates `mise`
+  when it is already present). Delete any hook the project does not want, and
+  its entry in the settings file above.
 - `.claude/agents/` holds `implementer.md`, `reviewer.md`, and
   `investigator.md`. None carries project-specific text, so none needs
   adapting; all three are outside the skills CLI, so refreshing skills never

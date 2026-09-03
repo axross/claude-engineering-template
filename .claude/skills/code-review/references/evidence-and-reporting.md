@@ -66,6 +66,20 @@ Evidence is what lets a reader confirm a finding without taking the reviewer's w
 - MUST replace a vague appeal to "best practices" with a specific rule and failure mode, or drop the finding.
 - MUST name every skipped required check and why it was skipped; a skipped check is residual risk, never success evidence.
 
+## What Is Not Evidence
+
+The author's own account of a change cannot corroborate it. A verification table, a criteria checklist, and a disclosed figure are all products of the same loop that produced the diff, so agreement between them and the change is self-consistency, not correctness. A review that re-runs the author's checks and confirms the author's numbers has audited the arithmetic, not the change.
+
+Self-authored acceptance criteria carry a specific blind spot worth naming. Criteria asserting that something is **present** are monotone in content: adding text can satisfy them but never violate them. A change can therefore meet every criterion and still be substantially duplication and bloat.
+
+**Guidelines:**
+
+- MUST NOT treat a pull request's own verification table as evidence of correctness; that the diff matches the numbers in the description is a consistency check the author already ran.
+- MUST NOT treat "all acceptance criteria met" as sufficient when the criteria were authored in the same loop as the change; search separately for what presence-only criteria cannot detect — duplication, bloat, and content that should have been cut.
+- MUST compare the actual against any expected numeric band recorded anywhere the review can reach — a linked issue, a plan, or prior review discussion — and raise a finding when it falls outside; the author having disclosed the miss does not discharge it.
+- MUST treat a fired tripwire as a finding wherever the expectation was recorded — a band that lived only in prose still binds the review.
+- SHOULD re-derive a figure the review relies on rather than quoting the author's, and say so in the summary when it could not be re-derived.
+
 ## When the Reviewer Cannot Verify
 
 An issue the reviewer could not actually confirm can send the author chasing a non-bug when it is presented with full confidence.

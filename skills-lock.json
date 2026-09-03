@@ -5,7 +5,7 @@
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/agent-skill-authoring/SKILL.md",
-      "computedHash": "68ecd82715e6f6b3c8dc0db63c5f25679509bf7c2c08a940c1eb209f8161fef9"
+      "computedHash": "2b74ad667302eeaa2d85b45712c15fdbe1a603d81a0a2a5d82d469c239c5c1e5"
     },
     "agent-skill-management": {
       "source": "axross/skills",
@@ -29,7 +29,7 @@
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/code-review/SKILL.md",
-      "computedHash": "350aa07b54c3163ad3aea1bea1846ab4aef98be27e36dce4ffc7b4ef634521f8"
+      "computedHash": "66934faec06995d7a223632033c4bbc56b8ac4cdc0c9a313c78b49d50eec17dc"
     },
     "conventional-commits": {
       "source": "axross/skills",
@@ -59,19 +59,19 @@
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/loop-engineering/SKILL.md",
-      "computedHash": "71db8e15f0eff15ddc28a94f10c25043fddb3aa4dbeb61b6e0d98e002c16ee4c"
+      "computedHash": "ccceb1cccaf784e292e1cd68ade37532a5579997cf78445a8a6ba46fd36711c1"
     },
     "product-requirement-document-authoring": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/product-requirement-document-authoring/SKILL.md",
-      "computedHash": "9f6856dca8e956fd70b514ca2f0f53c538aba09c48790bb260747ec34b308167"
+      "computedHash": "02b8770e9b8dcf6d94f92702ca155c67bc6e325af40da9d260a74d17c6814cef"
     },
     "professional-behavior": {
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/professional-behavior/SKILL.md",
-      "computedHash": "278ca2624a188c760b5d17c2952d3854e269c2468f58f9081bc1fa13510f4c34"
+      "computedHash": "3db8e1b4e1ccd89bfb408a338949494571177ac4b3698ba3d6b9d7259f11147d"
     },
     "quality-assurance": {
       "source": "axross/skills",
@@ -83,7 +83,7 @@
       "source": "axross/skills",
       "sourceType": "github",
       "skillPath": "skills/software-development/SKILL.md",
-      "computedHash": "945c0e3e712f746ae3136e1d4847af4aadeabc063a5edbaaedbad620677cd925"
+      "computedHash": "5c06c9137c8cecfe041a05fe1cc0332540c2ef8b9329e373a2530b8614f2c88b"
     },
     "software-instrumentation": {
       "source": "axross/skills",

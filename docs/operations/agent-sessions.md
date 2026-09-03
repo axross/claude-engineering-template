@@ -46,15 +46,56 @@ not a convenience: `loop-engineering` schedules its own wake with them while
 waiting on CI and the independent review, and without the grant every wait
 raises a permission prompt that an unattended session cannot answer.
 
-[`check.sh`](../../.claude/hooks/check.sh) blocks completion on a failing lint
-or test run, and separately emits a non-blocking reminder when the branch has
-commits ahead of the default branch that are **all pushed** and the tree is
-clean. That state is what a change loop looks like when it stopped between the
-push and the pull request, and the hook's own change gate would otherwise read
-it as "nothing pending". The hook cannot ask GitHub whether a pull request
-exists, so it reminds rather than blocks — and it MUST stay non-blocking, since
-a false positive that halts an agent mid-delivery costs more than the reminder
-saves.
+Format-on-edit fires only for a file changed through `Edit`, `Write`, or
+`MultiEdit` — the `PostToolUse` matcher's scope, deliberately not widened — so
+a file changed another way (a Bash heredoc, `sed -i`) reaches `Stop`
+uncorrected regardless of which check below would have repaired it.
+
+A blocking `Stop` check fires only after the agent believes the task is
+finished, so a failure there costs a whole main turn: read the failure,
+re-plan, fix, stop again. That cost is why the placement question exists at
+all, and it is answered the same way for every check this project runs:
+whether a check belongs at `Stop` or earlier at `PostToolUse` turns on whether
+its repair needs an authoring decision or is purely mechanical.
+
+- Where the project keeps `format.sh`'s per-file lint-autofix step, the
+  linter's violations that the autofix repairs are **non-blocking**, because
+  `format.sh` reaches the file first — see
+  [`format.sh`](../../.claude/hooks/format.sh). The hook's file filter admits
+  the union of the whole-project formatter's own file set and the autofix's
+  file set: the formatter takes no file argument and reformats the whole
+  project regardless of which file changed, so narrowing the filter to the
+  formatter's file set alone would skip the formatter for a file that only
+  the autofix cares about. The autofix step itself then runs only for a file
+  that also falls in its own file set and lives under the project root,
+  before the whole-project formatter runs — its alternative in the filter
+  carries that same project-root anchor, while the formatter's alternative
+  does not, since the formatter's reach outside the project root is
+  pre-existing, unrelated behaviour. Each file set is a shell `case` pattern:
+  where one lists alternatives, each needs its own `"$PROJECT_DIR"/` prefix,
+  because a `case` pattern does not distribute a prefix across `|`-joined
+  alternatives — see [`tokens.json`](../../tokens.json).
+- The linter's violations that the autofix cannot repair — or, for a project
+  that drops the autofix step, all of the linter's violations — are
+  **blocking**, because the correct repair is an authoring decision no hook
+  can make.
+- Where the project keeps a unit test run, it is **blocking** for the same
+  reason: a failing test has no mechanical repair.
+- The change-in-flight reminder below is **already non-blocking**, and MUST
+  stay so, since a false positive that halts an agent mid-delivery costs more
+  than the reminder saves.
+
+[`check.sh`](../../.claude/hooks/check.sh) never attempts a repair itself, by
+design rather than oversight: a repair applied at `Stop` can land in the working
+tree after the agent has already committed and pushed, so the pushed commit
+would keep the violation while the hook reported success. It blocks completion
+on a failing lint run and, where the project keeps one, a failing unit test run,
+and separately emits a non-blocking reminder when the branch has commits ahead
+of the default branch that are **all pushed** and the tree is clean. That state
+is what a change loop looks like when it stopped between the push and the pull
+request, and the hook's own change gate would otherwise read it as "nothing
+pending". The hook cannot ask GitHub whether a pull request exists, so it
+reminds rather than blocks.
 
 ## Subagents
 

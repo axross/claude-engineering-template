@@ -12,6 +12,29 @@ Load only the reference sections a given task touches; each one below routes to 
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119.html).
 
+## Independent Operations
+
+A turn is priced by the size of the context it carries, not by what it does: a turn that issues one operation costs about what a turn that issues several unrelated operations costs, because the price follows the turn, not what is packed into it. Spreading N operations that do not depend on one another across N turns therefore costs roughly N times what issuing the same N together, in one turn, costs — without producing more than the one-turn version would have.
+
+See [independent-operations.md](./references/independent-operations.md) for:
+
+- the pricing rationale in full — what a turn is billed for, and why the multiplier is the number of turns rather than the number of operations
+- the dependency test that decides which operations may share a turn, worked through with a Good/Bad example pair
+- why no numeric target is given for how many operations belong in one turn
+- how this rule sits beside [change-management.md](./references/change-management.md)'s incremental-changes rule without contradicting it
+
+**Guidelines:**
+
+- MUST read [independent-operations.md](./references/independent-operations.md) when it is not obvious whether a candidate operation depends on another's result, or when this rule appears to conflict with [change-management.md](./references/change-management.md)'s incremental-changes rule.
+
+What follows is the rule itself, not a further reading obligation: it binds every turn this skill governs rather than some narrower situation — a turn either has mutually independent operations available to issue together or it does not, and this rule is what decides which — so it stands here directly instead of behind a pointer that would fire on every turn regardless.
+
+**Guidelines:**
+
+- MUST issue operations that do not depend on one another in the same turn rather than splitting them across consecutive turns.
+- MUST NOT batch an operation into that turn when its target, arguments, or necessity is determined by another operation's result — that operation is dependent, and batching it produces a call made against the wrong target, or one that should never have been made at all.
+- MUST NOT read this rule as licence to skip verifying a change before moving to the next step: [change-management.md](./references/change-management.md)'s "Make Incremental Changes" governs that case, and such a step is dependent by construction — its necessity is set by the previous step's verification result, so it stays outside this rule's batch rather than being an exception to it.
+
 ## Code Quality
 
 See [code-quality.md](./references/code-quality.md) for:
@@ -81,6 +104,7 @@ The commit-message header format — its allowed types, scope and description co
 
 See [pull-request-descriptions.md](./references/pull-request-descriptions.md) for:
 
+- who the description is written for — the developer about to read the diff — and the roughly 200-word ceiling that follows from it
 - what a pull request body contains, and why the "why" leads
 - reproducing the repository's pull request template in an API-authored body
 - issue linking, verification evidence, risk disclosure, and reviewer guidance

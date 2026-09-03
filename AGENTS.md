@@ -80,7 +80,9 @@ made the guesses it exists to prevent.
 document update goes through the change loop: plan, human approval, code,
 verify, independent review, address. There is no size threshold and no
 self-approval shortcut — a one-line edit follows the same loop as a large
-feature. The skill is **model-invoked**, so describing the work is enough to
+feature, and the loop's independent review (governed by
+[REVIEW.md](./REVIEW.md)) is the only authoritative review of the agent's own
+change. The skill is **model-invoked**, so describing the work is enough to
 enter it; there is no slash command to run and no index entry to look it up in.
 That is exactly why it is named here: nothing else guarantees it loads. A task
 that changes nothing stays outside it: answering a question, reviewing someone
@@ -130,12 +132,13 @@ plan, the plan-approval stop, and the independent review apply in a headless
 or autonomous session exactly as in an interactive one. Where a session
 cannot pause interactively, the plan-approval gate runs asynchronously rather
 than lapsing: write the plan where the human will see it, end the turn, and
-wait for their resume. A "no pull request unless asked" clause is already
-satisfied — this working agreement is the standing ask — and a
-spawn-conditioning clause is satisfied the same way, by the delegation item
-above. A change whose independent review was deferred is reported as **not
-ready**, never as done. The Execution Model in `loop-engineering` owns the
-full precedence rule.
+wait for their resume. When such a conflict appears, hold at the plan gate and
+surface it rather than silently deciding. A "no pull request unless asked"
+clause is already satisfied — this working agreement is the standing ask —
+and a spawn-conditioning clause is satisfied the same way, by the delegation
+item above. A change whose independent review was deferred is reported as
+**not ready**, never as done, whatever the session's summary says. The
+Execution Model in `loop-engineering` owns the full precedence rule.
 
 Beyond those six, load whichever installed skill matches the surface you are
 changing. Discovery resolves them by their own `description`, so there is no
@@ -148,8 +151,9 @@ answer within it.
 **Guidelines:**
 
 - MUST, when a task matches a skill — discovered by its `description` in the
-  host's skill catalog — load that skill's body and execute its own steps
-  rather than acting from a one-line summary of it.
+  host's skill catalog — load that skill's body (invoke it by name, or read
+  its `SKILL.md`) and execute its own steps rather than acting from a
+  one-line summary of it.
 - MUST enter `loop-engineering` for any code change or document update by
   loading it, before acting on whatever other skill discovery surfaces — not by
   working from this section's description of it.
